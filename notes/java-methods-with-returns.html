@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Methods with Returns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  /* ---------- Minimal header (no nav) ---------- */
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 6px; letter-spacing:-0.01em;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  /* ---------- Hero statement ---------- */
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  /* ---------- Numbered sections ---------- */
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+  .callout.analogy{ border-left-color:var(--border-strong); background:#FCFBF8; }
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  /* ---------- Code blocks ---------- */
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  /* ---------- Tables ---------- */
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14.5px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:11px 14px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12.5px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:13px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+
+  /* ---------- Method Anatomy interactive ---------- */
+  .anatomy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:22px 22px 18px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .anatomy-code{
+    font-family:'JetBrains Mono',monospace; font-size:15.5px; line-height:1.9;
+    background:var(--code-bg); color:var(--code-ink); border-radius:6px;
+    padding:16px 18px; display:flex; flex-wrap:wrap; gap:0;
+  }
+  .anatomy-part{
+    padding:2px 3px; border-radius:4px; cursor:pointer;
+    transition:background var(--dur), color var(--dur);
+    border-bottom:2px solid transparent;
+  }
+  .anatomy-part[data-part="return-type"]{ color:var(--code-type); }
+  .anatomy-part[data-part="name"]{ color:var(--code-fn); }
+  .anatomy-part[data-part="params"]{ color:var(--code-key); }
+  .anatomy-part[data-part="return-stmt"]{ color:var(--code-str); }
+  .anatomy-part.active{ background:rgba(255,255,255,0.14); border-bottom-color:currentColor; }
+  .anatomy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .anatomy-chip{
+    display:flex; align-items:center; gap:6px;
+    font-size:12.5px; padding:6px 10px; border-radius:6px;
+    border:1px solid var(--border); cursor:pointer; color:var(--muted);
+    transition:background var(--dur), border-color var(--dur), color var(--dur);
+  }
+  .anatomy-chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .anatomy-chip[data-part="return-type"] .dot{ background:var(--code-type); }
+  .anatomy-chip[data-part="name"] .dot{ background:var(--code-fn); }
+  .anatomy-chip[data-part="params"] .dot{ background:var(--code-key); }
+  .anatomy-chip[data-part="return-stmt"] .dot{ background:var(--code-str); }
+  .anatomy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .anatomy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:20px; }
+
+  /* ---------- Challenge / predict-reveal ---------- */
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 260ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+
+  /* ---------- Self test ---------- */
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:400px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  /* ---------- Compare grid ---------- */
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  /* ---------- Diagram box ---------- */
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  /* ---------- Recap grid ---------- */
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:23px; }
+    .anatomy-code{ font-size:12.5px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Methods with Returns</h1>
+    <p class="sub">Methods that don't just act — they hand something back.</p>
+  </header>
+  <hr class="rule" />
+
+  <p class="hero-statement">A method can <em>calculate or produce a value</em> and send that value back to the code that called it.</p>
+  <p class="hero-sub">Think of it like ordering from a vending machine: you make a request, the method performs work, produces a value, and that value comes back to you. In <code class="inline">int result = add(10, 20);</code> the method calculates <code class="inline">30</code>, and that <code class="inline">30</code> comes back and is stored in <code class="inline">result</code>.</p>
+
+  <div class="flow-box">
+    <span class="step">You make a request</span>
+    <span class="arrow">↓</span>
+    <span class="step">Method performs work</span>
+    <span class="arrow">↓</span>
+    <span class="step">Method produces a value</span>
+    <span class="arrow">↓</span>
+    <span class="step">Value comes back to you</span>
+  </div>
+
+  <!-- 01 -->
+  <section class="sec" id="r01">
+    <span class="sec-num">01</span>
+    <h2>What is a return type?</h2>
+    <p class="lede">A <strong>return type</strong> tells us what kind of value a method sends back after it finishes its work.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int add(int a, int b) {
+    return a + b;
+}</code></pre>
+    </div>
+    <p>Here, <code class="inline">int</code> is the return type. It tells Java: <em>"This method will send an <code class="inline">int</code> value back."</em></p>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="r02">
+    <span class="sec-num">02</span>
+    <h2><code class="inline">void</code> vs. a returning method</h2>
+    <p class="lede">You've already seen methods like this, which <strong>display</strong> a result but don't give it back:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void displaySum(int a, int b) {
+    System.out.println(a + b);
+}</code></pre>
+    </div>
+    <p>Compare it with a method that <strong>returns</strong> the result instead:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int calculateSum(int a, int b) {
+    return a + b;
+}</code></pre>
+    </div>
+    <table class="ref">
+      <thead><tr><th><code>void</code> method</th><th>Returning method</th></tr></thead>
+      <tbody>
+        <tr><td>Performs a task</td><td>Performs a task and produces a value</td></tr>
+        <tr><td>Does not return a value</td><td>Returns a value</td></tr>
+        <tr><td>Uses <code>void</code></td><td>Uses a data type such as <code>int</code>, <code>double</code>, <code>String</code></td></tr>
+        <tr><td><code>void display()</code></td><td><code>int calculate()</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — two calculators</div>
+      <p><strong>Calculator A:</strong> you enter <code class="inline">10 + 20</code>, it displays <code class="inline">30</code> — but gives you nothing else to use. <strong>Calculator B:</strong> it produces <code class="inline">30</code> and lets you take that value and use it elsewhere. A returning method is like Calculator B.</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="r03">
+    <span class="sec-num">03</span>
+    <h2>Basic syntax of a returning method</h2>
+    <p class="lede">The general shape is <code class="inline">returnType methodName(parameters) { return value; }</code>. Click each part below.</p>
+    <div class="anatomy">
+      <div class="anatomy-code" id="anatomyCode">
+        <span class="anatomy-part" data-part="return-type">int</span><span>&nbsp;</span><span class="anatomy-part" data-part="name">add</span><span class="anatomy-part" data-part="params">(int&nbsp;a,&nbsp;int&nbsp;b)</span><span>&nbsp;{&nbsp;</span><span class="anatomy-part" data-part="return-stmt">return&nbsp;a&nbsp;+&nbsp;b;</span><span>&nbsp;}</span>
+      </div>
+      <div class="anatomy-legend">
+        <div class="anatomy-chip" data-part="return-type"><span class="dot"></span>Return type</div>
+        <div class="anatomy-chip" data-part="name"><span class="dot"></span>Method name</div>
+        <div class="anatomy-chip" data-part="params"><span class="dot"></span>Parameters</div>
+        <div class="anatomy-chip" data-part="return-stmt"><span class="dot"></span>Return statement</div>
+      </div>
+      <div class="anatomy-desc" id="anatomyDesc">Hover or click a part of the code above to see what it does.</div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="r04">
+    <span class="sec-num">04</span>
+    <h2>The <code class="inline">return</code> keyword</h2>
+    <p class="lede">The <code class="inline">return</code> keyword sends a value back from a method.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int getNumber() {
+    return 10;
+}</code></pre>
+    </div>
+    <p>Think of <code class="inline">return 10;</code> as saying: <em>"Here is the result. Send it back."</em></p>
+    <h3>Saving the returned value in a variable</h3>
+    <p>A returned value can be stored in a variable, then used like any other:</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int getNumber() {
+    return 100;
+}
+
+int number = getNumber();
+
+System.out.println(number);   // → 100</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Key idea</div>
+      <p>A returned value can be <strong>stored, displayed, compared, calculated with, or passed somewhere else</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="r05">
+    <span class="sec-num">05</span>
+    <h2>Return type and returned value must match</h2>
+    <p class="lede">The type after <code class="inline">return</code> must be compatible with the declared return type.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int getAge() {
+    return 20;          // int → int ✓
+}
+
+double getPrice() {
+    return 499.99;      // double → double ✓
+}
+
+String getName() {
+    return "Anu";       // String → String ✓
+}</code></pre>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">Common mistake</div>
+      <p>Don't promise one type and return an incompatible value:</p>
+      <div class="codeblock small" data-lang="java" style="margin:8px 0 0;"><div class="cb-head"><span class="cb-lang">Won't compile</span></div><pre><code>int getNumber() {
+    return "Hello";   // int promised, String returned
+}</code></pre></div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="r06">
+    <span class="sec-num">06</span>
+    <h2>Calling a returning method from <code class="inline">main()</code></h2>
+    <p class="lede">A common place to call methods is <code class="inline">main()</code>.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Calculator.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Calculator {
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int result = add(10, 20);
+        System.out.println(result);   // → 30
+    }
+}</code></pre>
+    </div>
+    <p>The flow behind <code class="inline">int result = add(10, 20);</code>:</p>
+    <div class="diagram-box">        main()
+          │ calls
+          ↓
+    add(10, 20)
+          │
+          ↓
+     a=10, b=20
+          │
+          ↓
+     a + b = 30
+          │
+          ↓
+     return 30
+          │
+          ↓
+    main() receives 30
+          │
+          ↓
+    result = 30</div>
+    <div class="callout">
+      <div class="callout-label">Note</div>
+      <p>This chapter focuses on <strong>returning methods</strong> — the mechanics of <code class="inline">static</code> and access modifiers aren't the focus here.</p>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="r07">
+    <span class="sec-num">07</span>
+    <h2>Returning a calculation — and why not just print it?</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int square(int number) {
+    return number * number;
+}
+
+int result = square(5);   // → 25</code></pre>
+    </div>
+    <p>Compare a method that <strong>prints</strong> with one that <strong>returns</strong>:</p>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Prints</h4>
+        <code>void square(int number) {
+  System.out.println(
+    number * number);
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>Returns</h4>
+        <code>int square(int number) {
+  return number * number;
+}</code>
+      </div>
+    </div>
+    <p>With the returning version, the value is available for further use:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int result = square(5);
+int finalValue = result + 10;
+System.out.println(finalValue);   // → 35</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Important</div>
+      <p><strong>Printing a value and returning a value are not the same thing.</strong> <code class="inline">System.out.println()</code> sends information to the screen. <code class="inline">return</code> sends information back to the code that called the method.</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="r08">
+    <span class="sec-num">08</span>
+    <h2>Analogy: a coffee machine ☕</h2>
+    <p class="lede">You select <em>Coffee</em>. The machine receives the request, prepares coffee, produces coffee, and gives it to you.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>String makeCoffee() {
+    return "Coffee";
+}
+
+String drink = makeCoffee();   // drink = "Coffee"</code></pre>
+    </div>
+    <p>The method is like the machine, and the returned value is like the coffee.</p>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="r09">
+    <span class="sec-num">09</span>
+    <h2>Returning different data types</h2>
+    <p class="lede">A method doesn't always have to return an <code class="inline">int</code> — the general pattern <code class="inline">dataType methodName() { return value; }</code> works for any type.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int getAge() {
+    return 20;
+}
+
+double getPrice() {
+    return 499.99;
+}
+
+String getGreeting() {
+    return "Welcome to Java!";
+}
+
+boolean isEven(int number) {
+    return number % 2 == 0;
+}</code></pre>
+    </div>
+    <p>A <code class="inline">boolean</code>-returning method is often used directly in a decision:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>boolean result = isEven(10);   // → true
+
+if (result) {
+    System.out.println("The number is even.");
+}</code></pre>
+    </div>
+    <p>And a <code class="inline">double</code> can carry a calculated measurement:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>double calculateArea(double radius) {
+    return 3.14 * radius * radius;
+}
+
+double area = calculateArea(5);   // → 78.5</code></pre>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="r10">
+    <span class="sec-num">10</span>
+    <h2>Parameters go in, return values come out</h2>
+    <p class="lede">Parameters give information <strong>into</strong> the method. <code class="inline">return</code> sends information <strong>out of</strong> the method.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int multiply(int number1, int number2) {
+    return number1 * number2;
+}
+
+int result = multiply(6, 7);   // → 42</code></pre>
+    </div>
+    <div class="diagram-box">        INPUT
+          ↓
+    6         7
+     \       /
+      \     /
+    multiply()
+        │
+        ↓
+       42
+        │
+      OUTPUT</div>
+    <div class="callout">
+      <div class="callout-label">Memory trick</div>
+      <p>Think of a method as a machine: <code class="inline">INPUT → [ METHOD ] → OUTPUT</code>. Parameters are the input. The returned value is the output.</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="r11">
+    <span class="sec-num">11</span>
+    <h2>Using a returned value</h2>
+    <p class="lede">You don't always have to store the returned value — you can print it directly, use it in another expression, or feed it straight into another method.</p>
+    <h3>Calling a method directly</h3>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int add(int a, int b) {
+    return a + b;
+}
+
+System.out.println(add(10, 20));   // → 30</code></pre>
+    </div>
+    <h3>Using it in another calculation</h3>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int result = square(5) + 10;   // 25 + 10 → 35</code></pre>
+    </div>
+    <h3>Feeding one returning method into another</h3>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int result = addTen(square(5));
+// square(5) → 25
+// addTen(25) → 35</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — an assembly line</div>
+      <p>Machine 1 → Machine 2 → Machine 3. Each machine produces something that becomes the input for the next. Returning methods can work the same way.</p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="r12">
+    <span class="sec-num">12</span>
+    <h2>Storing and reusing results</h2>
+    <p class="lede">Storing a returned value in a variable is one of the most common patterns — the variable is simply a place we choose to keep the value.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int calculateTotal(int price, int quantity) {
+    return price * quantity;
+}
+
+int total = calculateTotal(500, 3);   // total = 1500
+
+System.out.println("Total: " + total);</code></pre>
+    </div>
+    <p>The same method can be reused with different inputs, into different variables:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int firstResult  = add(10, 20);   // 30
+int secondResult = add(50, 25);   // 75</code></pre>
+    </div>
+    <p>A returned value can also feed a further calculation, such as an average built from a total:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int total = calculateTotal(80, 90, 85);
+double average = total / 3.0;</code></pre>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="r13">
+    <span class="sec-num">13</span>
+    <h2><code class="inline">return</code> ends the method — and must produce a value</h2>
+    <p class="lede">When Java reaches a <code class="inline">return</code> statement, the method finishes immediately. Anything written after it is unreachable.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int getNumber() {
+    return 10;
+    // unreachable — the method already ended
+}</code></pre>
+    </div>
+    <p>And if a method's return type isn't <code class="inline">void</code>, it must return an appropriate value on every valid path:</p>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Correct</h4>
+        <code>int getNumber() {
+  return 10;
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>Incorrect</h4>
+        <code>int getNumber() {
+  System.out.println("Hi");
+  // no return!
+}</code>
+      </div>
+    </div>
+    <p>The value after <code class="inline">return</code> can be any expression — Java evaluates it and sends the result back:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int doubleNumber(int number) {
+    return number * 2;
+}
+
+int findDifference(int a, int b) {
+    return a - b;
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="sec" id="r14">
+    <span class="sec-num">14</span>
+    <h2>Complete walkthrough with <code class="inline">main()</code></h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Calculator.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Calculator {
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        int result = add(15, 25);
+        System.out.println("Result: " + result);
+    }
+}</code></pre>
+    </div>
+    <div class="diagram-box">Output: Result: 40</div>
+    <table class="ref">
+      <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Method is defined: <code>int add(int a, int b) { return a + b; }</code></td></tr>
+        <tr><td>2</td><td>Method is called: <code>add(15, 25)</code></td></tr>
+        <tr><td>3</td><td>Parameters receive values: <code>a = 15, b = 25</code></td></tr>
+        <tr><td>4</td><td>Calculation occurs: <code>15 + 25 = 40</code></td></tr>
+        <tr><td>5</td><td>Method returns the value: <code>return 40</code></td></tr>
+        <tr><td>6</td><td><code>main()</code> stores it: <code>int result = 40;</code></td></tr>
+        <tr><td>7</td><td>Result is displayed: <code>System.out.println(result);</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 15 -->
+  <section class="sec" id="r15">
+    <span class="sec-num">15</span>
+    <h2>One method, many results</h2>
+    <p class="lede">A method doesn't have one permanent answer — the result depends on the input.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int square(int number) {
+    return number * number;
+}
+
+int a = square(2);    // 4
+int b = square(5);    // 25
+int c = square(10);   // 100</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a juice machine</div>
+      <p>Put in an orange → orange juice. Put in an apple → apple juice. Same method + different parameters = potentially different returned values.</p>
+    </div>
+    <h3>Booleans for decisions, strings for display</h3>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>boolean isEligible(int age) {
+    return age >= 18;
+}
+
+String createMessage(String name) {
+    return "Welcome, " + name;
+}</code></pre>
+    </div>
+    <p>The method doesn't need to print anything — it just answers a question, or prepares text, and lets the <strong>caller</strong> decide what to do with the result. That's what gives a returning method flexibility:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int total = calculateTotal(500, 2);
+
+System.out.println(total);
+int discountedTotal = total - 100;
+if (total > 500) {
+    System.out.println("Large order");
+}</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Key advantage</div>
+      <p>A method that returns a value can be used as a <strong>building block</strong> for other calculations and decisions.</p>
+    </div>
+  </section>
+
+  <!-- 16 : COMMON MISTAKES -->
+  <section class="sec" id="r16">
+    <span class="sec-num">16</span>
+    <h2>Common mistakes</h2>
+    <table class="ref">
+      <thead><tr><th>Mistake</th><th>Incorrect</th><th>Correct</th></tr></thead>
+      <tbody>
+        <tr><td>Forgetting <code>return</code></td><td><code>a + b;</code></td><td><code>return a + b;</code></td></tr>
+        <tr><td>Returning the wrong type</td><td><code>return "500";</code> from a <code>double</code> method</td><td><code>return 500.0;</code></td></tr>
+        <tr><td>Expecting <code>return</code> to print</td><td><code>return 50;</code> shows nothing on screen</td><td><code>System.out.println(getNumber());</code></td></tr>
+        <tr><td>Ignoring the returned value</td><td><code>add(10, 20);</code> — the 30 goes nowhere</td><td><code>int result = add(10, 20);</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">Important distinction</div>
+      <p><code class="inline">return 30;</code> does <strong>not</strong> mean <code class="inline">System.out.println(30);</code>. <code class="inline">return</code> sends the value back; <code class="inline">println</code> displays a value.</p>
+    </div>
+  </section>
+
+  <!-- 17 : CHALLENGES -->
+  <section class="sec" id="r17">
+    <span class="sec-num">17</span>
+    <h2>Try it: ten quick challenges</h2>
+    <p class="lede">Work each one out yourself before revealing the answer.</p>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the answer</span> What's stored in <code style="background:transparent;border:none;padding:0;">answer</code>?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int add(int a, int b) {
+    return a + b;
+}
+
+int answer = add(7, 8);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">a = 7</code>, <code class="inline">b = 8</code> → <code class="inline">7 + 8 = 15</code>. So <code class="inline">answer = 15</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the output</span> Trace the print</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int multiply(int a, int b) {
+    return a * b;
+}
+
+System.out.println(multiply(4, 5));</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">20</code> — because <code class="inline">4 × 5 = 20</code>, and the returned value is passed directly to <code class="inline">System.out.println()</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Multiple steps</span> Guess the output</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int square(int number) {
+    return number * number;
+}
+
+int result = square(6);
+
+System.out.println(result + 4);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">square(6) → 36</code>, so <code class="inline">result = 36</code>. Then <code class="inline">36 + 4 = 40</code>. Output: <code class="inline">40</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the data type</span> Fill the blank</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>_____ getPrice() {
+    return 499.99;
+}</code></pre></div>
+        <p>What should replace the blank?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">double</code> — because <code class="inline">499.99</code> is a <code class="inline">double</code> value.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Spot the error</span> What's wrong here?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>String getName() {
+    return 25;
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p>The method promises a <code class="inline">String</code> but returns an integer. Correct: <code class="inline">return "Anu";</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Celsius to Fahrenheit 🌡️</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">convertToFahrenheit</code>: accepts a Celsius <code class="inline">double</code>, returns Fahrenheit using <code class="inline">F = (C × 9 / 5) + 32</code>. What does <code class="inline">convertToFahrenheit(25)</code> give?</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>double convertToFahrenheit(double celsius) {
+    return (celsius * 9 / 5) + 32;
+}
+
+double result = convertToFahrenheit(25);   // → 77.0</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Calculate total 🛒</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">calculateTotal</code>: accepts <code class="inline">price</code> and <code class="inline">quantity</code>, returns <code class="inline">price × quantity</code>. What does <code class="inline">calculateTotal(200, 4)</code> give?</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int calculateTotal(int price, int quantity) {
+    return price * quantity;
+}
+
+int total = calculateTotal(200, 4);   // → 800</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Find the larger number</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">findLarger</code>: accepts two integers, returns the larger one. <code class="inline">findLarger(25, 40)</code> should give <code class="inline">40</code>.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int findLarger(int a, int b) {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Build the flow</span> Fill the missing return</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int multiply(int a, int b) {
+    return ________;
+}
+
+int answer = multiply(5, 6);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">a * b</code> — so <code class="inline">answer = 30</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Predict the value</span> Two steps at once</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>int calculateTotal(int price, int quantity) {
+    return price * quantity;
+}
+
+int total = calculateTotal(150, 3);
+int finalAmount = total + 50;</code></pre></div>
+        <p>What are <code class="inline">total</code> and <code class="inline">finalAmount</code>?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">150 × 3 = 450</code>, so <code class="inline">total = 450</code>. Then <code class="inline">450 + 50 = 500</code>, so <code class="inline">finalAmount = 500</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 : SELF TEST -->
+  <section class="sec" id="r18">
+    <span class="sec-num">18</span>
+    <h2>Final self-test</h2>
+    <p class="lede">Try answering these without scrolling back up.</p>
+    <div class="selftest-bar">
+      <span id="selftestCount">0 / 6 answered</span>
+      <div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div>
+    </div>
+    <div id="selftestList"></div>
+  </section>
+
+  <!-- 19 : RECAP -->
+  <section class="sec" id="r19">
+    <span class="sec-num">19</span>
+    <h2>Chapter recap</h2>
+    <p class="lede"><code class="inline">void</code> vs. returning — the final comparison.</p>
+    <table class="ref">
+      <thead><tr><th>Feature</th><th><code>void</code> method</th><th>Returning method</th></tr></thead>
+      <tbody>
+        <tr><td>Performs a task</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Accepts parameters</td><td>✅</td><td>✅</td></tr>
+        <tr><td>Sends a value back</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Uses <code>return</code> with a value</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Can store result in a variable</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Example</td><td><code>void display()</code></td><td><code>int calculate()</code></td></tr>
+        <tr><td>Main purpose</td><td>Perform an action</td><td>Produce a usable value</td></tr>
+      </tbody>
+    </table>
+
+    <div class="recap-grid">
+      <div class="recap-card"><h4>Return type</h4><p>The kind of value a method promises to send back. <code class="inline">int</code>, <code class="inline">double</code>, <code class="inline">String</code>…</p></div>
+      <div class="recap-card"><h4>return</h4><p>The keyword that sends a value back and ends the method immediately.</p></div>
+      <div class="recap-card"><h4>Returned value</h4><p>What actually comes back — e.g. <code class="inline">30</code> from <code class="inline">return a + b;</code></p></div>
+      <div class="recap-card"><h4>Storing it</h4><p><code class="inline">int result = add(10, 20);</code> keeps the value for later use.</p></div>
+      <div class="recap-card"><h4>Using it directly</h4><p><code class="inline">System.out.println(add(10, 20));</code> — no variable needed.</p></div>
+      <div class="recap-card"><h4>Chaining</h4><p><code class="inline">addTen(square(5))</code> — one method's output becomes another's input.</p></div>
+    </div>
+
+    <h3>Final mental model</h3>
+    <div class="diagram-box">                  PARAMETERS
+                      ↓
+             ┌────────────────┐
+             │     METHOD      │
+             │   processing    │
+             └───────┬─────────┘
+                     │
+                  return
+                     │
+                     ↓
+               RETURNED VALUE
+                     │
+            ┌────────┴────────┐
+            ↓                 ↓
+       Store it          Use it directly
+       in variable       in an expression</div>
+
+    <div class="callout">
+      <div class="callout-label">⭐ The golden rule</div>
+      <p><strong>Parameters bring information INTO a method. <code class="inline">return</code> sends a value OUT of a method.</strong></p>
+      <p>For <code class="inline">int result = add(10, 20);</code> the journey is: <code class="inline">10, 20 → parameters → add() → 10 + 20 → return 30 → result = 30</code>.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Methods with Returns
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Java mini highlighter ---------------- */
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{
+    el.innerHTML = highlight(el.textContent);
+  });
+
+  /* ---------------- Copy buttons ---------------- */
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(()=>{ btn.textContent = 'Select & copy'; });
+    });
+  });
+
+  /* ---------------- Method anatomy interactive ---------------- */
+  const anatomyDescs = {
+    "return-type": "The return type. It tells Java what kind of value this method promises to send back — here, an int.",
+    "name": "The method name. Describes the task the method performs, so callers understand its purpose at a glance.",
+    "params": "The parameters. Information going IN to the method — here, two ints, a and b.",
+    "return-stmt": "The return statement. Java evaluates the expression a + b and sends that value back to the caller, ending the method immediately."
+  };
+  const anatomyDescEl = document.getElementById('anatomyDesc');
+  function setAnatomy(part){
+    document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+      el.classList.toggle('active', el.dataset.part === part);
+    });
+    anatomyDescEl.textContent = part ? anatomyDescs[part] : 'Hover or click a part of the code above to see what it does.';
+  }
+  document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+    el.addEventListener('mouseenter', ()=> setAnatomy(el.dataset.part));
+    el.addEventListener('click', ()=> setAnatomy(el.dataset.part));
+  });
+  const anatomyCodeEl = document.getElementById('anatomyCode');
+  if(anatomyCodeEl) anatomyCodeEl.addEventListener('mouseleave', ()=> setAnatomy(null));
+
+  /* ---------------- Challenge reveal ---------------- */
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = open ? 'Hide answer ' : btn.firstChild.textContent.replace('Hide answer ','Reveal answer ');
+    });
+  });
+
+  /* ---------------- Self test ---------------- */
+  const selfTestData = [
+    {q:"What does a return type tell us?", a:"It tells us the type of value the method is expected to return."},
+    {q:"What keyword sends a value back from a method?", a:"<code class=\"inline\">return</code>"},
+    {q:"What is returned here? <code class=\"inline\">int add(int a, int b) { return a + b; }</code>", a:"The result of <code class=\"inline\">a + b</code>."},
+    {q:"What will result contain? <code class=\"inline\">int square(int number){ return number*number; } int result = square(8);</code>", a:"<code class=\"inline\">64</code>"},
+    {q:"Can a returned value be stored in a variable?", a:"Yes — for example, <code class=\"inline\">int result = add(10, 20);</code>"},
+    {q:"What's the difference between a void display() that prints 10, and an int getNumber() that returns 10?", a:"The first displays 10 but does not return a value. The second returns 10, letting the calling code store or use that value."}
+  ];
+  const listEl = document.getElementById('selftestList');
+  const doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qcard-head">
+        <span><span class="qn">Q${i+1}</span>${item.q}</span>
+        <span class="check">✓</span>
+      </div>
+      <div class="qcard-answer"><p>${item.a}</p></div>
+    `;
+    const head = card.querySelector('.qcard-head');
+    const ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){
+        doneSet.add(i);
+        card.classList.add('done');
+        updateSelftest();
+      }
+    });
+    listEl.appendChild(card);
+  });
+  function updateSelftest(){
+    document.getElementById('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    document.getElementById('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
