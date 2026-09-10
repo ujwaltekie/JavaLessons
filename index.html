@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+  a{color:var(--accent);}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  .masthead{ padding:48px 0 30px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:44px; margin:0 0 12px; letter-spacing:-0.01em; line-height:1.1;
+  }
+  .masthead .sub{ color:var(--muted); font-size:16px; margin:0; max-width:34rem; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:30px 0 6px; }
+
+  .toc-meta{
+    display:flex; align-items:center; justify-content:space-between;
+    margin:26px 0 18px; font-size:13px; color:var(--faint);
+  }
+  .toc-meta span.count{ font-weight:600; color:var(--muted); }
+
+  .chapter-list{ list-style:none; margin:0; padding:0; }
+  .chapter-card{
+    display:block; text-decoration:none; color:inherit;
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:20px 22px;
+    margin-bottom:14px;
+    transition:border-color var(--dur), box-shadow var(--dur), transform var(--dur);
+    position:relative;
+  }
+  .chapter-card:hover{
+    border-color:var(--border-strong);
+    box-shadow:0 4px 18px rgba(34,31,27,0.07);
+    transform:translateY(-1px);
+  }
+  .chapter-card:hover .cc-arrow{ transform:translateX(3px); color:var(--accent); }
+  .chapter-card .cc-top{ display:flex; align-items:baseline; gap:12px; margin-bottom:6px; }
+  .chapter-card .cc-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:12.5px;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:5px; flex-shrink:0;
+  }
+  .chapter-card h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:19px; margin:0; letter-spacing:-0.005em; line-height:1.3;
+  }
+  .chapter-card p{ margin:0 0 0 0; color:var(--muted); font-size:14.5px; padding-left:0; }
+  .chapter-card .cc-bottom{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; }
+  .chapter-card .cc-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+  .chapter-card .cc-tag{
+    font-size:11px; font-weight:600; color:var(--muted);
+    background:#F5F1E9; border:1px solid var(--border); border-radius:4px;
+    padding:2px 7px;
+  }
+  .chapter-card .cc-arrow{
+    font-size:13px; color:var(--faint); font-weight:600; white-space:nowrap;
+    display:flex; align-items:center; gap:4px;
+    transition:transform var(--dur), color var(--dur);
+  }
+
+  .empty-note{
+    border:1px dashed var(--border-strong); border-radius:var(--radius);
+    padding:18px 20px; margin-top:6px; color:var(--faint); font-size:14px;
+    text-align:center; background:transparent;
+  }
+
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:34px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:32px; }
+    .chapter-card{ padding:16px 17px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Index</p>
+    <h1>Java Notes</h1>
+    <p class="sub">An interactive, growing set of cheat sheets covering Java — one concept at a time. Pick a chapter below to start reading.</p>
+  </header>
+  <hr class="rule" />
+
+  <div class="toc-meta">
+    <span>Table of contents</span>
+    <span><span class="count" id="chapterCount">0</span> chapters so far</span>
+  </div>
+
+  <ul class="chapter-list" id="chapterList"></ul>
+
+  <div class="empty-note">More chapters are added regularly — check back for new topics.</div>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Interactive notes for learning Java, one chapter at a time.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Add a new entry here whenever a new chapter is published.
+  const chapters = [
+    {
+      title: "Java Methods",
+      description: "What a method is, how to define one, and how parameters let you feed information in.",
+      href: "/notes/intro-to-methods/index.html",
+      tags: ["Methods", "Parameters"]
+    },
+    {
+      title: "Java Methods with Returns",
+      description: "Giving a method a return type, using the return keyword, and doing something useful with the value that comes back.",
+      href: "java-methods-with-returns.html",
+      tags: ["Methods", "return"]
+    },
+    {
+      title: "Java Instance Variables and Constructors",
+      description: "Storing an object's own data, and using a constructor to set it up the moment the object is created.",
+      href: "java-instance-variables-and-constructors.html",
+      tags: ["Objects", "Constructors"]
+    },
+    {
+      title: "Method Overloading & Constructor Overloading",
+      description: "Giving one name several forms — how Java tells overloaded methods and constructors apart by their parameters.",
+      href: "java-method-and-constructor-overloading.html",
+      tags: ["Methods", "Constructors", "Overloading"]
+    },
+    {
+      title: "Parameter Passing, Access Modifiers, static, and Variables",
+      description: "How data enters methods, who can access what, whether a member belongs to an object or the class, and where variables live.",
+      href: "java-parameter-passing-access-static-variables.html",
+      tags: ["Access modifiers", "static", "Variables"]
+    }
+  ];
+
+  const listEl = document.getElementById('chapterList');
+  document.getElementById('chapterCount').textContent = chapters.length;
+
+  chapters.forEach((ch, i) => {
+    const li = document.createElement('li');
+    const num = String(i + 1).padStart(2, '0');
+    const tags = ch.tags.map(t => `<span class="cc-tag">${t}</span>`).join('');
+    li.innerHTML = `
+      <a class="chapter-card" href="${ch.href}">
+        <div class="cc-top">
+          <span class="cc-num">${num}</span>
+          <h2>${ch.title}</h2>
+        </div>
+        <p>${ch.description}</p>
+        <div class="cc-bottom">
+          <div class="cc-tags">${tags}</div>
+          <span class="cc-arrow">Read chapter →</span>
+        </div>
+      </a>
+    `;
+    listEl.appendChild(li);
+  });
+})();
+</script>
+</body>
+</html>
