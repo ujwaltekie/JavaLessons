@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Method Overloading &amp; Constructor Overloading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  /* ---------- Minimal header (no nav) ---------- */
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  /* ---------- Hero statement ---------- */
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  /* ---------- Numbered sections ---------- */
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+  .callout.analogy{ border-left-color:var(--border-strong); background:#FCFBF8; }
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  /* ---------- Code blocks ---------- */
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  /* ---------- Tables ---------- */
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14.5px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:11px 14px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12.5px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:13px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+  table.ref td.yes{ color:#2F7D4F; font-weight:600; }
+  table.ref td.no{ color:var(--warn); font-weight:600; }
+
+  /* ---------- Signature anatomy interactive ---------- */
+  .anatomy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:22px 22px 18px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .anatomy-code{
+    font-family:'JetBrains Mono',monospace; font-size:15.5px; line-height:1.9;
+    background:var(--code-bg); color:var(--code-ink); border-radius:6px;
+    padding:16px 18px; display:flex; flex-wrap:wrap; gap:0;
+  }
+  .anatomy-part{
+    padding:2px 3px; border-radius:4px; cursor:pointer;
+    transition:background var(--dur), color var(--dur);
+    border-bottom:2px solid transparent;
+  }
+  .anatomy-part[data-part="ret"]{ color:var(--faint); }
+  .anatomy-part[data-part="mname"]{ color:var(--code-fn); }
+  .anatomy-part[data-part="params"]{ color:var(--code-key); }
+  .anatomy-part.active{ background:rgba(255,255,255,0.14); border-bottom-color:currentColor; }
+  .anatomy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .anatomy-chip{
+    display:flex; align-items:center; gap:6px;
+    font-size:12.5px; padding:6px 10px; border-radius:6px;
+    border:1px solid var(--border); cursor:pointer; color:var(--muted);
+    transition:background var(--dur), border-color var(--dur), color var(--dur);
+  }
+  .anatomy-chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .anatomy-chip[data-part="ret"] .dot{ background:var(--faint); }
+  .anatomy-chip[data-part="mname"] .dot{ background:var(--code-fn); }
+  .anatomy-chip[data-part="params"] .dot{ background:var(--code-key); }
+  .anatomy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .anatomy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:20px; }
+  .anatomy-note{ margin-top:10px; font-size:13px; color:var(--faint); font-style:italic; }
+
+  /* ---------- Object / signature cards ---------- */
+  .object-cards{ display:flex; flex-wrap:wrap; gap:14px; margin:16px 0 22px; }
+  .object-card{
+    flex:1 1 160px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); overflow:hidden;
+  }
+  .object-card .oc-head{
+    background:#F5F1E9; padding:8px 13px; font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; font-weight:600; color:var(--accent); border-bottom:1px solid var(--border);
+  }
+  .object-card .oc-body{ padding:10px 13px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted); }
+  .object-card .oc-body div{ padding:2px 0; }
+  .object-card .oc-body b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Challenge / predict-reveal ---------- */
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 260ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+  .answer-panel .verdict{
+    display:inline-block; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    padding:2px 9px; border-radius:4px; margin-bottom:8px;
+  }
+  .answer-panel .verdict.yes{ background:#E4F3E9; color:#2F7D4F; }
+  .answer-panel .verdict.no{ background:var(--warn-tint); color:var(--warn); }
+
+  /* ---------- Self test ---------- */
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:400px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  /* ---------- Compare grid ---------- */
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  /* ---------- Diagram box ---------- */
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  /* ---------- Recap grid ---------- */
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:28px; }
+    .anatomy-code{ font-size:12.5px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:12px; }
+    .object-cards{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Chapter — Method Overloading &amp; Constructor Overloading</h1>
+    <p class="sub">One name, many forms — letting Java pick the right version for you.</p>
+  </header>
+  <hr class="rule" />
+
+  <p class="hero-statement">Overloading means having multiple methods or constructors with the <em>same name</em>, but different parameter lists.</p>
+  <p class="hero-sub">Think of a person named Alex who can respond to different requests: <code class="inline">Alex("Hello")</code>, <code class="inline">Alex("Hello", "Rahul")</code>, <code class="inline">Alex("Hello", "Rahul", 20)</code>. The name is the same, but the information supplied is different — and Java uses the parameters to determine which version should run.</p>
+
+  <div class="flow-box">
+    <span class="step">You call a method/constructor by name</span>
+    <span class="arrow">↓</span>
+    <span class="step">Java looks at the arguments you supplied</span>
+    <span class="arrow">↓</span>
+    <span class="step">Java matches them to a parameter list</span>
+    <span class="arrow">↓</span>
+    <span class="step">That specific version runs</span>
+  </div>
+
+  <!-- 01 -->
+  <section class="sec" id="o01">
+    <span class="sec-num">01</span>
+    <h2>What is method overloading?</h2>
+    <p class="lede"><strong>Method overloading</strong> happens when a class has two or more methods with the same name but different parameter lists.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Calculator.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Calculator {
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}</code></pre>
+    </div>
+    <p>Both are named <code class="inline">add</code>, but their signatures differ: <code class="inline">add(int, int)</code> vs. <code class="inline">add(int, int, int)</code>.</p>
+    <h3>Why bother?</h3>
+    <p>Without overloading we'd need separate names for essentially the same operation — <code class="inline">addTwo()</code>, <code class="inline">addThree()</code>. With overloading, one meaningful name covers several versions of the same general operation, and Java picks the right one from the arguments.</p>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — ordering a pizza 🍕</div>
+      <p>The basic action is always <em>"Order Pizza"</em> — but you might supply just that, or add a size, or a size and toppings. <code class="inline">orderPizza(); orderPizza("Large"); orderPizza("Large", "Cheese");</code> — same name, different information.</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="o02">
+    <span class="sec-num">02</span>
+    <h2>Basic syntax, and the key rule</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void display() {
+    System.out.println("Hello");
+}
+
+void display(String name) {
+    System.out.println("Hello " + name);
+}</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">⭐ The key rule</div>
+      <p><strong>The overloaded methods must have different parameter lists.</strong> The list can differ by: 1) number of parameters, 2) data types of parameters, or 3) order of parameter types.</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="o03">
+    <span class="sec-num">03</span>
+    <h2>Overloading by number of parameters</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void display() {
+    System.out.println("No information");
+}
+
+void display(String name) {
+    System.out.println("Name: " + name);
+}
+
+void display(String name, int age) {
+    System.out.println("Name: " + name);
+    System.out.println("Age: " + age);
+}</code></pre>
+    </div>
+    <table class="ref">
+      <thead><tr><th>Call</th><th>Matches</th></tr></thead>
+      <tbody>
+        <tr><td><code>display();</code></td><td><code>display()</code></td></tr>
+        <tr><td><code>display("Anu");</code></td><td><code>display(String)</code></td></tr>
+        <tr><td><code>display("Anu", 20);</code></td><td><code>display(String, int)</code></td></tr>
+      </tbody>
+    </table>
+    <p>Java chooses based on the arguments supplied.</p>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="o04">
+    <span class="sec-num">04</span>
+    <h2>Overloading by data type</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void show(int number) {
+    System.out.println("Integer: " + number);
+}
+
+void show(double number) {
+    System.out.println("Double: " + number);
+}
+
+show(10);     // → show(int)
+show(10.5);   // → show(double)</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — different plug types</div>
+      <p>The action is still "connect," but the plug type tells the system which connection process is appropriate. Similarly, the parameter type helps Java select the overloaded method.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="o05">
+    <span class="sec-num">05</span>
+    <h2>Overloading by parameter order</h2>
+    <p class="lede">Even with the <em>same</em> parameter types, a different order creates a valid overload.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void display(String name, int age) {
+    System.out.println("Name first");
+}
+
+void display(int age, String name) {
+    System.out.println("Age first");
+}</code></pre>
+    </div>
+    <div class="diagram-box">display("Anu", 20)  → matches display(String, int)
+display(20, "Anu")  → matches display(int, String)</div>
+    <p>The order gives Java enough information to tell the two apart.</p>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="o06">
+    <span class="sec-num">06</span>
+    <h2>Signature anatomy, and the golden rule about return types</h2>
+    <p class="lede">A method's signature is its <strong>name + parameter types</strong> — the return type is never part of it. Click each part below.</p>
+    <div class="anatomy">
+      <div class="anatomy-code" id="anatomyCode">
+        <span class="anatomy-part" data-part="ret">int</span><span>&nbsp;</span><span class="anatomy-part" data-part="mname">add</span><span class="anatomy-part" data-part="params">(int&nbsp;a,&nbsp;int&nbsp;b)</span><span>&nbsp;{&nbsp;return&nbsp;a&nbsp;+&nbsp;b;&nbsp;}</span>
+      </div>
+      <div class="anatomy-legend">
+        <div class="anatomy-chip" data-part="ret"><span class="dot"></span>Return type</div>
+        <div class="anatomy-chip" data-part="mname"><span class="dot"></span>Method name</div>
+        <div class="anatomy-chip" data-part="params"><span class="dot"></span>Parameter types</div>
+      </div>
+      <div class="anatomy-desc" id="anatomyDesc">Hover or click a part of the code above to see what it does.</div>
+      <p class="anatomy-note">Signature = name + parameter types only. The return type never counts.</p>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">🚨 Golden rule</div>
+      <p><strong>Return type alone cannot overload a method.</strong> <code class="inline">int getNumber()</code> and <code class="inline">double getNumber()</code> both have the signature <code class="inline">getNumber()</code> — this will not compile.</p>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="o07">
+    <span class="sec-num">07</span>
+    <h2>Overloading in practice: area, greetings, search</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">AreaCalculator</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int area(int length, int width) {
+    return length * width;
+}
+
+int area(int side) {
+    return side * side;
+}
+
+int rectangleArea = area(10, 5);
+int squareArea = area(5);</code></pre>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Greetings</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void greet() { System.out.println("Hello!"); }
+void greet(String name) { System.out.println("Hello " + name); }
+void greet(String name, String time) { System.out.println("Good " + time + ", " + name); }</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a search bar 🔎</div>
+      <p>You might search by product name, or name + category, or name + category + price range. The basic action is always <em>Search</em>. <code class="inline">search(String)</code>, <code class="inline">search(String, String)</code>, <code class="inline">search(String, String, double)</code> — different inputs, same general operation.</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="o08">
+    <span class="sec-num">08</span>
+    <h2>Constructor overloading</h2>
+    <p class="lede"><strong>Constructor overloading</strong> means having multiple constructors in the same class with the same class name, but different parameter lists.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Student.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+
+    String name;
+    int age;
+
+    Student() {
+        name = "Unknown";
+        age = 0;
+    }
+
+    Student(String studentName) {
+        name = studentName;
+        age = 0;
+    }
+
+    Student(String studentName, int studentAge) {
+        name = studentName;
+        age = studentAge;
+    }
+}</code></pre>
+    </div>
+    <p>Three overloaded constructors: <code class="inline">Student()</code>, <code class="inline">Student(String)</code>, <code class="inline">Student(String, int)</code>.</p>
+    <h3>Why use it?</h3>
+    <p>Not every object has the same amount of information available at creation time. Constructor overloading gives different ways to create the object depending on what's known:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>Student student1 = new Student();
+Student student2 = new Student("Anu");
+Student student3 = new Student("Rahul", 21);</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — hotel check-in 🏨</div>
+      <p>Sometimes the hotel already has your name, age, and room preference. Sometimes just your name. Sometimes it's a temporary booking with nothing yet. The hotel can still start the process with whatever's available — constructor overloading gives the same flexibility.</p>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="o09">
+    <span class="sec-num">09</span>
+    <h2>Using the different constructors</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Book.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Book {
+
+    String title;
+    int pages;
+
+    Book() {
+        title = "Unknown";
+        pages = 0;
+    }
+
+    Book(String bookTitle) {
+        title = bookTitle;
+        pages = 0;
+    }
+
+    Book(String bookTitle, int bookPages) {
+        title = bookTitle;
+        pages = bookPages;
+    }
+}</code></pre>
+    </div>
+    <div class="object-cards">
+      <div class="object-card"><div class="oc-head">new Book()</div><div class="oc-body"><div><b>title</b> = Unknown</div><div><b>pages</b> = 0</div></div></div>
+      <div class="object-card"><div class="oc-head">new Book("Java Basics")</div><div class="oc-body"><div><b>title</b> = Java Basics</div><div><b>pages</b> = 0</div></div></div>
+      <div class="object-card"><div class="oc-head">new Book("Java Basics", 300)</div><div class="oc-body"><div><b>title</b> = Java Basics</div><div><b>pages</b> = 300</div></div></div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="o10">
+    <span class="sec-num">10</span>
+    <h2>Constructor overloading by type and by order</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">By data type</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Product {
+    String name;
+    int code;
+
+    Product(String productName) {
+        name = productName;
+        code = 0;
+    }
+
+    Product(int productCode) {
+        name = "Unknown";
+        code = productCode;
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">By parameter order</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+
+    Student(String studentName, int studentAge) {
+        name = studentName;
+        age = studentAge;
+    }
+
+    Student(int studentAge, String studentName) {
+        name = studentName;
+        age = studentAge;
+    }
+}</code></pre>
+    </div>
+    <p><code class="inline">Product(String)</code> vs. <code class="inline">Product(int)</code>, and <code class="inline">Student(String, int)</code> vs. <code class="inline">Student(int, String)</code> — both valid, for the same reasons overloaded methods can differ.</p>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="o11">
+    <span class="sec-num">11</span>
+    <h2>Constructor overloading rules</h2>
+    <table class="ref">
+      <thead><tr><th>Rule</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>1 — Same class name</td><td>Every constructor uses the class's exact name.</td></tr>
+        <tr><td>2 — No return type</td><td><code>Student()</code>, never <code>void Student()</code>.</td></tr>
+        <tr><td>3 — Parameter lists must differ</td><td><code>Student()</code>, <code>Student(String)</code>, <code>Student(String, int)</code> can coexist.</td></tr>
+        <tr><td>4 — Return type is irrelevant</td><td>Constructors have none, so only the parameter list decides overloading.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="o12">
+    <span class="sec-num">12</span>
+    <h2>Method overloading vs. constructor overloading</h2>
+    <table class="ref">
+      <thead><tr><th>Method overloading</th><th>Constructor overloading</th></tr></thead>
+      <tbody>
+        <tr><td>Same method name</td><td>Same class/constructor name</td></tr>
+        <tr><td>Different parameter lists</td><td>Different parameter lists</td></tr>
+        <tr><td>Different versions of an operation</td><td>Different ways to initialise an object</td></tr>
+        <tr><td>Called explicitly</td><td>Selected during object creation</td></tr>
+        <tr><td>Can have a return type</td><td>Has no return type</td></tr>
+        <tr><td><code>add(int, int)</code></td><td><code>Student(String, int)</code></td></tr>
+      </tbody>
+    </table>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a restaurant menu</div>
+      <p><strong>Method overloading</strong> is one action, <code class="inline">order()</code>, that accepts different requests: <code class="inline">order()</code>, <code class="inline">order("Pizza")</code>, <code class="inline">order("Pizza", "Large")</code>. <strong>Constructor overloading</strong> is creating a customer order in different ways depending on what information is available: <code class="inline">Order()</code>, <code class="inline">Order("Pizza")</code>, <code class="inline">Order("Pizza", "Large")</code>.</p>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="o13">
+    <span class="sec-num">13</span>
+    <h2>Overloading is compile-time polymorphism</h2>
+    <p class="lede">Don't let the term intimidate you — it just means Java determines which overloaded version to use based on the call and its arguments, before the program even runs.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void print(int number) { System.out.println("Integer"); }
+void print(String text) { System.out.println("String"); }
+
+print(10);       // → print(int)
+print("Hello");  // → print(String)</code></pre>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="sec" id="o14">
+    <span class="sec-num">14</span>
+    <h2>Common mistakes</h2>
+    <table class="ref">
+      <thead><tr><th>Change</th><th>Overloading?</th></tr></thead>
+      <tbody>
+        <tr><td>Different number of parameters</td><td class="yes">✅ Yes</td></tr>
+        <tr><td>Different parameter types</td><td class="yes">✅ Yes</td></tr>
+        <tr><td>Different order of parameter types</td><td class="yes">✅ Yes</td></tr>
+        <tr><td>Different parameter <em>names</em> only</td><td class="no">❌ No</td></tr>
+        <tr><td>Different return type only</td><td class="no">❌ No</td></tr>
+        <tr><td>Different method body only</td><td class="no">❌ No</td></tr>
+      </tbody>
+    </table>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Not overloading — names only</h4>
+        <code>void display(int number)
+void display(int value)</code>
+      </div>
+      <div class="compare-col">
+        <h4>Not overloading — return type only</h4>
+        <code>int calculate()
+double calculate()</code>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">Remember</div>
+      <p>Both mistakes above produce the exact same signature — <code class="inline">display(int)</code> and <code class="inline">calculate()</code> respectively — so the compiler sees them as duplicate declarations, not overloads.</p>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="sec" id="o15">
+    <span class="sec-num">15</span>
+    <h2>Complete examples</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Calculator.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Calculator {
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+int result1 = add(10, 20);        // → 30
+int result2 = add(10, 20, 30);    // → 60
+double result3 = add(10.5, 20.5); // → 31.0</code></pre>
+    </div>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Student.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+    double marks;
+
+    Student() { name = "Unknown"; age = 0; marks = 0.0; }
+    Student(String studentName) { name = studentName; age = 0; marks = 0.0; }
+    Student(String studentName, int studentAge) { name = studentName; age = studentAge; marks = 0.0; }
+    Student(String studentName, int studentAge, double studentMarks) {
+        name = studentName; age = studentAge; marks = studentMarks;
+    }
+}
+
+Student student1 = new Student();
+Student student2 = new Student("Anu");
+Student student3 = new Student("Rahul", 21);
+Student student4 = new Student("Priya", 20, 91.5);</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Design benefit</div>
+      <p>Without overloading: <code class="inline">calculateAreaOfSquare(5)</code>, <code class="inline">calculateAreaOfRectangle(10, 5)</code>. With overloading: <code class="inline">calculateArea(5)</code>, <code class="inline">calculateArea(10, 5)</code> — one memorable name for related operations. But don't overdo it: five near-identical overloads of the same method can get confusing. Ask whether each version is a sensible variation of the same operation.</p>
+    </div>
+  </section>
+
+  <!-- 16 : CHALLENGES -->
+  <section class="sec" id="o16">
+    <span class="sec-num">16</span>
+    <h2>Try it: twelve quick challenges</h2>
+    <p class="lede">Work each one out yourself before revealing the answer.</p>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Valid or invalid?</span> Different types</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void show(int x) { }
+void show(double x) { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict yes">✅ Valid</span><p><code class="inline">show(int)</code> and <code class="inline">show(double)</code> are different signatures.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Valid or invalid?</span> Different parameter names</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void show(int x) { }
+void show(int y) { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict no">❌ Not valid</span><p>Parameter names don't matter — both are <code class="inline">show(int)</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Valid or invalid?</span> Different count</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void show(int x) { }
+void show(int x, int y) { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict yes">✅ Valid</span><p>Different number of parameters.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess which runs</span> show(25)</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void show(int number) { System.out.println("Integer version"); }
+void show(String text) { System.out.println("String version"); }
+
+show(25);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p>Java selects <code class="inline">show(int)</code>. Output: <code class="inline">Integer version</code></p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the constructor</span> new Student("Anu")</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>Student() { System.out.println("No details"); }
+Student(String name) { System.out.println("Name provided"); }
+
+Student student1 = new Student("Anu");</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p>Java selects <code class="inline">Student(String)</code>. Output: <code class="inline">Name provided</code></p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Debugging</span> Is this really overloading?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Calculator {
+    int add(int a, int b) { return a + b; }
+    double add(int a, int b) { return a + b; }
+}</code></pre></div>
+        <p>A student claims these are overloaded because the return types differ. Correct?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict no">❌ Incorrect</span><p>Both have the signature <code class="inline">add(int, int)</code>. Return type alone can't create an overload — this won't compile.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Debugging</span> Is this a constructor?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Book {
+    String title;
+
+    void Book(String title) {
+        this.title = title;
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict no">❌ No</span><p><code class="inline">void Book(String title)</code> has a return type, so it's a method that happens to share the class's name — not a constructor.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Predict the output</span> Three overloaded constructors</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Laptop {
+    Laptop() { System.out.println("Basic laptop"); }
+    Laptop(String brand) { System.out.println("Laptop with brand"); }
+    Laptop(String brand, int price) { System.out.println("Laptop with brand and price"); }
+}
+
+Laptop a = new Laptop();
+Laptop b = new Laptop("Dell");
+Laptop c = new Laptop("Dell", 60000);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">a → "Basic laptop"</code>, <code class="inline">b → "Laptop with brand"</code>, <code class="inline">c → "Laptop with brand and price"</code> — each matched by argument count.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Is this overloading?</span> Names changed, order didn't</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void display(String name, int age) { }
+void display(String studentName, int studentAge) { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict no">❌ No</span><p>Only parameter names changed. Both signatures are <code class="inline">display(String, int)</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Is this overloading?</span> Order swapped</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void display(String name, int age) { }
+void display(int age, String name) { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><span class="verdict yes">✅ Yes</span><p><code class="inline">display(String, int)</code> vs. <code class="inline">display(int, String)</code> — the order of parameter types is different.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Design it</span> Build a Printer class</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">Printer</code> with three overloaded <code class="inline">print</code> methods: one for an <code class="inline">int</code>, one for a <code class="inline">String</code>, one for an <code class="inline">int</code> and a <code class="inline">String</code> together.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Printer {
+    void print(int number) { System.out.println(number); }
+    void print(String text) { System.out.println(text); }
+    void print(int number, String text) { System.out.println(number + " " + text); }
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Design it</span> Build a BankAccount class</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">BankAccount</code> with <code class="inline">accountHolder</code> and <code class="inline">balance</code>, and three overloaded constructors: no info, holder only, and holder + balance.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class BankAccount {
+    String accountHolder;
+    double balance;
+
+    BankAccount() { accountHolder = "Unknown"; balance = 0; }
+    BankAccount(String holder) { accountHolder = holder; balance = 0; }
+    BankAccount(String holder, double initialBalance) {
+        accountHolder = holder;
+        balance = initialBalance;
+    }
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 : SELF TEST -->
+  <section class="sec" id="o17">
+    <span class="sec-num">17</span>
+    <h2>Final self-test</h2>
+    <p class="lede">Try answering these without scrolling back up.</p>
+    <div class="selftest-bar">
+      <span id="selftestCount">0 / 7 answered</span>
+      <div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div>
+    </div>
+    <div id="selftestList"></div>
+  </section>
+
+  <!-- 18 : RECAP -->
+  <section class="sec" id="o18">
+    <span class="sec-num">18</span>
+    <h2>Chapter recap</h2>
+
+    <div class="recap-grid">
+      <div class="recap-card"><h4>Overloading</h4><p>Same name, different parameter list. Works for both methods and constructors.</p></div>
+      <div class="recap-card"><h4>By number</h4><p><code class="inline">add(int,int)</code> vs. <code class="inline">add(int,int,int)</code></p></div>
+      <div class="recap-card"><h4>By type</h4><p><code class="inline">show(int)</code> vs. <code class="inline">show(double)</code></p></div>
+      <div class="recap-card"><h4>By order</h4><p><code class="inline">display(String,int)</code> vs. <code class="inline">display(int,String)</code></p></div>
+      <div class="recap-card"><h4>Not valid</h4><p>Different parameter names only, or different return type only.</p></div>
+      <div class="recap-card"><h4>Compile-time polymorphism</h4><p>Java resolves which version runs based on the call's arguments.</p></div>
+    </div>
+
+    <h3>Final comparison table</h3>
+    <table class="ref">
+      <thead><tr><th>Feature</th><th>Method overloading</th><th>Constructor overloading</th></tr></thead>
+      <tbody>
+        <tr><td>Basic idea</td><td>Multiple versions of a method</td><td>Multiple versions of a constructor</td></tr>
+        <tr><td>Name</td><td>Same method name</td><td>Same class name</td></tr>
+        <tr><td>Parameter list</td><td>Must differ</td><td>Must differ</td></tr>
+        <tr><td>Return type alone</td><td>❌</td><td>Not applicable</td></tr>
+        <tr><td>Main purpose</td><td>Variations of an operation</td><td>Variations of object initialisation</td></tr>
+        <tr><td>Selection</td><td>Based on arguments in the method call</td><td>Based on arguments during object creation</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Final mental model</h3>
+    <div class="diagram-box">METHOD OVERLOADING              CONSTRUCTOR OVERLOADING
+
+    SAME NAME                       SAME CLASS
+        │                               │
+  ┌─────┼─────┐                   ┌─────┼─────┐
+  ↓     ↓     ↓                   ↓     ↓     ↓
+add(2)add(3)add(double)      Student() Student(name) Student(name,age)
+  │     │     │                   │     │     │
+  └─────┼─────┘                   └─────┼─────┘
+        ↓                               ↓
+ Same general task            Different ways to initialise</div>
+
+    <div class="callout">
+      <div class="callout-label">⭐ The easiest sentence to remember</div>
+      <p><strong>Method overloading gives one operation multiple forms. Constructor overloading gives object creation multiple forms.</strong></p>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Method Overloading &amp; Constructor Overloading
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Java mini highlighter (single-pass, safe) ---------------- */
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','this']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{
+    el.innerHTML = highlight(el.textContent);
+  });
+
+  /* ---------------- Copy buttons ---------------- */
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(()=>{ btn.textContent = 'Select & copy'; });
+    });
+  });
+
+  /* ---------------- Signature anatomy interactive ---------------- */
+  const anatomyDescs = {
+    ret: "The return type. It is NEVER part of a method's signature — changing only this cannot create an overload.",
+    mname: "The method name. Every overloaded version shares this exact name.",
+    params: "The parameter types. This is what Java actually compares — by count, type, and order — to tell overloaded versions apart."
+  };
+  const anatomyDescEl = document.getElementById('anatomyDesc');
+  function setAnatomy(part){
+    document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+      el.classList.toggle('active', el.dataset.part === part);
+    });
+    anatomyDescEl.textContent = part ? anatomyDescs[part] : 'Hover or click a part of the code above to see what it does.';
+  }
+  document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+    el.addEventListener('mouseenter', ()=> setAnatomy(el.dataset.part));
+    el.addEventListener('click', ()=> setAnatomy(el.dataset.part));
+  });
+  const anatomyCodeEl = document.getElementById('anatomyCode');
+  if(anatomyCodeEl) anatomyCodeEl.addEventListener('mouseleave', ()=> setAnatomy(null));
+
+  /* ---------------- Challenge reveal ---------------- */
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = open ? 'Hide answer ' : btn.firstChild.textContent.replace('Hide answer ','Reveal answer ');
+    });
+  });
+
+  /* ---------------- Self test ---------------- */
+  const selfTestData = [
+    {q:"What is method overloading?", a:"Creating multiple methods with the same name but different parameter lists."},
+    {q:"Can you overload a method by changing only its return type?", a:"No — the parameter list must be different."},
+    {q:"Can changing only parameter names create overloading?", a:"No. <code class=\"inline\">void show(int x)</code> and <code class=\"inline\">void show(int y)</code> are not different overloads."},
+    {q:"Name three ways parameter lists can differ.", a:"Number of parameters, parameter types, and order of parameter types."},
+    {q:"What is constructor overloading?", a:"Having multiple constructors in the same class with different parameter lists."},
+    {q:"Why is constructor overloading useful?", a:"It lets objects be created and initialised in different ways depending on what information is available."},
+    {q:"Which constructor is selected for <code class=\"inline\">new Student(\"Anu\", 20)</code> given Student(), Student(String), and Student(String, int)?", a:"<code class=\"inline\">Student(String, int)</code> — the call supplies a String followed by an int."}
+  ];
+  const listEl = document.getElementById('selftestList');
+  const doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qcard-head">
+        <span><span class="qn">Q${i+1}</span>${item.q}</span>
+        <span class="check">✓</span>
+      </div>
+      <div class="qcard-answer"><p>${item.a}</p></div>
+    `;
+    const head = card.querySelector('.qcard-head');
+    const ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){
+        doneSet.add(i);
+        card.classList.add('done');
+        updateSelftest();
+      }
+    });
+    listEl.appendChild(card);
+  });
+  function updateSelftest(){
+    document.getElementById('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    document.getElementById('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
