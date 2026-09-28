@@ -1,0 +1,1325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Instance Variables and Constructors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  /* ---------- Minimal header (no nav) ---------- */
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  /* ---------- Hero statement ---------- */
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  /* ---------- Numbered sections ---------- */
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+  .callout.analogy{ border-left-color:var(--border-strong); background:#FCFBF8; }
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  /* ---------- Code blocks ---------- */
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  /* ---------- Tables ---------- */
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14.5px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:11px 14px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12.5px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:13px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+
+  /* ---------- Object state interactive (instance vars anatomy) ---------- */
+  .anatomy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:22px 22px 18px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .anatomy-code{
+    font-family:'JetBrains Mono',monospace; font-size:15.5px; line-height:1.9;
+    background:var(--code-bg); color:var(--code-ink); border-radius:6px;
+    padding:16px 18px; display:flex; flex-wrap:wrap; gap:0;
+  }
+  .anatomy-part{
+    padding:2px 3px; border-radius:4px; cursor:pointer;
+    transition:background var(--dur), color var(--dur);
+    border-bottom:2px solid transparent;
+  }
+  .anatomy-part[data-part="cname"]{ color:var(--code-type); }
+  .anatomy-part[data-part="ctor"]{ color:var(--code-fn); }
+  .anatomy-part[data-part="params"]{ color:var(--code-key); }
+  .anatomy-part[data-part="assign"]{ color:var(--code-str); }
+  .anatomy-part.active{ background:rgba(255,255,255,0.14); border-bottom-color:currentColor; }
+  .anatomy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .anatomy-chip{
+    display:flex; align-items:center; gap:6px;
+    font-size:12.5px; padding:6px 10px; border-radius:6px;
+    border:1px solid var(--border); cursor:pointer; color:var(--muted);
+    transition:background var(--dur), border-color var(--dur), color var(--dur);
+  }
+  .anatomy-chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .anatomy-chip[data-part="cname"] .dot{ background:var(--code-type); }
+  .anatomy-chip[data-part="ctor"] .dot{ background:var(--code-fn); }
+  .anatomy-chip[data-part="params"] .dot{ background:var(--code-key); }
+  .anatomy-chip[data-part="assign"] .dot{ background:var(--code-str); }
+  .anatomy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .anatomy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:20px; }
+
+  /* ---------- Object card visual ---------- */
+  .object-cards{ display:flex; flex-wrap:wrap; gap:14px; margin:16px 0 22px; }
+  .object-card{
+    flex:1 1 180px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); overflow:hidden;
+  }
+  .object-card .oc-head{
+    background:#F5F1E9; padding:8px 13px; font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; font-weight:600; color:var(--accent); border-bottom:1px solid var(--border);
+  }
+  .object-card .oc-body{ padding:10px 13px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted); }
+  .object-card .oc-body div{ padding:2px 0; }
+  .object-card .oc-body b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Challenge / predict-reveal ---------- */
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 260ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+
+  /* ---------- Self test ---------- */
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:400px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  /* ---------- Compare grid ---------- */
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  /* ---------- Diagram box ---------- */
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  /* ---------- Recap grid ---------- */
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- Checklist ---------- */
+  .checklist{ list-style:none; margin:14px 0 20px; padding:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 0;
+    border-bottom:1px solid var(--border); font-size:14.5px;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .box{
+    flex-shrink:0; width:17px; height:17px; border:1.5px solid var(--border-strong);
+    border-radius:4px; margin-top:2px;
+  }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:30px; }
+    .anatomy-code{ font-size:12.5px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:12px; }
+    .object-cards{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Chapter — Java Instance Variables and Constructors</h1>
+    <p class="sub">Giving every object its own data, and setting it up the moment it's born.</p>
+  </header>
+  <hr class="rule" />
+
+  <p class="hero-statement">When we create an object in Java, it usually needs to <em>store information about itself</em>.</p>
+  <p class="hero-sub">A <code class="inline">Student</code> object might need to store a name, an age, and marks. These live in <strong>instance variables</strong>. A <strong>constructor</strong> is then used the moment the object is created, to give those instance variables their initial values.</p>
+
+  <div class="flow-box">
+    <span class="step">Object is created</span>
+    <span class="arrow">↓</span>
+    <span class="step">Constructor runs</span>
+    <span class="arrow">↓</span>
+    <span class="step">Instance variables get their values</span>
+    <span class="arrow">↓</span>
+    <span class="step">Object is ready to use</span>
+  </div>
+
+  <!-- 01 -->
+  <section class="sec" id="c01">
+    <span class="sec-num">01</span>
+    <h2>What are instance variables?</h2>
+    <p class="lede">An <strong>instance variable</strong> is a variable that belongs to an object — declared inside a class, but outside its methods and constructors.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Student.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+
+    String name;
+    int age;
+    double marks;
+}</code></pre>
+    </div>
+    <p><code class="inline">name</code>, <code class="inline">age</code>, and <code class="inline">marks</code> are instance variables. Each <code class="inline">Student</code> object can have its own values for these.</p>
+    <h3>Why "instance" variables?</h3>
+    <p>An object created from a class is called an <strong>instance</strong> of that class. Each instance has its own copy of the instance variables:</p>
+    <div class="object-cards">
+      <div class="object-card">
+        <div class="oc-head">student1</div>
+        <div class="oc-body"><div><b>name</b> = "Anu"</div><div><b>age</b> = 20</div><div><b>marks</b> = 85.5</div></div>
+      </div>
+      <div class="object-card">
+        <div class="oc-head">student2</div>
+        <div class="oc-body"><div><b>name</b> = "Rahul"</div><div><b>age</b> = 21</div><div><b>marks</b> = 91.0</div></div>
+      </div>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a student registration form 📝</div>
+      <p>The form's blank fields (Name, Age, Marks) are like instance variables — the <em>class</em> design. Each completed form is a different object, with its own filled-in values.</p>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Easy way to remember</div>
+      <p><strong>Class = blueprint.</strong> <strong>Object = the actual thing built from the blueprint.</strong> <strong>Instance variables = information stored inside each actual object.</strong></p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="c02">
+    <span class="sec-num">02</span>
+    <h2>Declaring instance variables</h2>
+    <p class="lede">The general pattern is <code class="inline">class ClassName { dataType variableName; }</code>.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Car {
+
+    String brand;
+    String model;
+    int year;
+}
+
+class BankAccount {
+
+    String accountHolder;
+    double balance;
+}</code></pre>
+    </div>
+    <p>A <code class="inline">BankAccount</code> object can then store <code class="inline">accountHolder → "Anu"</code>, <code class="inline">balance → 5000.0</code>, and so on for each account.</p>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="c03">
+    <span class="sec-num">03</span>
+    <h2>Instance variables vs. local variables</h2>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Instance variable</h4>
+        <code>class Student {
+  String name;  // here
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>Local variable</h4>
+        <code>void displayStudent() {
+  String message = "Hi"; // here
+}</code>
+      </div>
+    </div>
+    <table class="ref">
+      <thead><tr><th>Instance variable</th><th>Local variable</th></tr></thead>
+      <tbody>
+        <tr><td>Declared inside the class</td><td>Declared inside a method/block</td></tr>
+        <tr><td>Belongs to an object</td><td>Belongs to the method/block execution</td></tr>
+        <tr><td>Usable across the object's instance methods</td><td>Available only within its own scope</td></tr>
+        <tr><td>Each object has its own state</td><td>Created fresh for the local execution</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">Common mistake</div>
+      <p>Don't assume every variable written inside a class is an instance variable — one declared inside a method body, like <code class="inline">String message = "Hello";</code> inside <code class="inline">display()</code>, is a local variable, not an instance variable.</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="c04">
+    <span class="sec-num">04</span>
+    <h2>What happens when we create an object?</h2>
+    <p class="lede">If we haven't assigned values ourselves, Java gives instance variables <strong>default values</strong>: <code class="inline">String → null</code>, <code class="inline">int → 0</code>, <code class="inline">double → 0.0</code>, <code class="inline">boolean → false</code>.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>Student student1 = new Student();
+// student1.name = null
+// student1.age  = 0
+
+student1.name = "Anu";
+student1.age = 20;</code></pre>
+    </div>
+    <p>This works, but there's a more organised way to set up a new object from the start: <strong>constructors</strong>.</p>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="c05">
+    <span class="sec-num">05</span>
+    <h2>What is a constructor?</h2>
+    <p class="lede">A <strong>constructor</strong> is a special member of a class that runs when an object is created — its job is to <strong>initialise the object</strong>.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+
+    String name;
+    int age;
+
+    Student(String studentName, int studentAge) {
+        name = studentName;
+        age = studentAge;
+    }
+}
+
+Student student1 = new Student("Anu", 20);
+// name = "Anu", age = 20 — set immediately</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — filling out a registration form</div>
+      <p>Rather than creating a blank record and filling in the name and age afterwards, you provide the information during registration itself: <code class="inline">new Student("Anu", 20)</code>. Think of a constructor as the object's <strong>initial setup process</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="c06">
+    <span class="sec-num">06</span>
+    <h2>Constructor syntax, and Rule 1: same name as the class</h2>
+    <p class="lede">A constructor's name must be <strong>exactly</strong> the class name — including capitalization.</p>
+    <div class="anatomy">
+      <div class="anatomy-code" id="anatomyCode">
+        <span class="anatomy-part" data-part="cname">class</span><span>&nbsp;</span><span class="anatomy-part" data-part="cname">Student</span><span>&nbsp;{&nbsp;</span><span class="anatomy-part" data-part="ctor">Student</span><span class="anatomy-part" data-part="params">(String&nbsp;studentName,&nbsp;int&nbsp;studentAge)</span><span>&nbsp;{&nbsp;</span><span class="anatomy-part" data-part="assign">name&nbsp;=&nbsp;studentName;&nbsp;age&nbsp;=&nbsp;studentAge;</span><span>&nbsp;}&nbsp;}</span>
+      </div>
+      <div class="anatomy-legend">
+        <div class="anatomy-chip" data-part="cname"><span class="dot"></span>Class name</div>
+        <div class="anatomy-chip" data-part="ctor"><span class="dot"></span>Constructor name</div>
+        <div class="anatomy-chip" data-part="params"><span class="dot"></span>Parameters</div>
+        <div class="anatomy-chip" data-part="assign"><span class="dot"></span>Initialisation</div>
+      </div>
+      <div class="anatomy-desc" id="anatomyDesc">Hover or click a part of the code above to see what it does.</div>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Correct</h4>
+        <code>class Student {
+  Student() { ... }
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>Incorrect</h4>
+        <code>class Student {
+  student() { ... }
+}</code>
+      </div>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">Remember</div>
+      <p>Java is case-sensitive. <code class="inline">Class name = Constructor name</code>, including capitalization.</p>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="c07">
+    <span class="sec-num">07</span>
+    <h2>Rule 2: a constructor has no return type</h2>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Constructor</h4>
+        <code>Student() {
+  System.out.println("Created");
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>Method (not a constructor!)</h4>
+        <code>void Student() {
+  System.out.println("Created");
+}</code>
+      </div>
+    </div>
+    <p>Adding <code class="inline">void</code> turns it into a regular method that happens to share the class's name — not a constructor.</p>
+    <div class="callout">
+      <div class="callout-label">Memory trick</div>
+      <p><strong>Constructor = same class name + NO return type.</strong></p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="c08">
+    <span class="sec-num">08</span>
+    <h2>Rule 3: it runs when an object is created</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    Student() {
+        System.out.println("Constructor executed");
+    }
+}
+
+Student student1 = new Student();   // prints once
+Student student2 = new Student();   // prints again</code></pre>
+    </div>
+    <p>Each object creation triggers the constructor. For a parameterised constructor, the flow behind <code class="inline">new Student("Anu", 20)</code> is:</p>
+    <div class="diagram-box">new Student("Anu", 20)
+          ↓
+     Create object
+          ↓
+     Call constructor
+          ↓
+Student(String studentName, int studentAge)
+          ↓
+Initialise instance variables</div>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="c09">
+    <span class="sec-num">09</span>
+    <h2>Constructors with and without parameters</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">No parameters</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+
+    Student() {
+        name = "Unknown";
+        age = 0;
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">With parameters</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+
+    Student(String studentName, int studentAge) {
+        name = studentName;
+        age = studentAge;
+    }
+}</code></pre>
+    </div>
+    <h3>Following the process step by step</h3>
+    <p>For <code class="inline">Student student1 = new Student("Anu", 20);</code>:</p>
+    <div class="diagram-box">1. Object created:      name = null, age = 0
+2. Constructor receives: studentName="Anu", studentAge=20
+3. Constructor assigns:  name = studentName; age = studentAge;
+4. Object initialised:   name = "Anu", age = 20</div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — setting up a new phone</div>
+      <p>The phone exists, but the setup process (name, language, region) gives it its initial configuration. A constructor performs a similar initial setup for an object.</p>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="c10">
+    <span class="sec-num">10</span>
+    <h2>Multiple objects, different values</h2>
+    <p class="lede">One constructor can initialise many different objects.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>Student student1 = new Student("Anu", 20);
+Student student2 = new Student("Rahul", 21);
+Student student3 = new Student("Priya", 19);</code></pre>
+    </div>
+    <div class="object-cards">
+      <div class="object-card"><div class="oc-head">student1</div><div class="oc-body"><div><b>name</b> = Anu</div><div><b>age</b> = 20</div></div></div>
+      <div class="object-card"><div class="oc-head">student2</div><div class="oc-body"><div><b>name</b> = Rahul</div><div><b>age</b> = 21</div></div></div>
+      <div class="object-card"><div class="oc-head">student3</div><div class="oc-body"><div><b>name</b> = Priya</div><div><b>age</b> = 19</div></div></div>
+    </div>
+    <p>Without a constructor, we'd create the object, then assign each field by hand. With a constructor, creation and initialisation happen together:</p>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Without constructor</h4>
+        <code>Create object
+→ Assign name
+→ Assign age
+→ Object ready</code>
+      </div>
+      <div class="compare-col">
+        <h4>With constructor</h4>
+        <code>Create + initialise
+→ Object ready</code>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Main purpose of a constructor</div>
+      <p>To make sure an object starts with an appropriate <strong>initial state</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="c11">
+    <span class="sec-num">11</span>
+    <h2>Constructor vs. normal method</h2>
+    <table class="ref">
+      <thead><tr><th>Constructor</th><th>Normal method</th></tr></thead>
+      <tbody>
+        <tr><td>Initialises an object</td><td>Performs an operation/task</td></tr>
+        <tr><td>Same name as class</td><td>Can have its own descriptive name</td></tr>
+        <tr><td>Has no return type</td><td>Has a return type, including <code>void</code></td></tr>
+        <tr><td>Runs when an object is created</td><td>Runs when explicitly called</td></tr>
+        <tr><td>Used for initial setup</td><td>Used for behaviour/operations</td></tr>
+      </tbody>
+    </table>
+    <p>A constructor is invoked as part of object creation; a method is called explicitly on an existing object:</p>
+    <div class="diagram-box">Constructor:  new Student()              → creation + initialisation
+Method:       student1.displayStudent() → perform an operation</div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — building a house 🏠</div>
+      <p>The <strong>constructor</strong> is the house's initial setup — rooms, doors, windows, structure. <strong>Methods</strong> are things you do with the finished house: <code class="inline">openDoor()</code>, <code class="inline">turnOnLights()</code>, <code class="inline">lockDoor()</code>. Constructor → "Set me up." Method → "Do something for me."</p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="c12">
+    <span class="sec-num">12</span>
+    <h2>A complete constructor example</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Car.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Car {
+
+    String brand;
+    int year;
+
+    Car(String carBrand, int carYear) {
+        brand = carBrand;
+        year = carYear;
+    }
+
+    void displayCar() {
+        System.out.println("Brand: " + brand);
+        System.out.println("Year: " + year);
+    }
+}
+
+Car car1 = new Car("Toyota", 2025);
+car1.displayCar();</code></pre>
+    </div>
+    <div class="diagram-box">Output:
+Brand: Toyota
+Year: 2025</div>
+    <p>Two different jobs: the <strong>constructor</strong> initialises <code class="inline">car1</code>; the <strong>method</strong> displays its information.</p>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="c13">
+    <span class="sec-num">13</span>
+    <h2>Constructor parameters are formal parameters</h2>
+    <p class="lede">Constructor parameters work exactly like method parameters — the same input/output thinking applies.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>Student(String studentName, int studentAge) {
+    name = studentName;
+    age = studentAge;
+}
+
+Student student1 = new Student("Anu", 20);</code></pre>
+    </div>
+    <div class="diagram-box">          CONSTRUCTOR
+               ↑
+               │
+        "Anu", 20   ← actual arguments
+               │
+               ↓
+      Initialise object</div>
+  </section>
+
+  <!-- 14 -->
+  <section class="sec" id="c14">
+    <span class="sec-num">14</span>
+    <h2>If we don't write a constructor</h2>
+    <p class="lede">If a class declares <strong>no constructor</strong>, Java provides a <strong>default constructor</strong>, so <code class="inline">new Student()</code> still works — instance variables get their normal default values.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+}
+
+Student student1 = new Student();   // works: name=null, age=0</code></pre>
+    </div>
+    <p>But the moment you write <strong>your own</strong> constructor, Java stops providing that default one:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+
+    Student(String studentName) {
+        name = studentName;
+    }
+}
+
+Student student1 = new Student("Anu");   // OK
+Student student2 = new Student();        // no longer works!</code></pre>
+    </div>
+    <p>If you want both forms, define both — one idea that leads directly into <strong>constructor overloading</strong>:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+
+    Student() {
+        name = "Unknown";
+    }
+
+    Student(String studentName) {
+        name = studentName;
+    }
+}</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Important</div>
+      <p>The compiler-provided default constructor is available only when you haven't declared a constructor yourself.</p>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="sec" id="c15">
+    <span class="sec-num">15</span>
+    <h2>Initialising multiple variables</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Laptop {
+
+    String brand;
+    String model;
+    int price;
+
+    Laptop(String laptopBrand, String laptopModel, int laptopPrice) {
+        brand = laptopBrand;
+        model = laptopModel;
+        price = laptopPrice;
+    }
+}
+
+Laptop laptop1 = new Laptop("Dell", "Inspiron", 60000);
+// brand = "Dell", model = "Inspiron", price = 60000</code></pre>
+    </div>
+  </section>
+
+  <!-- 16 -->
+  <section class="sec" id="c16">
+    <span class="sec-num">16</span>
+    <h2>The <code class="inline">this</code> keyword</h2>
+    <p class="lede"><code class="inline">this</code> refers to the <strong>current object</strong>. It's especially useful when a parameter name is the same as the instance variable it initialises.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}</code></pre>
+    </div>
+    <div class="diagram-box">this.name → instance variable
+name      → constructor parameter
+
+this.age  → instance variable
+age       → constructor parameter</div>
+    <p><code class="inline">this.name = name;</code> means: <em>"Take the <code class="inline">name</code> parameter and store it in the current object's <code class="inline">name</code> variable."</em></p>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — your own locker 🔐</div>
+      <p>If someone says "put this book in <em>my</em> locker," "my locker" identifies the current person's locker. In Java, <code class="inline">this.name</code> means "the <code class="inline">name</code> belonging to <em>this</em> current object." For <code class="inline">student1</code>, <code class="inline">this</code> refers to <code class="inline">student1</code>; for <code class="inline">student2</code>, it refers to <code class="inline">student2</code>.</p>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Without this</h4>
+        <code>Student(String studentName) {
+  name = studentName;
+}</code>
+      </div>
+      <div class="compare-col">
+        <h4>With this</h4>
+        <code>Student(String name) {
+  this.name = name;
+}</code>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Teaching tip</div>
+      <p>Using different parameter names is often easier when first learning constructors. Once comfortable, <code class="inline">this</code> is extremely common in Java code.</p>
+    </div>
+  </section>
+
+  <!-- 17 -->
+  <section class="sec" id="c17">
+    <span class="sec-num">17</span>
+    <h2>Constructor and object state</h2>
+    <p class="lede">The values stored in an object's instance variables are its <strong>state</strong>. Same class, different objects, different state:</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>Car car1 = new Car("Toyota", 80);   // brand=Toyota, speed=80
+Car car2 = new Car("Honda", 60);    // brand=Honda,  speed=60</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Key concept</div>
+      <p><strong>Instance variables describe the object's data/state. Constructors establish the object's initial state.</strong></p>
+    </div>
+    <h3>Constructor + method, together</h3>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+    int age;
+
+    Student(String studentName, int studentAge) {
+        name = studentName;
+        age = studentAge;
+    }
+
+    void displayDetails() {
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+    }
+}
+
+Student student1 = new Student("Anu", 20);
+student1.displayDetails();</code></pre>
+    </div>
+    <div class="diagram-box">Object creation → Constructor → Initialise data
+→ Object ready → Methods can perform tasks</div>
+  </section>
+
+  <!-- 18 -->
+  <section class="sec" id="c18">
+    <span class="sec-num">18</span>
+    <h2>Constructor checklist</h2>
+    <ul class="checklist">
+      <li><span class="box"></span> Does its name exactly match the class name?</li>
+      <li><span class="box"></span> Does it have no return type?</li>
+      <li><span class="box"></span> Does it initialise the required instance variables?</li>
+      <li><span class="box"></span> Are its parameters the correct types?</li>
+      <li><span class="box"></span> Are the values assigned correctly?</li>
+      <li><span class="box"></span> If using <code class="inline">this</code>, is it clear which name refers to the object and which to the parameter?</li>
+    </ul>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Product {
+    String name;
+    int price;
+
+    Product(String productName, int productPrice) {
+        name = productName;
+        price = productPrice;
+    }
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- 19 : CHALLENGES -->
+  <section class="sec" id="c19">
+    <span class="sec-num">19</span>
+    <h2>Try it: eleven quick challenges</h2>
+    <p class="lede">Work each one out yourself before revealing the answer.</p>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the constructor</span> Which one is valid?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">class Student { ______() {} }</span><button class="copy-btn">Copy</button></div><pre><code>A: void Student() { }
+B: Student() { }
+C: student() { }
+D: int Student() { }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><strong>B</strong> — same name as the class, no return type. A and D are methods (they have return types); C has the wrong capitalization.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the values</span> What does the object contain?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>Student(String studentName, int studentAge) {
+    name = studentName;
+    age = studentAge;
+}
+
+Student student1 = new Student("Rahul", 21);</code></pre></div>
+        <p>What are <code class="inline">student1.name</code> and <code class="inline">student1.age</code>?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">student1.name = "Rahul"</code>, <code class="inline">student1.age = 21</code></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Spot the mistake</span> What's wrong here?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Car {
+    String brand;
+
+    void Car(String carBrand) {
+        brand = carBrand;
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">void Car(...)</code> is not a constructor — a constructor cannot have a return type. Remove <code class="inline">void</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Spot the mistake</span> Constructor name</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Student {
+    String name;
+
+    student(String studentName) {
+        name = studentName;
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p>Java is case-sensitive — the class is <code class="inline">Student</code> but the constructor is <code class="inline">student</code>. They must match exactly, including capitalization.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Write a Book class</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">Book</code> with instance variables <code class="inline">title</code> and <code class="inline">pages</code>, and a constructor that accepts both.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Book {
+    String title;
+    int pages;
+
+    Book(String bookTitle, int bookPages) {
+        title = bookTitle;
+        pages = bookPages;
+    }
+}
+
+Book book1 = new Book("Java Basics", 300);</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Write an Employee class</div>
+      <div class="challenge-body">
+        <p>Create <code class="inline">Employee</code> with <code class="inline">name</code> and <code class="inline">salary</code>, and a constructor that receives both, used as <code class="inline">new Employee("Anu", 50000)</code>.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Employee {
+    String name;
+    double salary;
+
+    Employee(String employeeName, double employeeSalary) {
+        name = employeeName;
+        salary = employeeSalary;
+    }
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the meaning</span> What does <code style="background:transparent;border:none;padding:0;">this.brand</code> refer to?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Car {
+    String brand;
+
+    Car(String brand) {
+        this.brand = brand;
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">this.brand</code> is the instance variable belonging to the current object. The plain <code class="inline">brand</code> is the constructor parameter. So <code class="inline">this.brand = brand;</code> means "current object's brand = parameter brand."</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it with this</span> Complete the Book constructor</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Book {
+    String title;
+    int pages;
+
+    Book(String title, int pages) {
+        // initialise both using this
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>Book(String title, int pages) {
+    this.title = title;
+    this.pages = pages;
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Constructor or method?</span> Identify each one</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>A: Student() { }
+B: void displayStudent() { }
+C: Student(String name) { }
+D: int getAge() { return 20; }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">A → Constructor</code>, <code class="inline">B → Method</code>, <code class="inline">C → Constructor</code>, <code class="inline">D → Method</code>. A and C share the class name and have no return type; B and D have return types.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Build the object</span> Trace the values</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Phone {
+    String brand;
+    int price;
+
+    Phone(String phoneBrand, int phonePrice) {
+        brand = phoneBrand;
+        price = phonePrice;
+    }
+}
+
+Phone phone1 = new Phone("Samsung", 50000);</code></pre></div>
+        <p>What are <code class="inline">phoneBrand</code>, <code class="inline">phonePrice</code>, <code class="inline">phone1.brand</code>, and <code class="inline">phone1.price</code>?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">phoneBrand = "Samsung"</code>, <code class="inline">phonePrice = 50000</code>, <code class="inline">phone1.brand = "Samsung"</code>, <code class="inline">phone1.price = 50000</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Find the problem</span> Is this constructor valid?</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Employee {
+    String name;
+
+    Employee(String employeeName) {
+        System.out.println("Employee created");
+    }
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p>Yes, it's syntactically valid — but it never assigns <code class="inline">name</code>, so the instance variable stays <code class="inline">null</code>. If the intent is to store the name, it should read <code class="inline">name = employeeName;</code></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 : SELF TEST -->
+  <section class="sec" id="c20">
+    <span class="sec-num">20</span>
+    <h2>Final self-test</h2>
+    <p class="lede">Try answering these without scrolling back up.</p>
+    <div class="selftest-bar">
+      <span id="selftestCount">0 / 6 answered</span>
+      <div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div>
+    </div>
+    <div id="selftestList"></div>
+  </section>
+
+  <!-- 21 : RECAP -->
+  <section class="sec" id="c21">
+    <span class="sec-num">21</span>
+    <h2>Chapter recap</h2>
+
+    <div class="recap-grid">
+      <div class="recap-card"><h4>Class</h4><p>Blueprint for creating objects. <code class="inline">class Student</code></p></div>
+      <div class="recap-card"><h4>Object</h4><p>An instance created from a class. <code class="inline">new Student()</code></p></div>
+      <div class="recap-card"><h4>Instance variable</h4><p>Data belonging to an object. <code class="inline">String name;</code></p></div>
+      <div class="recap-card"><h4>Constructor</h4><p>Special member used to initialise an object. <code class="inline">Student()</code></p></div>
+      <div class="recap-card"><h4>Constructor name</h4><p>Must match the class name exactly. <code class="inline">Student</code></p></div>
+      <div class="recap-card"><h4>Constructor return type</h4><p>None — ever. <code class="inline">Student()</code>, not <code class="inline">void Student()</code></p></div>
+      <div class="recap-card"><h4>Constructor parameters</h4><p>Information supplied at creation. <code class="inline">Student(String name)</code></p></div>
+      <div class="recap-card"><h4>this</h4><p>Refers to the current object. <code class="inline">this.name</code></p></div>
+    </div>
+
+    <h3>The three most important rules</h3>
+    <table class="ref">
+      <thead><tr><th>Rule</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Constructor name must match the class name.</td></tr>
+        <tr><td>2</td><td>A constructor has no return type.</td></tr>
+        <tr><td>3</td><td>A constructor runs at object creation, to set up the object's initial state.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Final mental model</h3>
+    <div class="diagram-box">              CLASS
+        ┌───────────────┐
+        │   Blueprint    │
+        │  name          │
+        │  age           │
+        │  constructor() │
+        │  methods()     │
+        └───────────────┘
+                │ new
+                ↓
+             OBJECT
+        ┌───────────────┐
+        │ name = Anu    │
+        │ age = 20      │
+        └───────────────┘</div>
+
+    <div class="callout">
+      <div class="callout-label">⭐ Remember</div>
+      <p><strong>Instance variables</strong> describe what an object knows/stores. <strong>Constructors</strong> establish what the object starts with. <strong>Methods</strong> describe what the object can do.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Instance Variables and Constructors
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Java mini highlighter (single-pass, safe) ---------------- */
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','this']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{
+    el.innerHTML = highlight(el.textContent);
+  });
+
+  /* ---------------- Copy buttons ---------------- */
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(()=>{ btn.textContent = 'Select & copy'; });
+    });
+  });
+
+  /* ---------------- Anatomy interactive ---------------- */
+  const anatomyDescs = {
+    cname: "The class name. A constructor's name must match this exactly, including capitalization.",
+    ctor: "The constructor. Same name as the class, and — notice — no return type written before it.",
+    params: "The constructor's parameters. Information supplied when the object is created, e.g. new Student(\"Anu\", 20).",
+    assign: "The initialisation code. This is where the constructor copies the incoming values into the object's instance variables."
+  };
+  const anatomyDescEl = document.getElementById('anatomyDesc');
+  function setAnatomy(part){
+    document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+      el.classList.toggle('active', el.dataset.part === part);
+    });
+    anatomyDescEl.textContent = part ? anatomyDescs[part] : 'Hover or click a part of the code above to see what it does.';
+  }
+  document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+    el.addEventListener('mouseenter', ()=> setAnatomy(el.dataset.part));
+    el.addEventListener('click', ()=> setAnatomy(el.dataset.part));
+  });
+  const anatomyCodeEl = document.getElementById('anatomyCode');
+  if(anatomyCodeEl) anatomyCodeEl.addEventListener('mouseleave', ()=> setAnatomy(null));
+
+  /* ---------------- Challenge reveal ---------------- */
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = open ? 'Hide answer ' : btn.firstChild.textContent.replace('Hide answer ','Reveal answer ');
+    });
+  });
+
+  /* ---------------- Self test ---------------- */
+  const selfTestData = [
+    {q:"What is an instance variable?", a:"A variable declared inside a class but outside its methods and constructors — it represents data/state belonging to an object."},
+    {q:"What is the main purpose of a constructor?", a:"To perform the initial setup/initialisation of an object when it is created."},
+    {q:"What must the constructor name match?", a:"The class name, exactly — including capitalization."},
+    {q:"Can a constructor have void as its return type?", a:"No. <code class=\"inline\">Student()</code> is a constructor; <code class=\"inline\">void Student()</code> is a method, not a constructor."},
+    {q:"What does <code class=\"inline\">this.name = name;</code> mean?", a:"<code class=\"inline\">this.name</code> is the current object's instance variable; <code class=\"inline\">name</code> is the constructor parameter. It stores the parameter into the object's own field."},
+    {q:"What's the difference between a constructor and a normal method?", a:"A constructor initialises a newly created object, shares the class's name, and has no return type. A normal method performs an operation and has a return type such as void, int, or String."}
+  ];
+  const listEl = document.getElementById('selftestList');
+  const doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qcard-head">
+        <span><span class="qn">Q${i+1}</span>${item.q}</span>
+        <span class="check">✓</span>
+      </div>
+      <div class="qcard-answer"><p>${item.a}</p></div>
+    `;
+    const head = card.querySelector('.qcard-head');
+    const ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){
+        doneSet.add(i);
+        card.classList.add('done');
+        updateSelftest();
+      }
+    });
+    listEl.appendChild(card);
+  });
+  function updateSelftest(){
+    document.getElementById('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    document.getElementById('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
