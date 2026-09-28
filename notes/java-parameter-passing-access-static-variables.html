@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Parameter Passing, Access Modifiers, static, and Variables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; text-align:center; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  .part-label{
+    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--faint); margin:52px 0 -30px;
+  }
+  .part-label:first-of-type{ margin-top:0; }
+
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+  .callout.analogy{ border-left-color:var(--border-strong); background:#FCFBF8; }
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:10px 13px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:12.5px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+  table.ref td.yes{ color:#2F7D4F; font-weight:600; }
+  table.ref td.no{ color:var(--warn); font-weight:600; }
+  table.ref td.center{ text-align:center; }
+
+  .anatomy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:22px 22px 18px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .anatomy-code{
+    font-family:'JetBrains Mono',monospace; font-size:16px; line-height:1.9;
+    background:var(--code-bg); color:var(--code-ink); border-radius:6px;
+    padding:16px 18px; display:flex; flex-wrap:wrap; gap:0;
+  }
+  .anatomy-part{
+    padding:2px 3px; border-radius:4px; cursor:pointer;
+    transition:background var(--dur), color var(--dur);
+    border-bottom:2px solid transparent;
+  }
+  .anatomy-part[data-part="access"]{ color:var(--code-fn); }
+  .anatomy-part[data-part="own"]{ color:var(--code-key); }
+  .anatomy-part[data-part="type"]{ color:var(--code-type); }
+  .anatomy-part[data-part="vname"]{ color:var(--code-ink); }
+  .anatomy-part.active{ background:rgba(255,255,255,0.14); border-bottom-color:currentColor; }
+  .anatomy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .anatomy-chip{
+    display:flex; align-items:center; gap:6px;
+    font-size:12.5px; padding:6px 10px; border-radius:6px;
+    border:1px solid var(--border); cursor:pointer; color:var(--muted);
+    transition:background var(--dur), border-color var(--dur), color var(--dur);
+  }
+  .anatomy-chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .anatomy-chip[data-part="access"] .dot{ background:var(--code-fn); }
+  .anatomy-chip[data-part="own"] .dot{ background:var(--code-key); }
+  .anatomy-chip[data-part="type"] .dot{ background:var(--code-type); }
+  .anatomy-chip[data-part="vname"] .dot{ background:var(--faint); }
+  .anatomy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .anatomy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:20px; }
+
+  .object-cards{ display:flex; flex-wrap:wrap; gap:14px; margin:16px 0 22px; }
+  .object-card{
+    flex:1 1 150px; border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); overflow:hidden;
+  }
+  .object-card .oc-head{
+    background:#F5F1E9; padding:8px 13px; font-family:'JetBrains Mono',monospace;
+    font-size:12.5px; font-weight:600; color:var(--accent); border-bottom:1px solid var(--border);
+  }
+  .object-card .oc-body{ padding:10px 13px; font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted); }
+  .object-card .oc-body div{ padding:2px 0; }
+  .object-card .oc-body b{ color:var(--ink); font-weight:600; }
+  .object-card.shared{ border-color:var(--accent); }
+  .object-card.shared .oc-head{ background:var(--accent-tint); }
+
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 320ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:1200px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+  .answer-panel .verdict{
+    display:inline-block; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    padding:2px 9px; border-radius:4px; margin-bottom:8px;
+  }
+  .answer-panel .verdict.yes{ background:#E4F3E9; color:#2F7D4F; }
+  .answer-panel .verdict.no{ background:var(--warn-tint); color:var(--warn); }
+
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:500px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  .checklist{ list-style:none; margin:14px 0 20px; padding:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+    border-bottom:1px solid var(--border); font-size:14.5px;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .x{
+    flex-shrink:0; width:19px; height:19px; border-radius:50%; margin-top:1px;
+    background:var(--warn-tint); color:var(--warn); font-weight:700; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:27px; }
+    .anatomy-code{ font-size:13px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:11.5px; }
+    .object-cards{ flex-direction:column; }
+    table.ref{ font-size:12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Chapter — Parameter Passing, Access Modifiers, static, and Variables</h1>
+    <p class="sub">What belongs to an object, what belongs to the class, who can see it, and what happens to data when a method gets hold of it.</p>
+  </header>
+  <hr class="rule" />
+
+  <p class="hero-statement">Several ideas that are often confusing on their own turn out to be one connected story.</p>
+  <p class="hero-sub">How data enters a method, how that method can (or can't) change it, who's allowed to touch a class member, whether something belongs to an object or the whole class, and where a variable is even visible — it's all one picture once you see the connections.</p>
+
+  <div class="flow-box">
+    <span class="step">How data enters methods</span>
+    <span class="arrow">↓</span>
+    <span class="step">Pass by value / reference</span>
+    <span class="arrow">↓</span>
+    <span class="step">Pure vs. impure methods</span>
+    <span class="arrow">↓</span>
+    <span class="step">Access modifiers — who can see it?</span>
+    <span class="arrow">↓</span>
+    <span class="step">Instance vs. static — object or class?</span>
+    <span class="arrow">↓</span>
+    <span class="step">Instance vs. local — where does it live?</span>
+  </div>
+
+  <p class="part-label">Part 1 — Pass by value</p>
+
+  <!-- 01 -->
+  <section class="sec" id="p01">
+    <span class="sec-num">01</span>
+    <h2>What does "pass by value" mean?</h2>
+    <p class="lede"><strong>Pass by value</strong> means a method receives a <strong>copy of the value</strong> — not the original.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void changeNumber(int number) {
+    number = 100;
+}
+
+int x = 10;
+changeNumber(x);
+System.out.println(x);   // → 10, not 100</code></pre>
+    </div>
+    <p><code class="inline">x</code> stays <code class="inline">10</code> because the method only ever touched its own copy, called <code class="inline">number</code>.</p>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a photocopy 📄</div>
+      <p>The original document reads <code class="inline">10</code>. Someone asks for a photocopy; you hand over a copy. They write <code class="inline">100</code> on the copy. Did the original change? No. That's pass by value.</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="p02">
+    <span class="sec-num">02</span>
+    <h2>Java is strictly pass-by-value</h2>
+    <div class="callout">
+      <div class="callout-label">⭐ Key fact</div>
+      <p><strong>Java is strictly pass-by-value</strong> — for both primitives (<code class="inline">int</code>, <code class="inline">double</code>, <code class="inline">char</code>, <code class="inline">boolean</code>…) and object references. Java never does true pass-by-reference.</p>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void increase(int number) {
+    number = number + 1;
+}
+
+int count = 5;
+increase(count);
+System.out.println(count);   // → 5</code></pre>
+    </div>
+    <p>Inside the method, <code class="inline">number</code> becomes <code class="inline">6</code> — but <code class="inline">count</code> outside never changes.</p>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="p03">
+    <span class="sec-num">03</span>
+    <h2>What about objects?</h2>
+    <p class="lede">Here's where students often get confused.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+}
+
+void changeName(Student student) {
+    student.name = "Rahul";
+}
+
+Student s = new Student();
+s.name = "Anu";
+changeName(s);
+System.out.println(s.name);   // → Rahul</code></pre>
+    </div>
+    <p>This <em>looks</em> like pass-by-reference — the change is visible outside! But Java is still pass by value. What gets copied is the <strong>reference to the object</strong>, not the object itself.</p>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="p04">
+    <span class="sec-num">04</span>
+    <h2>What is an object reference?</h2>
+    <p class="lede"><code class="inline">Student s = new Student();</code> — the variable <code class="inline">s</code> doesn't literally hold the object. It holds a <strong>reference</strong> that lets Java reach the object.</p>
+    <div class="diagram-box">s ───reference───→ ┌───────────────┐
+                     │ Student       │
+                     │ name = "Anu"  │
+                     └───────────────┘</div>
+    <p>When we call <code class="inline">changeName(s)</code>, Java copies <em>that reference</em> — so both <code class="inline">s</code> and the parameter <code class="inline">student</code> point at the <strong>same object</strong>:</p>
+    <div class="diagram-box">s ───────┐
+         ↓
+      Object
+         ↑
+student ─┘</div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a house address 🏠</div>
+      <p><code class="inline">s</code> is like "House at 123 Main Street." The method receives a copy of that address — both know how to reach the same house. If the method rearranges the furniture inside, you'll see that through <code class="inline">s</code> too, because it's the same house.</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="p05">
+    <span class="sec-num">05</span>
+    <h2>The crucial difference: changing the object vs. changing the reference</h2>
+    <p class="lede">Two very different things can happen inside a method that receives an object.</p>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Changing the object</h4>
+        <code>student.name = "Rahul";</code>
+      </div>
+      <div class="compare-col">
+        <h4>Changing the reference</h4>
+        <code>student = new Student();</code>
+      </div>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Changes the object → visible outside</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void changeName(Student student) {
+    student.name = "Rahul";
+}
+// s.name becomes "Rahul"</code></pre>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Changes the reference → NOT visible outside</span><button class="copy-btn">Copy</button></div>
+      <pre><code>void changeStudent(Student student) {
+    student = new Student();
+    student.name = "Rahul";
+}
+// s.name is still "Anu"</code></pre>
+    </div>
+    <p>In the second case, <code class="inline">student = new Student();</code> only redirects the <em>local copy</em> of the reference to a brand-new object. <code class="inline">s</code> back in the caller still points to the original:</p>
+    <div class="diagram-box">s       → Object A (name = "Anu")
+student → Object B (name = "Rahul")   ← only the local copy moved</div>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="p06">
+    <span class="sec-num">06</span>
+    <h2>Pass by value vs. pass by reference</h2>
+    <table class="ref">
+      <thead><tr><th>Feature</th><th>Pass by value</th><th>Pass by reference</th></tr></thead>
+      <tbody>
+        <tr><td>What is passed?</td><td>A copy of the value</td><td>Alias to the original variable</td></tr>
+        <tr><td>Can the method reassign the caller's variable?</td><td>No</td><td>Yes, in languages that truly support it</td></tr>
+        <tr><td>Java uses it?</td><td class="yes">✅ Yes</td><td class="no">❌ No</td></tr>
+        <tr><td>Object example</td><td>Copy of the object reference</td><td>Not how Java works</td></tr>
+      </tbody>
+    </table>
+    <div class="callout warn">
+      <div class="callout-label">🚨 Exam alert</div>
+      <p>If asked "does Java use pass by value or pass by reference?" — the answer is always <strong>pass by value</strong>. For objects, the value being passed is a reference to the object.</p>
+    </div>
+  </section>
+
+  <p class="part-label">Part 2 — Pure and impure methods</p>
+
+  <!-- 07 -->
+  <section class="sec" id="p07">
+    <span class="sec-num">07</span>
+    <h2>Pure methods</h2>
+    <p class="lede">A <strong>pure method</strong> (1) produces the same output for the same input, and (2) doesn't change external state or cause observable side effects.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int square(int number) {
+    return number * number;
+}
+
+double calculateArea(double radius) {
+    return 3.14 * radius * radius;
+}</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a calculator 🧮</div>
+      <p>Enter <code class="inline">10 + 20</code>, get <code class="inline">30</code> — every time. The calculator doesn't secretly change your bank account or calendar.</p>
+    </div>
+    <h3>Why pure methods are nice</h3>
+    <p>They're easier to <strong>understand</strong>, <strong>test</strong>, and <strong>debug</strong>, more <strong>predictable</strong>, and easier to <strong>reuse</strong> — same input always gives the same result, with nothing hidden.</p>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="p08">
+    <span class="sec-num">08</span>
+    <h2>Impure methods</h2>
+    <p class="lede">An <strong>impure method</strong> has one or more side effects, or depends on changing external state.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>int count = 0;
+
+void increaseCount() {
+    count++;
+}
+
+void displayMessage() {
+    System.out.println("Hello");   // side effect: console output
+}</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a bank deposit 🏦</div>
+      <p><code class="inline">void deposit(double amount) { balance = balance + amount; }</code> doesn't just calculate a result — it changes the account's actual state. That's impure.</p>
+    </div>
+    <div class="callout">
+      <div class="callout-label">📌 Important</div>
+      <p>"Impure" doesn't mean <strong>bad</strong>. Programs need side effects to display information, save files, update objects, and change state — impure methods are often necessary.</p>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="p09">
+    <span class="sec-num">09</span>
+    <h2>Pure vs. impure, side by side</h2>
+    <table class="ref">
+      <thead><tr><th>Pure method</th><th>Impure method</th></tr></thead>
+      <tbody>
+        <tr><td>Same input → same output</td><td>Output may depend on external state</td></tr>
+        <tr><td>Doesn't modify external state</td><td>May modify external state</td></tr>
+        <tr><td>No observable side effects</td><td>Can have side effects</td></tr>
+        <tr><td>Easier to test</td><td>Can require more setup to test</td></tr>
+        <tr><td><code>square(5)</code></td><td><code>increaseScore()</code></td></tr>
+      </tbody>
+    </table>
+    <p><strong>Pure = predictable. Impure = interactive</strong> — useful whenever the program needs to <em>do</em> something to the world or change state.</p>
+  </section>
+
+  <p class="part-label">Part 3 — Access modifiers</p>
+
+  <!-- 10 -->
+  <section class="sec" id="p10">
+    <span class="sec-num">10</span>
+    <h2>Access modifiers</h2>
+    <p class="lede">Access modifiers control <strong>where a class, method, constructor, or variable can be accessed from</strong>. Java has four levels: <code class="inline">public</code>, <code class="inline">protected</code>, default (none written), and <code class="inline">private</code>.</p>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — office building security 🏢</div>
+      <p><code class="inline">public</code> is the open reception area. <code class="inline">protected</code> is a restricted area for employees and related people. <code class="inline">default</code> is available only within one department. <code class="inline">private</code> is a personal locker only its owner can open.</p>
+    </div>
+    <div class="diagram-box">More accessible
+     ↓
+  public
+     ↓
+  protected
+     ↓
+  default
+     ↓
+  private
+     ↓
+More restricted</div>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="p11">
+    <span class="sec-num">11</span>
+    <h2><code class="inline">public</code> and <code class="inline">private</code></h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">public — open to everyone</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    public String name;
+    public void displayName() { System.out.println(name); }
+}
+
+Student student = new Student();
+student.name = "Anu";           // OK from outside</code></pre>
+    </div>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">private — my personal locker</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class BankAccount {
+    private double balance;
+
+    void deposit(double amount) {
+        balance = balance + amount;   // OK — inside the class
+    }
+}
+
+account.balance = 5000;   // NOT allowed — balance is private</code></pre>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Why use private? Encapsulation</div>
+      <p>Instead of letting outside code do <code class="inline">account.balance = -100000;</code> directly, we control the change through a method: <code class="inline">if (amount > 0) balance = balance + amount;</code> — the class stays in charge of its own data.</p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="p12">
+    <span class="sec-num">12</span>
+    <h2><code class="inline">protected</code> and default access</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">protected</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Animal {
+    protected String name;
+}
+
+class Dog extends Animal {
+    void showName() {
+        System.out.println(name);   // OK — subclass access
+    }
+}</code></pre>
+    </div>
+    <p><code class="inline">protected</code> gives access within the same package, plus subclasses (including subclasses in other packages) — more restricted than <code class="inline">public</code>, more open than <code class="inline">private</code>.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">default (nothing written)</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;   // no modifier → default/package-private
+
+    void displayName() {
+        System.out.println(name);
+    }
+}</code></pre>
+    </div>
+    <p>Default access is visible to classes in the <strong>same package</strong> only.</p>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="p13">
+    <span class="sec-num">13</span>
+    <h2>Access modifier comparison</h2>
+    <table class="ref">
+      <thead><tr><th>Access level</th><th>Same class</th><th>Same package</th><th>Subclass, other package</th><th>Other package</th></tr></thead>
+      <tbody>
+        <tr><td><code>public</code></td><td class="center yes">✅</td><td class="center yes">✅</td><td class="center yes">✅</td><td class="center yes">✅</td></tr>
+        <tr><td><code>protected</code></td><td class="center yes">✅</td><td class="center yes">✅</td><td class="center">✅*</td><td class="center no">❌</td></tr>
+        <tr><td>default</td><td class="center yes">✅</td><td class="center yes">✅</td><td class="center no">❌</td><td class="center no">❌</td></tr>
+        <tr><td><code>private</code></td><td class="center yes">✅</td><td class="center no">❌</td><td class="center no">❌</td><td class="center no">❌</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px; color:var(--faint); margin-top:-10px;">* Through the subclass relationship, subject to Java's inheritance access rules.</p>
+    <div class="callout">
+      <div class="callout-label">Simplest memory order</div>
+      <p><code class="inline">public</code> → everywhere · <code class="inline">protected</code> → package + subclasses · <code class="inline">default</code> → package · <code class="inline">private</code> → class only.</p>
+    </div>
+  </section>
+
+  <p class="part-label">Part 4 — static</p>
+
+  <!-- 14 -->
+  <section class="sec" id="p14">
+    <span class="sec-num">14</span>
+    <h2>What is <code class="inline">static</code>?</h2>
+    <p class="lede"><code class="inline">static</code> means a member belongs to the <strong>class</strong> rather than to each individual object. Without it, an instance variable belongs to one object; with it, there's a single class-level member shared by everyone.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;                          // instance
+    static String schoolName = "ABC School"; // static
+}
+
+Student student1 = new Student();
+Student student2 = new Student();
+student1.name = "Anu";
+student2.name = "Rahul";</code></pre>
+    </div>
+    <div class="object-cards">
+      <div class="object-card"><div class="oc-head">student1</div><div class="oc-body"><div><b>name</b> = Anu</div></div></div>
+      <div class="object-card"><div class="oc-head">student2</div><div class="oc-body"><div><b>name</b> = Rahul</div></div></div>
+      <div class="object-card shared"><div class="oc-head">Student.schoolName</div><div class="oc-body"><div><b>shared</b> = "ABC School"</div></div></div>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a school 🏫</div>
+      <p>Every student has their own name, age, roll number — like instance variables. But <code class="inline">schoolName</code> is the same for all 500 students — a <code class="inline">static</code> variable belonging to the class as a whole.</p>
+    </div>
+  </section>
+
+  <!-- 15 -->
+  <section class="sec" id="p15">
+    <span class="sec-num">15</span>
+    <h2>Static methods</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class MathTools {
+    static int square(int number) {
+        return number * number;
+    }
+}
+
+int result = MathTools.square(5);   // → 25, called via the class</code></pre>
+    </div>
+    <div class="compare">
+      <div class="compare-col">
+        <h4>Instance method</h4>
+        <code>student.display();</code>
+      </div>
+      <div class="compare-col">
+        <h4>Static method</h4>
+        <code>MathTools.square(5);</code>
+      </div>
+    </div>
+    <p>There's no need to create a new <code class="inline">MathTools</code> object just to perform a general calculation — that's exactly what static is for.</p>
+  </section>
+
+  <!-- 16 -->
+  <section class="sec" id="p16">
+    <span class="sec-num">16</span>
+    <h2>A static method can't automatically reach instance data</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Problem</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;
+
+    static void display() {
+        System.out.println(name);   // won't compile — WHOSE name?
+    }
+}</code></pre>
+    </div>
+    <p>A static method has no particular object attached to it, so it can't reach <code class="inline">name</code> — which student's name would it even mean?</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Fix — give it an object</span><button class="copy-btn">Copy</button></div>
+      <pre><code>static void display(Student student) {
+    System.out.println(student.name);
+}
+
+Student.display(student);</code></pre>
+    </div>
+  </section>
+
+  <!-- 17 -->
+  <section class="sec" id="p17">
+    <span class="sec-num">17</span>
+    <h2>Static vs. instance</h2>
+    <table class="ref">
+      <thead><tr><th>Instance</th><th>Static</th></tr></thead>
+      <tbody>
+        <tr><td>Belongs to an object</td><td>Belongs to the class</td></tr>
+        <tr><td>Each object has its own copy</td><td>One member shared by all objects</td></tr>
+        <tr><td>Usually accessed through an object</td><td>Usually accessed through the class name</td></tr>
+        <tr><td><code>student.name</code></td><td><code>Student.schoolName</code></td></tr>
+      </tbody>
+    </table>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Counter — the classic demonstration</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Counter {
+    static int count = 0;
+    Counter() { count++; }
+}
+
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+Counter c3 = new Counter();
+System.out.println(Counter.count);   // → 3, one shared variable</code></pre>
+    </div>
+    <p>Change <code class="inline">count</code> to a plain instance variable instead, and each object ends up with its own <code class="inline">count = 1</code> — no sharing at all.</p>
+  </section>
+
+  <p class="part-label">Part 5 — Instance and local variables</p>
+
+  <!-- 18 -->
+  <section class="sec" id="p18">
+    <span class="sec-num">18</span>
+    <h2>Instance variables vs. local variables</h2>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;             // instance — belongs to each object
+
+    void display() {
+        String message = "Hello";   // local — temporary
+        System.out.println(message);
+    }
+}</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">Analogy — a student's backpack 🎒</div>
+      <p><strong>Instance variables</strong> are things that belong to the student long-term: name, age, roll number. <strong>Local variables</strong> are things used briefly for one task — a temporary number you're calculating, then forget.</p>
+    </div>
+    <table class="ref">
+      <thead><tr><th>Instance variable</th><th>Local variable</th></tr></thead>
+      <tbody>
+        <tr><td>Declared inside class, outside methods</td><td>Declared inside a method/constructor/block</td></tr>
+        <tr><td>Belongs to the object</td><td>Belongs to that execution only</td></tr>
+        <tr><td>Gets a default value automatically</td><td>Must be assigned before it's read</td></tr>
+        <tr><td>Usable across the object's instance methods</td><td>Accessible only within its own scope</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 19 -->
+  <section class="sec" id="p19">
+    <span class="sec-num">19</span>
+    <h2>Default values — instance vs. local</h2>
+    <p class="lede">Instance variables automatically get a default value if you don't set one:</p>
+    <div class="diagram-box">int      → 0
+double   → 0.0
+boolean  → false
+String   → null</div>
+    <div class="callout warn">
+      <div class="callout-label">⚠️ Important — this does NOT apply to local variables</div>
+      <p><code class="inline">void display() { int age; System.out.println(age); }</code> won't compile — a local variable must be <strong>definitely assigned</strong> before it's read. Fix: <code class="inline">int age = 20;</code></p>
+    </div>
+  </section>
+
+  <p class="part-label">Part 6 — Putting it all together</p>
+
+  <!-- 20 -->
+  <section class="sec" id="p20">
+    <span class="sec-num">20</span>
+    <h2>Static, instance, and local — together</h2>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Student {
+    String name;                     // Instance — belongs to each object
+
+    static String school = "ABC";    // Static   — belongs to the class
+
+    void display() {
+        int age = 20;                // Local    — belongs to this call only
+        System.out.println(name);
+        System.out.println(school);
+        System.out.println(age);
+    }
+}</code></pre>
+    </div>
+    <div class="callout analogy">
+      <div class="callout-label">The three-level school analogy 🏫</div>
+      <p><strong>Class-level:</strong> the school name — shared by everyone → <code class="inline">static</code>. <strong>Student-level:</strong> each student's name and roll number — different per student → <code class="inline">instance</code>. <strong>Temporary classroom work:</strong> a total or average calculated on the spot → <code class="inline">local</code>.</p>
+    </div>
+  </section>
+
+  <!-- 21 -->
+  <section class="sec" id="p21">
+    <span class="sec-num">21</span>
+    <h2>Access modifiers and <code class="inline">static</code> answer different questions</h2>
+    <p class="lede">These two ideas are often combined, but they're not the same thing. Click through the example below.</p>
+    <div class="anatomy">
+      <div class="anatomy-code" id="anatomyCode">
+        <span class="anatomy-part" data-part="access">private</span><span>&nbsp;</span><span class="anatomy-part" data-part="own">static</span><span>&nbsp;</span><span class="anatomy-part" data-part="type">int</span><span>&nbsp;</span><span class="anatomy-part" data-part="vname">count</span><span>;</span>
+      </div>
+      <div class="anatomy-legend">
+        <div class="anatomy-chip" data-part="access"><span class="dot"></span>Access modifier</div>
+        <div class="anatomy-chip" data-part="own"><span class="dot"></span>static (ownership)</div>
+        <div class="anatomy-chip" data-part="type"><span class="dot"></span>Data type</div>
+        <div class="anatomy-chip" data-part="vname"><span class="dot"></span>Variable name</div>
+      </div>
+      <div class="anatomy-desc" id="anatomyDesc">Hover or click a part of the code above to see what it does.</div>
+    </div>
+    <div class="callout">
+      <div class="callout-label">Two separate questions</div>
+      <p><strong>Access modifier</strong> → who can access it? <strong>static</strong> → does it belong to the class or to each object? Neither keyword replaces the meaning of the other — <code class="inline">private static int count;</code> restricts visibility <em>and</em> shares one copy across the class, at the same time.</p>
+    </div>
+  </section>
+
+  <!-- 22 -->
+  <section class="sec" id="p22">
+    <span class="sec-num">22</span>
+    <h2>The most important exam traps</h2>
+    <ul class="checklist">
+      <li><span class="x">✕</span> <strong>"Java passes objects by reference."</strong> — No. Java is pass-by-value; for objects, the value copied is the reference.</li>
+      <li><span class="x">✕</span> <strong>"A private variable can be accessed by any class in the same package."</strong> — No. Private restricts direct access to the declaring class only.</li>
+      <li><span class="x">✕</span> <strong>"static means the variable can't change."</strong> — No. static means it belongs to the class, not that it's constant.</li>
+      <li><span class="x">✕</span> <strong>"Instance variables must be manually initialised."</strong> — Not necessarily; they get default values automatically.</li>
+      <li><span class="x">✕</span> <strong>"Local variables automatically get default values."</strong> — No. They must be definitely assigned before use.</li>
+      <li><span class="x">✕</span> <strong>"Impure methods are bad methods."</strong> — No. Programs need side effects to be useful.</li>
+    </ul>
+  </section>
+
+  <!-- 23 : CHALLENGES -->
+  <section class="sec" id="p23">
+    <span class="sec-num">23</span>
+    <h2>Try it: ten quick challenges</h2>
+    <p class="lede">Work each one out yourself before revealing the answer.</p>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the output</span> A primitive parameter</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>void change(int x) { x = 100; }
+
+int number = 20;
+change(number);
+System.out.println(number);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">20</code> — the method only ever changed its own copy, <code class="inline">x</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the output</span> Changing an object's field</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Box { int value; }
+
+void change(Box box) { box.value = 100; }
+
+Box b = new Box();
+b.value = 20;
+change(b);
+System.out.println(b.value);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">100</code> — both references point to the same <code class="inline">Box</code> object, so the change is visible.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Trick question</span> Reassigning the reference</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Box { int value; }
+
+void change(Box box) {
+    box = new Box();
+    box.value = 100;
+}
+
+Box b = new Box();
+b.value = 20;
+change(b);
+System.out.println(b.value);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">20</code> — <code class="inline">box = new Box();</code> only redirects the local copy of the reference. The original <code class="inline">b</code> still points to the first object.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Pure or impure?</span> Four methods</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>A: int doubleNumber(int x) { return x * 2; }
+B: void increaseScore() { score++; }
+C: void printName(String name) { System.out.println(name); }
+D: int add(int a, int b) { return a + b; }</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">A → Pure</code>, <code class="inline">B → Impure</code> (changes state), <code class="inline">C → Impure</code> (console output), <code class="inline">D → Pure</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the access modifier</span> Class-only access</div>
+      <div class="challenge-body">
+        <p>Which modifier restricts a variable to being accessed only directly within its own class?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">private</code> — e.g. <code class="inline">private int marks;</code></p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Predict the output</span> Static counter</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Counter {
+    static int count = 0;
+    Counter() { count++; }
+}
+
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+Counter c3 = new Counter();
+System.out.println(Counter.count);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">3</code> — one shared <code class="inline">static</code> variable, incremented by every constructor call.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Static vs. instance</span> Predict every value</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Counter {
+    int instanceCount = 0;
+    static int staticCount = 0;
+    Counter() { instanceCount++; staticCount++; }
+}
+
+Counter c1 = new Counter();
+Counter c2 = new Counter();
+Counter c3 = new Counter();</code></pre></div>
+        <p>What are <code class="inline">c1.instanceCount</code>, <code class="inline">c2.instanceCount</code>, <code class="inline">c3.instanceCount</code>, and <code class="inline">Counter.staticCount</code>?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p>Every object's <code class="inline">instanceCount</code> is <code class="inline">1</code> — each has its own copy. But <code class="inline">Counter.staticCount = 3</code>, since it's shared by all three.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Identify the type</span> Three variables in one class</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Employee {
+    String name;
+    static String company = "TechCorp";
+
+    void calculateSalary() {
+        double bonus = 5000;
+    }
+}</code></pre></div>
+        <p>What are <code class="inline">name</code>, <code class="inline">company</code>, and <code class="inline">bonus</code>?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">name → instance</code>, <code class="inline">company → static</code>, <code class="inline">bonus → local</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Final challenge</span> Pass by value, three steps deep</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Box { int value; }
+
+void change(Box box) {
+    box.value = 50;
+    box = new Box();
+    box.value = 100;
+}
+
+Box b = new Box();
+b.value = 10;
+change(b);
+System.out.println(b.value);</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <p><code class="inline">50</code>. First <code class="inline">box.value = 50;</code> changes the shared object (visible via <code class="inline">b</code>). Then <code class="inline">box = new Box();</code> redirects only the local <code class="inline">box</code> reference — <code class="inline">box.value = 100;</code> after that touches the new object, not the one <code class="inline">b</code> points to.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Match it</span> Access modifiers</div>
+      <div class="challenge-body">
+        <p>Match each description to <code class="inline">public</code>, <code class="inline">protected</code>, default, or <code class="inline">private</code>: A) only inside the declaring class · B) everywhere the member is accessible · C) same package + subclasses · D) same package only.</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">A → private</code>, <code class="inline">B → public</code>, <code class="inline">C → protected</code>, <code class="inline">D → default</code>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 : SELF TEST -->
+  <section class="sec" id="p24">
+    <span class="sec-num">24</span>
+    <h2>Final self-test</h2>
+    <p class="lede">Try answering these without scrolling back up.</p>
+    <div class="selftest-bar">
+      <span id="selftestCount">0 / 7 answered</span>
+      <div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div>
+    </div>
+    <div id="selftestList"></div>
+  </section>
+
+  <!-- 25 : RECAP -->
+  <section class="sec" id="p25">
+    <span class="sec-num">25</span>
+    <h2>Chapter recap</h2>
+
+    <table class="ref">
+      <thead><tr><th>Concept</th><th>Main question it answers</th></tr></thead>
+      <tbody>
+        <tr><td>Pass by value</td><td>How is an argument's value passed into a method?</td></tr>
+        <tr><td>Pure method</td><td>Does it avoid side effects and depend predictably on its inputs?</td></tr>
+        <tr><td>Impure method</td><td>Does it change state or interact with the outside world?</td></tr>
+        <tr><td>Access modifier</td><td>Who can access this member?</td></tr>
+        <tr><td><code>static</code></td><td>Does this belong to the class rather than an individual object?</td></tr>
+        <tr><td>Instance variable</td><td>What data belongs to each object?</td></tr>
+        <tr><td>Local variable</td><td>What temporary data belongs to this method/block?</td></tr>
+      </tbody>
+    </table>
+
+    <div class="recap-grid">
+      <div class="recap-card"><h4>Pass by value</h4><p>Java always copies the value. For objects, that copied value is the reference itself.</p></div>
+      <div class="recap-card"><h4>Pure</h4><p>Same input → same output, no observable side effects. <code class="inline">square(x)</code></p></div>
+      <div class="recap-card"><h4>Impure</h4><p>Changes state or talks to the outside world. <code class="inline">increaseScore()</code></p></div>
+      <div class="recap-card"><h4>Access</h4><p>public → everywhere · protected → package+subclasses · default → package · private → class</p></div>
+      <div class="recap-card"><h4>static</h4><p>Belongs to the class. One shared copy. <code class="inline">static int count;</code></p></div>
+      <div class="recap-card"><h4>Instance / local</h4><p>Instance = object's ongoing state. Local = temporary, scoped to one call.</p></div>
+    </div>
+
+    <h3>Final mental model</h3>
+    <div class="diagram-box">                     JAVA
+                       │
+       ┌───────────────┼────────────────┐
+       ↓               ↓                ↓
+   PARAMETERS       METHODS          VARIABLES
+       │               │                │
+ Pass by value    Pure / Impure   Instance/Static/Local
+       │
+ Objects: copied value
+ is a reference
+
+                 ACCESS                        OWNERSHIP
+                   │                               │
+     public·protected·default·private     Instance ←→ static
+        "Who can access it?"              "Object or class?"</div>
+
+    <div class="callout">
+      <div class="callout-label">🎯 One-sentence summary</div>
+      <p>Java passes everything by value; pure methods calculate predictably while impure methods can change state; access modifiers control visibility; <code class="inline">static</code> makes a member class-level rather than object-specific; and instance/local variables differ mainly in where they're declared, what they belong to, and their scope.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Parameter Passing, Access Modifiers, static, and Variables
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','private','protected','this','extends']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{
+    el.innerHTML = highlight(el.textContent);
+  });
+
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(()=>{ btn.textContent = 'Select & copy'; });
+    });
+  });
+
+  const anatomyDescs = {
+    access: "The access modifier — who can reach this variable. private means only code inside this same class can touch it directly.",
+    own: "The static keyword — ownership. This says the variable belongs to the class itself, shared by every object, not copied per-instance.",
+    type: "The data type — what kind of value this variable holds.",
+    vname: "The variable name — how the code refers to it, e.g. Counter.count from outside."
+  };
+  const anatomyDescEl = document.getElementById('anatomyDesc');
+  function setAnatomy(part){
+    document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+      el.classList.toggle('active', el.dataset.part === part);
+    });
+    anatomyDescEl.textContent = part ? anatomyDescs[part] : 'Hover or click a part of the code above to see what it does.';
+  }
+  document.querySelectorAll('.anatomy-part, .anatomy-chip').forEach(el=>{
+    el.addEventListener('mouseenter', ()=> setAnatomy(el.dataset.part));
+    el.addEventListener('click', ()=> setAnatomy(el.dataset.part));
+  });
+  const anatomyCodeEl = document.getElementById('anatomyCode');
+  if(anatomyCodeEl) anatomyCodeEl.addEventListener('mouseleave', ()=> setAnatomy(null));
+
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = open ? 'Hide answer ' : btn.firstChild.textContent.replace('Hide answer ','Reveal answer ');
+    });
+  });
+
+  const selfTestData = [
+    {q:"Does Java use pass by value or pass by reference?", a:"Pass by value — always. For objects, the value copied happens to be a reference to the object."},
+    {q:"If a method reassigns an object parameter with <code class=\"inline\">student = new Student();</code>, does the caller's variable change?", a:"No — that only redirects the method's local copy of the reference. The caller's variable still points to the original object."},
+    {q:"What makes a method 'pure'?", a:"Same input always produces the same output, and it causes no observable side effects."},
+    {q:"Is <code class=\"inline\">System.out.println()</code> pure or impure?", a:"Impure — it has an observable side effect (writing to the console)."},
+    {q:"What's the difference between private and default access?", a:"private restricts access to the declaring class only. default (no modifier) allows access from anywhere in the same package."},
+    {q:"What does static actually mean?", a:"The member belongs to the class rather than to each individual object — one shared copy, not that it's unchangeable."},
+    {q:"Do local variables get default values like instance variables do?", a:"No — local variables must be definitely assigned a value before they're read."}
+  ];
+  const listEl = document.getElementById('selftestList');
+  const doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qcard-head">
+        <span><span class="qn">Q${i+1}</span>${item.q}</span>
+        <span class="check">✓</span>
+      </div>
+      <div class="qcard-answer"><p>${item.a}</p></div>
+    `;
+    const head = card.querySelector('.qcard-head');
+    const ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){
+        doneSet.add(i);
+        card.classList.add('done');
+        updateSelftest();
+      }
+    });
+    listEl.appendChild(card);
+  });
+  function updateSelftest(){
+    document.getElementById('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    document.getElementById('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
