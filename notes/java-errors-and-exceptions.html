@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Errors and Exceptions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --ok:#2F7D4F;
+    --ok-tint:#E7F3EB;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; text-align:center; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+
+  /* ---------- Analogy cards ---------- */
+  .analogy-card{
+    margin:22px 0 26px; border:1px solid #EBD3AE; border-radius:10px; overflow:hidden;
+    background:#FFFCF6; box-shadow:0 1px 3px rgba(180,83,9,0.07);
+  }
+  .ac-head{
+    display:flex; align-items:center; gap:11px; padding:11px 16px;
+    background:var(--accent-tint); border-bottom:1px solid #EBD3AE;
+  }
+  .ac-icon{
+    width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ac-icon svg{ width:16px; height:16px; }
+  .ac-kicker{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); line-height:1.2; }
+  .ac-title{ display:block; font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:16.5px; line-height:1.3; color:var(--ink); }
+  .ac-story{ margin:0; padding:14px 18px 6px; font-size:15px; }
+  .ac-map{ padding:6px 18px 16px; }
+  .ac-map-label{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:8px 0 7px; }
+  .ac-row{
+    display:grid; grid-template-columns:1fr 22px 1fr; align-items:center; gap:8px;
+    margin-bottom:6px; font-size:13.5px;
+  }
+  .ac-real{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:6px 10px; }
+  .ac-java{ background:var(--code-bg); color:var(--code-ink); border-radius:6px; padding:6px 10px; font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+  .ac-arrow{ text-align:center; color:var(--accent); font-weight:700; }
+  @media (max-width:560px){
+    .ac-row{ grid-template-columns:1fr; gap:3px; }
+    .ac-arrow{ transform:rotate(90deg); height:14px; line-height:14px; }
+  }
+
+  /* ---------- Checked exception table ---------- */
+  .filter-row{ display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 4px; }
+  .filter-chip{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; padding:5px 11px; border-radius:999px;
+    border:1px solid var(--border); background:var(--bg-raised); color:var(--muted); cursor:pointer;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .filter-chip:hover{ border-color:var(--border-strong); }
+  .filter-chip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  table.ref td.pkg{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--faint); white-space:nowrap; }
+  table.ref tr.hide{ display:none; }
+  td.exc-cell{ word-break:break-word; }
+  .pkg-sub{ display:block; margin-top:3px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); }
+  .pkg-sub .cat-tag{ font-family:'Inter',sans-serif; font-size:10px; }
+  .cat-tag{ font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
+
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .codeblock.out pre{ color:#D6A8A2; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:10px 13px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:12.5px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+
+  /* ---------- Hierarchy flowchart ---------- */
+  .hierarchy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 18px 16px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .hierarchy svg{ width:100%; height:auto; display:block; }
+  .hnode rect{
+    fill:var(--code-bg); stroke:#322C26; stroke-width:1.5; rx:8; cursor:pointer;
+    transition:fill var(--dur), stroke var(--dur);
+  }
+  .hnode text{ fill:var(--code-ink); font-family:'JetBrains Mono',monospace; font-size:13px; pointer-events:none; }
+  .hnode text.sub{ fill:#A69C8C; font-size:10.5px; }
+  .hnode:hover rect, .hnode.active rect{ stroke:var(--accent); fill:#2A241F; }
+  .hnode.active text{ fill:var(--accent-tint); }
+  .hline{ stroke:var(--border-strong); stroke-width:1.5; fill:none; }
+  .hierarchy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .hierarchy-chip{
+    font-size:12px; padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+    color:var(--muted); cursor:pointer; transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .hierarchy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .hierarchy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:38px; }
+  .hierarchy-desc strong{ color:var(--ink); }
+
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 320ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+  .answer-panel .verdict{
+    display:inline-block; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    padding:2px 9px; border-radius:4px; margin-bottom:8px;
+  }
+  .answer-panel .verdict.yes{ background:#E4F3E9; color:#2F7D4F; }
+  .answer-panel .verdict.no{ background:var(--warn-tint); color:var(--warn); }
+
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:500px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  .checklist{ list-style:none; margin:14px 0 20px; padding:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+    border-bottom:1px solid var(--border); font-size:14.5px;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .x{
+    flex-shrink:0; width:19px; height:19px; border-radius:50%; margin-top:1px;
+    background:var(--warn-tint); color:var(--warn); font-weight:700; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:27px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:11.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Chapter — Errors and Exceptions</h1>
+    <p class="sub">What goes wrong, when Java notices, and how to catch it before it crashes everything.</p>
+  </header>
+  <hr class="rule" />
+
+  <p class="hero-statement">Every program is one unexpected input away from something <em>going wrong</em>.</p>
+  <p class="hero-sub">A file that isn't there, a number divided by zero, an array index that doesn't exist — Java needs a way to notice these problems and let your program respond gracefully instead of just crashing. That's what errors and exceptions are for.</p>
+
+  <div class="flow-box">
+    <span class="step">Code runs</span>
+    <span class="arrow">↓</span>
+    <span class="step">Something goes wrong</span>
+    <span class="arrow">↓</span>
+    <span class="step">Java throws an exception</span>
+    <span class="arrow">↓</span>
+    <span class="step">try/catch intercepts it</span>
+    <span class="arrow">↓</span>
+    <span class="step">Program recovers gracefully</span>
+  </div>
+
+  <!-- 01 -->
+  <section class="sec" id="e01">
+    <span class="sec-num">01</span>
+    <h2>What is an error?</h2>
+    <p class="lede">An <strong>error</strong> is something that breaks the rules of the Java language itself — most commonly a <strong>syntax error</strong>, caught by the compiler before your program ever runs.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main (
+    public static void main(String[] args) {
+        System.out.println("Hello world!");
+    }
+)</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Main.java:1: error: '{' expected
+class Main (
+           ^</code></pre>
+    </div>
+    <p>Round brackets <code class="inline">( )</code> were used instead of curly braces <code class="inline">{ }</code> — the compiler catches this before a single line executes.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">A spell-checker on your essay</span></div></div>
+      <p class="ac-story">You type an essay in Word. Before you hand it in, red squiggly lines mark every broken sentence, and you fix them first. Java's compiler works the same way: it reads your <em>whole</em> program before running anything, and refuses to start while grammar mistakes are still in it.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Your essay</span><span class="ac-arrow">→</span><span class="ac-java">Your Java program</span></div><div class="ac-row"><span class="ac-real">Red squiggly line</span><span class="ac-arrow">→</span><span class="ac-java">Compile error</span></div><div class="ac-row"><span class="ac-real">Fixing it before submitting</span><span class="ac-arrow">→</span><span class="ac-java">Fixing it before the program runs</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 02 -->
+  <section class="sec" id="e02">
+    <span class="sec-num">02</span>
+    <h2>What is an exception?</h2>
+    <p class="lede">Even code that's perfectly valid Java can still fail the moment it actually <em>runs</em>. <strong>Errors detected during execution are called exceptions.</strong></p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        int num1 = 5;
+        int num2 = 0;
+        int result = num1 / num2;
+        System.out.println(result);
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Exception in thread "main" java.lang.ArithmeticException: / by zero
+    at Main.main(Main.java:5)</code></pre>
+    </div>
+    <p>This code is syntactically correct — it compiles fine. The problem only appears once Java actually tries to divide by zero.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">A recipe that reads perfectly, until you open the fridge</span></div></div>
+      <p class="ac-story">A recipe can be spelled perfectly and every step can make sense. But halfway through cooking you reach &ldquo;add two eggs&rdquo; and the fridge is empty. Nobody could have spotted that by just reading the recipe. Only <em>cooking</em> it revealed the problem.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">A perfectly written recipe</span><span class="ac-arrow">→</span><span class="ac-java">Code that compiles fine</span></div><div class="ac-row"><span class="ac-real">Actually cooking it</span><span class="ac-arrow">→</span><span class="ac-java">Running the program</span></div><div class="ac-row"><span class="ac-real">The empty fridge</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>5 / 0</code> or a missing file = an exception</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 03 -->
+  <section class="sec" id="e03">
+    <span class="sec-num">03</span>
+    <h2>The error and exception hierarchy</h2>
+    <p class="lede"><code class="inline">Throwable</code> is the root of the whole family — everything that can be thrown and caught descends from it. Click each box below.</p>
+    <div class="hierarchy">
+      <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg">
+        <path class="hline" d="M 340 66 L 340 95 L 170 95 L 170 128"/>
+        <path class="hline" d="M 340 66 L 340 95 L 500 95 L 500 128"/>
+        <path class="hline" d="M 500 174 L 500 203 L 400 203 L 400 236"/>
+        <path class="hline" d="M 500 174 L 500 203 L 610 203 L 610 236"/>
+
+        <g class="hnode" data-node="throwable">
+          <rect x="270" y="20" width="140" height="46"></rect>
+          <text x="340" y="48" text-anchor="middle">Throwable</text>
+        </g>
+
+        <g class="hnode" data-node="error">
+          <rect x="90" y="128" width="160" height="46"></rect>
+          <text x="170" y="150" text-anchor="middle">Error</text>
+          <text x="170" y="164" text-anchor="middle" class="sub">JVM / system problems</text>
+        </g>
+
+        <g class="hnode" data-node="exception">
+          <rect x="410" y="128" width="180" height="46"></rect>
+          <text x="500" y="150" text-anchor="middle">Exception</text>
+          <text x="500" y="164" text-anchor="middle" class="sub">program-level problems</text>
+        </g>
+
+        <g class="hnode" data-node="checked">
+          <rect x="310" y="236" width="180" height="50"></rect>
+          <text x="400" y="258" text-anchor="middle">Checked</text>
+          <text x="400" y="273" text-anchor="middle" class="sub">compiler-checked</text>
+        </g>
+
+        <g class="hnode" data-node="unchecked">
+          <rect x="510" y="236" width="200" height="50"></rect>
+          <text x="610" y="258" text-anchor="middle">Unchecked</text>
+          <text x="610" y="273" text-anchor="middle" class="sub">RuntimeException</text>
+        </g>
+      </svg>
+      <div class="hierarchy-legend">
+        <div class="hierarchy-chip" data-node="throwable">Throwable</div>
+        <div class="hierarchy-chip" data-node="error">Error</div>
+        <div class="hierarchy-chip" data-node="exception">Exception</div>
+        <div class="hierarchy-chip" data-node="checked">Checked</div>
+        <div class="hierarchy-chip" data-node="unchecked">Unchecked</div>
+      </div>
+      <div class="hierarchy-desc" id="hierarchyDesc">Click a box above to see what it means.</div>
+    </div>
+    <p>The hierarchy splits into two branches: <strong>Error</strong> (usually not something your code should try to handle) and <strong>Exception</strong> (which splits again into <strong>checked</strong> and <strong>unchecked</strong> — the distinction this chapter spends the most time on).</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Everything that can go wrong at school</span></div></div>
+      <p class="ac-story">Imagine one big list called <strong>&ldquo;Things that can go wrong at school.&rdquo;</strong> It splits into two groups. Some problems are way beyond your control, like a city-wide power cut. Others are things you can plan for, like forgetting your homework or missing the bus. Java sorts its problems the same way.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Anything that can go wrong at school</span><span class="ac-arrow">→</span><span class="ac-java">Throwable</span></div><div class="ac-row"><span class="ac-real">City-wide power cut (you can&rsquo;t fix it)</span><span class="ac-arrow">→</span><span class="ac-java">Error</span></div><div class="ac-row"><span class="ac-real">Forgot homework, missed the bus (you can plan for it)</span><span class="ac-arrow">→</span><span class="ac-java">Exception</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 04 -->
+  <section class="sec" id="e04">
+    <span class="sec-num">04</span>
+    <h2>Unchecked exceptions</h2>
+    <p class="lede"><strong>Unchecked exceptions</strong> mostly happen because of mistakes the programmer made. They're <em>not</em> checked by the compiler — only discovered at runtime. These are also called <strong>runtime exceptions</strong>.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        int[] arr = {1, 2, 3, 4};
+        System.out.println(arr[6]);
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index 6 out of bounds for length 4
+    at Main.main(Main.java:5)</code></pre>
+    </div>
+    <p>The code compiles perfectly — the array index is simply out of range, and Java only discovers that while running.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Tripping over your own shoelaces</span></div></div>
+      <p class="ac-story">Nobody makes you fill in a form before walking down the corridor. But if you leave your laces untied and trip, that was a slip in <em>your own</em> steps. Unchecked exceptions are like that: they come from careless code (like asking for item #6 in a list of 4), and the compiler doesn&rsquo;t warn you in advance.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Untied shoelaces</span><span class="ac-arrow">→</span><span class="ac-java">Careless code, e.g. <code style='background:none;border:0;padding:0;color:inherit'>arr[6]</code> on a 4-item array</span></div><div class="ac-row"><span class="ac-real">Tripping</span><span class="ac-arrow">→</span><span class="ac-java">ArrayIndexOutOfBoundsException</span></div><div class="ac-row"><span class="ac-real">No form needed beforehand</span><span class="ac-arrow">→</span><span class="ac-java">No <code style='background:none;border:0;padding:0;color:inherit'>try/catch</code> required by the compiler</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 05 -->
+  <section class="sec" id="e05">
+    <span class="sec-num">05</span>
+    <h2>Checked exceptions</h2>
+    <p class="lede"><strong>Checked exceptions</strong> are verified by the compiler <em>before the program runs</em>. If your code might throw one, you must either catch it or declare it with <code class="inline">throws</code>, or it won&rsquo;t compile. They usually come from things outside your program&rsquo;s control: files, networks, databases, threads.</p>
+        <h3>The checked exceptions you&rsquo;ll meet most</h3>
+    <div class="filter-row" id="catFilter"><button class="filter-chip active" data-cat="all">All</button><button class="filter-chip" data-cat="File &amp; I/O">File &amp; I/O</button><button class="filter-chip" data-cat="Network">Network</button><button class="filter-chip" data-cat="Threads">Threads</button><button class="filter-chip" data-cat="Database">Database</button><button class="filter-chip" data-cat="Reflection">Reflection</button><button class="filter-chip" data-cat="Data &amp; other">Data &amp; other</button></div>
+    <table class="ref" id="checkedTable">
+      <thead><tr><th style="width:44%">Exception</th><th>When it happens</th></tr></thead>
+      <tbody>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>IOException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>Any input/output failure. Parent of most file and network exceptions below.</td></tr>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>FileNotFoundException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>The file you tried to open doesn&rsquo;t exist or can&rsquo;t be opened.</td></tr>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>EOFException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>Hit the end of a file or stream while still expecting more data.</td></tr>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>UnsupportedEncodingException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>Asked for a text encoding Java doesn&rsquo;t know.</td></tr>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>NotSerializableException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>Tried to save an object whose class isn&rsquo;t <code>Serializable</code>.</td></tr>
+<tr data-cat="File &amp; I/O"><td class="exc-cell"><code>NoSuchFileException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.nio.file</span></td><td>A <code>Path</code> you used with <code>Files</code> doesn&rsquo;t exist.</td></tr>
+<tr data-cat="Network"><td class="exc-cell"><code>MalformedURLException</code><span class="pkg-sub"><span class="cat-tag">Network</span> · java.net</span></td><td>The URL text is invalid, like <code>&quot;htp:/oops&quot;</code>.</td></tr>
+<tr data-cat="Network"><td class="exc-cell"><code>UnknownHostException</code><span class="pkg-sub"><span class="cat-tag">Network</span> · java.net</span></td><td>The website or host name can&rsquo;t be found.</td></tr>
+<tr data-cat="Network"><td class="exc-cell"><code>ConnectException</code><span class="pkg-sub"><span class="cat-tag">Network</span> · java.net</span></td><td>The connection was refused by the other side.</td></tr>
+<tr data-cat="Network"><td class="exc-cell"><code>SocketTimeoutException</code><span class="pkg-sub"><span class="cat-tag">Network</span> · java.net</span></td><td>The connection or read took too long.</td></tr>
+<tr data-cat="Network"><td class="exc-cell"><code>URISyntaxException</code><span class="pkg-sub"><span class="cat-tag">Network</span> · java.net</span></td><td>A string isn&rsquo;t a valid URI.</td></tr>
+<tr data-cat="Threads"><td class="exc-cell"><code>InterruptedException</code><span class="pkg-sub"><span class="cat-tag">Threads</span> · java.lang</span></td><td>A thread that was sleeping or waiting got interrupted, e.g. <code>Thread.sleep()</code>.</td></tr>
+<tr data-cat="Threads"><td class="exc-cell"><code>ExecutionException</code><span class="pkg-sub"><span class="cat-tag">Threads</span> · java.util.concurrent</span></td><td>A background task you were waiting on failed.</td></tr>
+<tr data-cat="Threads"><td class="exc-cell"><code>TimeoutException</code><span class="pkg-sub"><span class="cat-tag">Threads</span> · java.util.concurrent</span></td><td>You waited for a task and it didn&rsquo;t finish in time.</td></tr>
+<tr data-cat="Database"><td class="exc-cell"><code>SQLException</code><span class="pkg-sub"><span class="cat-tag">Database</span> · java.sql</span></td><td>Any database problem: bad query, lost connection, wrong password.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>ClassNotFoundException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang</span></td><td>A class named in a string can&rsquo;t be found at runtime.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>InstantiationException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang</span></td><td>Tried to create an object of an abstract class or interface by reflection.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>IllegalAccessException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang</span></td><td>Reflection tried to touch something it isn&rsquo;t allowed to, like a private member.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>NoSuchMethodException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang</span></td><td>A method named in a string doesn&rsquo;t exist.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>NoSuchFieldException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang</span></td><td>A field named in a string doesn&rsquo;t exist.</td></tr>
+<tr data-cat="Reflection"><td class="exc-cell"><code>InvocationTargetException</code><span class="pkg-sub"><span class="cat-tag">Reflection</span> · java.lang.reflect</span></td><td>A method called through reflection itself threw an exception.</td></tr>
+<tr data-cat="Data &amp; other"><td class="exc-cell"><code>ParseException</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.text</span></td><td>Text couldn&rsquo;t be parsed into a date or number format.</td></tr>
+<tr data-cat="Data &amp; other"><td class="exc-cell"><code>CloneNotSupportedException</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.lang</span></td><td>Called <code>clone()</code> on an object whose class isn&rsquo;t <code>Cloneable</code>.</td></tr>
+<tr data-cat="Data &amp; other"><td class="exc-cell"><code>NoSuchAlgorithmException</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.security</span></td><td>Asked for an encryption or hashing algorithm Java doesn&rsquo;t have.</td></tr>
+<tr data-cat="Data &amp; other"><td class="exc-cell"><code>Exception (and your own subclasses)</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.lang</span></td><td>Any class that extends <code>Exception</code> directly, including ones you write yourself.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">
+      <div class="callout-label">How to spot a checked exception</div>
+      <p>Look at its parent. If it extends <code class="inline">Exception</code> but <strong>not</strong> <code class="inline">RuntimeException</code>, it&rsquo;s checked. That&rsquo;s the whole rule, and it&rsquo;s why the table above can never be &ldquo;complete&rdquo;: every library, and every class you write yourself, can add more.</p>
+    </div>
+    <div class="callout warn">
+      <div class="callout-label">Common trap</div>
+      <p><code class="inline">ArithmeticException</code>, <code class="inline">ArrayIndexOutOfBoundsException</code>, <code class="inline">NullPointerException</code>, <code class="inline">NumberFormatException</code> and <code class="inline">IllegalArgumentException</code> all <em>sound</em> like things you&rsquo;d be forced to handle, but they&rsquo;re <strong>unchecked</strong>. They aren&rsquo;t in this table.</p>
+    </div>
+    <h3>What &ldquo;the compiler forces you&rdquo; looks like</h3>
+    <p><code class="inline">Thread.sleep()</code> can throw the checked <code class="inline">InterruptedException</code>. Ignore it and the program won&rsquo;t even compile:</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        Thread.sleep(1000);
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Main.java:3: error: unreported exception InterruptedException; must be caught or declared to be thrown
+        Thread.sleep(1000);
+                    ^</code></pre>
+    </div>
+    <p>Two ways to satisfy the compiler: catch it, or declare it with <code class="inline">throws</code>.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    // Option 1: catch it
+    static void pause() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("Interrupted!");
+        }
+    }
+
+    // Option 2: pass the responsibility to whoever calls us
+    public static void main(String[] args) throws InterruptedException {
+        pause();
+        Thread.sleep(500);
+        System.out.println("Done");
+    }
+}</code></pre>
+    </div>
+
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">The school-trip permission slip</span></div></div>
+      <p class="ac-story">Before the bus leaves, the teacher checks every student for a signed permission slip. No slip, no seat on the bus. The school <em>knows</em> trips can have risks (a missing file, a lost connection), so it forces you to have a plan <strong>before</strong> you go. That is exactly what a checked exception is.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Teacher checking slips at the bus door</span><span class="ac-arrow">→</span><span class="ac-java">The Java compiler</span></div><div class="ac-row"><span class="ac-real">The signed slip</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>try/catch</code> or <code style='background:none;border:0;padding:0;color:inherit'>throws</code></span></div><div class="ac-row"><span class="ac-real">Not allowed on the bus</span><span class="ac-arrow">→</span><span class="ac-java">Code won&rsquo;t compile</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 06 -->
+  <section class="sec" id="e06">
+    <span class="sec-num">06</span>
+    <h2>Checked vs. unchecked, side by side</h2>
+    <table class="ref">
+      <thead><tr><th>Checked</th><th>Unchecked (RuntimeException)</th></tr></thead>
+      <tbody>
+        <tr><td>Checked by the compiler at compile-time</td><td>Only discovered at run-time</td></tr>
+        <tr><td>Must be caught or declared with <code>throws</code></td><td>No such requirement</td></tr>
+        <tr><td>Usually environmental (files, I/O, network)</td><td>Usually programming mistakes</td></tr>
+        <tr><td><code>FileNotFoundException</code></td><td><code>ArithmeticException</code>, <code>ArrayIndexOutOfBoundsException</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 07 -->
+  <section class="sec" id="e07">
+    <span class="sec-num">07</span>
+    <h2>Handling exceptions: try / catch</h2>
+    <p class="lede">Java uses a <code class="inline">try...catch</code> block to handle exceptions.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Syntax</span><button class="copy-btn">Copy</button></div>
+      <pre><code>try {
+    // body of try block
+} catch (ExceptionType variableName) {
+    // body of catch block
+}</code></pre>
+    </div>
+    <p>The <strong>try</strong> block holds code that might throw an exception. The <strong>catch</strong> block runs only if that exception actually occurs.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        try {
+            int num1 = 5;
+            int num2 = 0;
+            int result = num1 / num2;
+            System.out.println(result);
+        } catch (ArithmeticException e) {
+            System.out.println("Denominator can't be 0");
+        }
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Denominator can't be 0</code></pre>
+    </div>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">First aid during PE class</span></div></div>
+      <p class="ac-story">During PE everyone runs around, which is the risky part. The nurse sits quietly and does <em>nothing</em> until somebody actually gets hurt. Then she steps in and treats that injury.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">PE class (the risky part)</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>try</code> block</span></div><div class="ac-row"><span class="ac-real">A scraped knee</span><span class="ac-arrow">→</span><span class="ac-java">An exception is thrown</span></div><div class="ac-row"><span class="ac-real">The nurse treating it</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>catch</code> block</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 08 -->
+  <section class="sec" id="e08">
+    <span class="sec-num">08</span>
+    <h2>Handling multiple exceptions</h2>
+    <p class="lede">Java lets you stack multiple <code class="inline">catch</code> blocks to handle different exception types differently.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Syntax</span><button class="copy-btn">Copy</button></div>
+      <pre><code>try {
+    // body of try block
+} catch (ExceptionType variableName) {
+    // body of catch block
+} catch (ExceptionType variableName) {
+    // body of catch block
+}</code></pre>
+    </div>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        try {
+            int[] arr = {1, 2, 3, 4};
+            System.out.println(arr[6]);
+        } catch (ArithmeticException e) {
+            System.out.println("Invalid value");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Array index out of range");
+        }
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Array index out of range</code></pre>
+    </div>
+    <p>Java checks the <code class="inline">catch</code> blocks in order and runs the first one whose exception type matches what was actually thrown.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">A nurse with a different cure for each injury</span></div></div>
+      <p class="ac-story">Scraped knee? Bandage. Sprained ankle? Ice pack. <em>Anything else?</em> Call the parents. The nurse checks the specific injuries first and the &ldquo;anything else&rdquo; rule last. If she checked &ldquo;anything else&rdquo; first, the specific treatments would never get used. Order matters in <code class="inline">catch</code> blocks too.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Scraped knee → bandage</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>catch (ArithmeticException e)</code></span></div><div class="ac-row"><span class="ac-real">Sprained ankle → ice pack</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>catch (ArrayIndexOutOfBoundsException e)</code></span></div><div class="ac-row"><span class="ac-real">&ldquo;Anything else&rdquo; → call parents (goes last)</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>catch (Exception e)</code></span></div></div>
+    </aside>
+  </section>
+
+  <!-- 09 -->
+  <section class="sec" id="e09">
+    <span class="sec-num">09</span>
+    <h2>The <code class="inline">finally</code> block</h2>
+    <p class="lede">Beyond <code class="inline">try</code> and <code class="inline">catch</code>, Java offers a <code class="inline">finally</code> block — code that runs <strong>no matter what</strong>, whether an exception occurred or not.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Syntax</span><button class="copy-btn">Copy</button></div>
+      <pre><code>try {
+    // body of try block
+} catch (ExceptionType variableName) {
+    // body of catch block
+} finally {
+    // body of finally block
+}</code></pre>
+    </div>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        try {
+            int num1 = 5;
+            int num2 = 0;
+            int result = num1 / num2;
+            System.out.println(result);
+        } catch (ArithmeticException e) {
+            System.out.println("Denominator can't be 0");
+        } finally {
+            System.out.println("Execution completed");
+        }
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Denominator can't be 0
+Execution completed</code></pre>
+    </div>
+    <p>The division throws <code class="inline">ArithmeticException</code>, which <code class="inline">catch</code> handles — and then <code class="inline">finally</code> still runs afterward, regardless.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Returning the equipment after PE</span></div></div>
+      <p class="ac-story">When PE ends, <em>everyone</em> puts the balls back and lines up for attendance. Doesn&rsquo;t matter if you played perfectly or got hurt and visited the nurse, the routine happens either way.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Return equipment + attendance</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>finally</code> block</span></div><div class="ac-row"><span class="ac-real">Whether you got hurt or not</span><span class="ac-arrow">→</span><span class="ac-java">Whether an exception happened or not</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 10 -->
+  <section class="sec" id="e10">
+    <span class="sec-num">10</span>
+    <h2>Raising exceptions with <code class="inline">throw</code></h2>
+    <p class="lede">You can explicitly trigger an exception yourself using the <code class="inline">throw</code> keyword.</p>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    public static void main(String[] args) {
+        try {
+            throw new ArithmeticException("Denominator can't be 0");
+        } catch (ArithmeticException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>Denominator can't be 0</code></pre>
+    </div>
+    <p>The instance of the exception, <code class="inline">e</code>, has a <code class="inline">getMessage()</code> method that returns the exception's message as a <code class="inline">String</code>.</p>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Pulling the fire alarm</span></div></div>
+      <p class="ac-story">You don&rsquo;t wait for fire to find you. The moment you see smoke, you deliberately pull the alarm lever and everyone is alerted. <code class="inline">throw</code> is you pulling the lever on purpose.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Spotting smoke</span><span class="ac-arrow">→</span><span class="ac-java">Your <code style='background:none;border:0;padding:0;color:inherit'>if</code> check finds a bad value</span></div><div class="ac-row"><span class="ac-real">Pulling the lever</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>throw new …Exception(&quot;…&quot;)</code></span></div><div class="ac-row"><span class="ac-real">The message on the alarm panel</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>e.getMessage()</code></span></div></div>
+    </aside>
+  </section>
+
+  <!-- 11 -->
+  <section class="sec" id="e11">
+    <span class="sec-num">11</span>
+    <h2>The <code class="inline">throws</code> keyword</h2>
+    <p class="lede"><code class="inline">throws</code> (with an "s") is different from <code class="inline">throw</code> — it goes in a method's signature to declare which exception types that method <em>might</em> throw.</p>
+    <div class="codeblock small" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Syntax</span><button class="copy-btn">Copy</button></div>
+      <pre><code>returnType methodName() throws ExceptionType1, ExceptionType2, ... {
+    // body of the method
+}</code></pre>
+    </div>
+    <div class="codeblock" data-lang="java">
+      <div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div>
+      <pre><code>class Main {
+    static void divideByZero() throws ArithmeticException {
+        throw new ArithmeticException("Division with zero");
+    }
+
+    public static void main(String[] args) {
+        try {
+            divideByZero();
+        } catch (ArithmeticException e) {
+            System.out.println(e);
+        }
+    }
+}</code></pre>
+    </div>
+    <div class="codeblock out small" data-lang="text">
+      <div class="cb-head"><span class="cb-lang">Output</span></div>
+      <pre><code>java.lang.ArithmeticException: Division with zero</code></pre>
+    </div>
+    <p><code class="inline">divideByZero()</code> declares, using <code class="inline">throws</code>, that it might throw an <code class="inline">ArithmeticException</code> — warning anyone who calls it ahead of time.</p>
+    <div class="callout warn">
+      <div class="callout-label">Don't mix these up</div>
+      <p><code class="inline">throw</code> actually triggers one exception, right now, inside a method body. <code class="inline">throws</code> just <em>declares</em>, in the method header, what might happen — it doesn't trigger anything by itself.</p>
+    </div>
+    <aside class="analogy-card">
+      <div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">The &ldquo;Wet Floor&rdquo; sign</span></div></div>
+      <p class="ac-story">A yellow wet-floor sign doesn&rsquo;t make anyone slip, and it doesn&rsquo;t clean the floor. It just <em>warns</em> everyone who walks past that a slip is possible. <code class="inline">throws</code> is that sign, stuck on the front of a method.</p>
+      <div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">The sign itself</span><span class="ac-arrow">→</span><span class="ac-java"><code style='background:none;border:0;padding:0;color:inherit'>throws</code> in the method header</span></div><div class="ac-row"><span class="ac-real">Someone actually slipping</span><span class="ac-arrow">→</span><span class="ac-java">The exception really being thrown</span></div><div class="ac-row"><span class="ac-real">People walking past, who must be careful</span><span class="ac-arrow">→</span><span class="ac-java">Callers who must <code style='background:none;border:0;padding:0;color:inherit'>catch</code> it</span></div></div>
+    </aside>
+  </section>
+
+  <!-- 12 -->
+  <section class="sec" id="e12">
+    <span class="sec-num">12</span>
+    <h2>Putting it all together</h2>
+    <p class="lede">A single flow connects everything in this chapter:</p>
+    <div class="diagram-box">     Code runs
+          │
+          ↓
+   Something goes wrong
+          │
+          ↓
+   Java throws an exception ← or you throw one yourself with `throw`
+          │
+          ↓
+     try block catches it
+          │
+          ↓
+     catch block runs    (first matching type, in order)
+          │
+          ↓
+    finally block runs   (always, no matter what)
+          │
+          ↓
+    Program continues safely</div>
+    <p>And a method can warn its callers in advance with <code class="inline">throws</code>, so the exception doesn't come as a surprise at the call site.</p>
+  </section>
+
+  <!-- 13 -->
+  <section class="sec" id="e13">
+    <span class="sec-num">13</span>
+    <h2>Common mistakes</h2>
+    <ul class="checklist">
+      <li><span class="x">✕</span> <strong>Confusing <code class="inline">throw</code> with <code class="inline">throws</code>.</strong> <code class="inline">throw</code> triggers an exception in a method body; <code class="inline">throws</code> only declares one in a method's signature.</li>
+      <li><span class="x">✕</span> <strong>Assuming every exception needs a <code class="inline">throws</code> declaration.</strong> Only checked exceptions force this — unchecked (runtime) exceptions don't require it.</li>
+      <li><span class="x">✕</span> <strong>Thinking <code class="inline">finally</code> is optional "just in case" code.</strong> It runs whether an exception happened or not — it's not conditional on the <code class="inline">catch</code> firing.</li>
+      <li><span class="x">✕</span> <strong>Writing catch blocks in the wrong order.</strong> Java checks them top to bottom and uses the first type that matches, so a broader type listed first can swallow a more specific one that never gets reached.</li>
+    </ul>
+  </section>
+
+  <!-- 14 : CHALLENGES -->
+  <section class="sec" id="e14">
+    <span class="sec-num">14</span>
+    <h2>Try it: eight quick challenges</h2>
+    <p class="lede">Work each one out yourself before revealing the answer.</p>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Error or exception?</span> Identify the problem</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>class Main {
+    public static void main(String[] args) {
+        System.out.println("Hi")
+    }
+}</code></pre></div>
+        <p>A semicolon is missing after <code class="inline">println("Hi")</code>. Is this an error or an exception?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p>An <strong>error</strong> — a syntax error. The compiler catches this before the program ever runs; it's not something the program discovers at runtime.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Checked or unchecked?</span> Classify it</div>
+      <div class="challenge-body">
+        <p><code class="inline">FileNotFoundException</code> — checked or unchecked?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><strong>Checked</strong> — the compiler forces you to catch it or declare it with <code class="inline">throws</code> before your code will compile.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the output</span> Trace the try/catch</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>try {
+    int[] nums = {1, 2, 3};
+    System.out.println(nums[1] / 0);
+} catch (ArithmeticException e) {
+    System.out.println("Can't divide by zero");
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("Bad index");
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">Can't divide by zero</code> — <code class="inline">nums[1]</code> is a valid index (<code class="inline">2</code>), but dividing it by <code class="inline">0</code> throws <code class="inline">ArithmeticException</code>, which the first matching <code class="inline">catch</code> handles.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Guess the output</span> finally always runs</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>try {
+    System.out.println("A");
+} finally {
+    System.out.println("B");
+}</code></pre></div>
+        <p>There's no exception here at all. What prints?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">A</code> then <code class="inline">B</code> — <code class="inline">finally</code> runs whether or not an exception occurred, so it still executes after a clean <code class="inline">try</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">throw or throws?</span> Fill the blank</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>static void check(int age) ________ IllegalStateException {
+    if (age < 0) {
+        ________ new IllegalStateException("Age can't be negative");
+    }
+}</code></pre></div>
+        <p>Which keyword goes in each blank?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p>The method signature needs <code class="inline">throws</code> (declaring what might happen); the body needs <code class="inline">throw</code> (actually triggering it).</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Spot the mistake</span> Catch block order</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>try {
+    int[] arr = {1, 2, 3};
+    System.out.println(arr[10]);
+} catch (Exception e) {
+    System.out.println("Generic problem");
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("Index out of range");
+}</code></pre></div>
+        <p>This won't compile. Why?</p>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">Exception</code> is a more general type than <code class="inline">ArrayIndexOutOfBoundsException</code>, and it's listed first — the compiler rejects this because the second, more specific <code class="inline">catch</code> could never be reached. More specific exception types must come before more general ones.</p></div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Write a safe divider</div>
+      <div class="challenge-body">
+        <p>Write a method <code class="inline">safeDivide(int a, int b)</code> that divides <code class="inline">a</code> by <code class="inline">b</code> and prints the result, but prints <code class="inline">"Cannot divide by zero"</code> instead of crashing when <code class="inline">b</code> is <code class="inline">0</code>.</p>
+        <button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button>
+        <div class="answer-panel">
+          <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>static void safeDivide(int a, int b) {
+    try {
+        System.out.println(a / b);
+    } catch (ArithmeticException e) {
+        System.out.println("Cannot divide by zero");
+    }
+}</code></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <div class="challenge-head"><span class="challenge-tag">Predict the output</span> Exception message</div>
+      <div class="challenge-body">
+        <div class="codeblock small" data-lang="java"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>try {
+    throw new ArithmeticException("Out of range");
+} catch (ArithmeticException e) {
+    System.out.println(e.getMessage());
+}</code></pre></div>
+        <button class="reveal-btn">Reveal answer <span class="chev">▾</span></button>
+        <div class="answer-panel"><p><code class="inline">Out of range</code> — <code class="inline">getMessage()</code> returns the exact text passed to the exception's constructor.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 : SELF TEST -->
+  <section class="sec" id="e15">
+    <span class="sec-num">15</span>
+    <h2>Final self-test</h2>
+    <p class="lede">Try answering these without scrolling back up.</p>
+    <div class="selftest-bar">
+      <span id="selftestCount">0 / 6 answered</span>
+      <div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div>
+    </div>
+    <div id="selftestList"></div>
+  </section>
+
+  <!-- 16 : RECAP -->
+  <section class="sec" id="e16">
+    <span class="sec-num">16</span>
+    <h2>Chapter recap</h2>
+
+    <div class="recap-grid">
+      <div class="recap-card"><h4>Error</h4><p>Breaks the language's own rules — usually a syntax error, caught before the program runs.</p></div>
+      <div class="recap-card"><h4>Exception</h4><p>A problem detected while the program is executing, not while it's compiling.</p></div>
+      <div class="recap-card"><h4>Unchecked</h4><p>Runtime exceptions from programming mistakes. No compiler requirement to handle them.</p></div>
+      <div class="recap-card"><h4>Checked</h4><p>Compiler-enforced. Must be caught or declared with <code class="inline">throws</code>.</p></div>
+      <div class="recap-card"><h4>try / catch</h4><p>Risky code goes in <code class="inline">try</code>; the response to a specific exception type goes in <code class="inline">catch</code>.</p></div>
+      <div class="recap-card"><h4>finally</h4><p>Runs no matter what — exception or not.</p></div>
+      <div class="recap-card"><h4>throw</h4><p>Triggers one specific exception, right now, in a method body.</p></div>
+      <div class="recap-card"><h4>throws</h4><p>Declares, in a method's signature, what it might throw — a warning for callers.</p></div>
+    </div>
+
+    <h3>Vocabulary, at a glance</h3>
+    <table class="ref">
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>Throwable</code></td><td>Root class of the whole hierarchy — anything throwable/catchable.</td></tr>
+        <tr><td><code>Error</code></td><td>Serious, usually unrecoverable JVM/system-level problems.</td></tr>
+        <tr><td><code>Exception</code></td><td>Program-level problems the code can often anticipate and recover from.</td></tr>
+        <tr><td>Checked exception</td><td>Verified by the compiler at compile-time; must be handled or declared.</td></tr>
+        <tr><td>Unchecked exception</td><td>A <code>RuntimeException</code>; only discovered when the program runs.</td></tr>
+        <tr><td><code>getMessage()</code></td><td>Returns an exception instance's message as a <code>String</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout">
+      <div class="callout-label">⭐ The easiest sentence to remember</div>
+      <p><strong>Errors are caught by the compiler before your code runs; exceptions are caught by <code class="inline">try</code>/<code class="inline">catch</code> while it's running — and <code class="inline">throw</code> triggers one, while <code class="inline">throws</code> just warns that one might come.</strong></p>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fn">Java Notes</span>
+    Errors and Exceptions
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','private','protected','this','extends','try','catch','finally','throw','throws']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{
+    el.innerHTML = highlight(el.textContent);
+  });
+
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }).catch(()=>{ btn.textContent = 'Select & copy'; });
+    });
+  });
+
+  /* ---------------- Hierarchy flowchart interactive ---------------- */
+  const hDescs = {
+    throwable: "<strong>Throwable</strong> — the root of Java's error hierarchy. Every error and exception, everything that can be thrown and caught, descends from this one class.",
+    error: "<strong>Error</strong> — serious problems usually outside the programmer's control: running out of memory, a stack overflow, JVM failures. Rarely caught, rarely recoverable.",
+    exception: "<strong>Exception</strong> — problems during execution that the program can often anticipate and recover from. This is the branch you'll handle most often.",
+    checked: "<strong>Checked exceptions</strong> — verified by the compiler at compile-time. If a method might throw one, you must catch it or declare it with <code class=\"inline\">throws</code>. Example: <code class=\"inline\">FileNotFoundException</code>.",
+    unchecked: "<strong>Unchecked exceptions (RuntimeException)</strong> — not checked at compile-time, usually caused by programming mistakes. Examples: <code class=\"inline\">ArithmeticException</code>, <code class=\"inline\">ArrayIndexOutOfBoundsException</code>."
+  };
+  const hDescEl = document.getElementById('hierarchyDesc');
+  function setHierarchy(node){
+    document.querySelectorAll('.hnode, .hierarchy-chip').forEach(el=>{
+      el.classList.toggle('active', el.dataset.node === node);
+    });
+    hDescEl.innerHTML = node ? hDescs[node] : 'Click a box above to see what it means.';
+  }
+  document.querySelectorAll('.hnode, .hierarchy-chip').forEach(el=>{
+    el.addEventListener('click', ()=> setHierarchy(el.dataset.node));
+  });
+
+
+  /* ---------------- checked-exception filter ---------------- */
+  const catChips = document.querySelectorAll('#catFilter .filter-chip');
+  const catRows = document.querySelectorAll('#checkedTable tbody tr');
+  catChips.forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      catChips.forEach(c=>c.classList.toggle('active', c===chip));
+      const cat = chip.dataset.cat;
+      catRows.forEach(r=> r.classList.toggle('hide', cat!=='all' && r.dataset.cat!==cat));
+    });
+  });
+
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = open ? 'Hide answer ' : btn.firstChild.textContent.replace('Hide answer ','Reveal answer ');
+    });
+  });
+
+  const selfTestData = [
+    {q:"What's the difference between an error and an exception?", a:"An error (like a syntax error) is usually caught by the compiler before the program runs. An exception is a problem detected while the program is executing."},
+    {q:"What is the root class of Java's error/exception hierarchy?", a:"<code class=\"inline\">Throwable</code>."},
+    {q:"What's the key difference between checked and unchecked exceptions?", a:"Checked exceptions are verified by the compiler at compile-time and must be caught or declared with throws. Unchecked exceptions (RuntimeExceptions) are only discovered at run-time, with no such requirement."},
+    {q:"When does a finally block run?", a:"Always — whether or not an exception occurred inside the try block."},
+    {q:"What's the difference between throw and throws?", a:"throw actually triggers a specific exception inside a method body. throws is written in a method's signature to declare which exception types it might throw."},
+    {q:"What does an exception instance's getMessage() method return?", a:"The exception's message, as a String."}
+  ];
+  const listEl = document.getElementById('selftestList');
+  const doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div');
+    card.className = 'qcard';
+    card.innerHTML = `
+      <div class="qcard-head">
+        <span><span class="qn">Q${i+1}</span>${item.q}</span>
+        <span class="check">✓</span>
+      </div>
+      <div class="qcard-answer"><p>${item.a}</p></div>
+    `;
+    const head = card.querySelector('.qcard-head');
+    const ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){
+        doneSet.add(i);
+        card.classList.add('done');
+        updateSelftest();
+      }
+    });
+    listEl.appendChild(card);
+  });
+  function updateSelftest(){
+    document.getElementById('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    document.getElementById('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
