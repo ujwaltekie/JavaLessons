@@ -364,6 +364,10 @@
     .compare{ grid-template-columns:1fr; }
     .flow-box{ font-size:11.5px; }
   }
+  .tbl-wrap{ overflow-x:auto; margin:14px 0 20px; }
+  .tbl-wrap table.ref{ margin:0; }
+  table.ref td code{ word-break:break-word; }
+  @media (max-width:600px){ table.ref th, table.ref td{ padding:8px 9px; } }
 </style>
 </head>
 <body>
@@ -540,7 +544,7 @@ class Main (
     <p class="lede"><strong>Checked exceptions</strong> are verified by the compiler <em>before the program runs</em>. If your code might throw one, you must either catch it or declare it with <code class="inline">throws</code>, or it won&rsquo;t compile. They usually come from things outside your program&rsquo;s control: files, networks, databases, threads.</p>
         <h3>The checked exceptions you&rsquo;ll meet most</h3>
     <div class="filter-row" id="catFilter"><button class="filter-chip active" data-cat="all">All</button><button class="filter-chip" data-cat="File &amp; I/O">File &amp; I/O</button><button class="filter-chip" data-cat="Network">Network</button><button class="filter-chip" data-cat="Threads">Threads</button><button class="filter-chip" data-cat="Database">Database</button><button class="filter-chip" data-cat="Reflection">Reflection</button><button class="filter-chip" data-cat="Data &amp; other">Data &amp; other</button></div>
-    <table class="ref" id="checkedTable">
+    <div class="tbl-wrap"><table class="ref" id="checkedTable">
       <thead><tr><th style="width:44%">Exception</th><th>When it happens</th></tr></thead>
       <tbody>
 <tr data-cat="File &amp; I/O"><td class="exc-cell"><code>IOException</code><span class="pkg-sub"><span class="cat-tag">File &amp; I/O</span> · java.io</span></td><td>Any input/output failure. Parent of most file and network exceptions below.</td></tr>
@@ -569,7 +573,7 @@ class Main (
 <tr data-cat="Data &amp; other"><td class="exc-cell"><code>NoSuchAlgorithmException</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.security</span></td><td>Asked for an encryption or hashing algorithm Java doesn&rsquo;t have.</td></tr>
 <tr data-cat="Data &amp; other"><td class="exc-cell"><code>Exception (and your own subclasses)</code><span class="pkg-sub"><span class="cat-tag">Data &amp; other</span> · java.lang</span></td><td>Any class that extends <code>Exception</code> directly, including ones you write yourself.</td></tr>
       </tbody>
-    </table>
+    </table></div>
     <div class="callout">
       <div class="callout-label">How to spot a checked exception</div>
       <p>Look at its parent. If it extends <code class="inline">Exception</code> but <strong>not</strong> <code class="inline">RuntimeException</code>, it&rsquo;s checked. That&rsquo;s the whole rule, and it&rsquo;s why the table above can never be &ldquo;complete&rdquo;: every library, and every class you write yourself, can add more.</p>
@@ -627,7 +631,7 @@ class Main (
   <section class="sec" id="e06">
     <span class="sec-num">06</span>
     <h2>Checked vs. unchecked, side by side</h2>
-    <table class="ref">
+    <div class="tbl-wrap"><table class="ref">
       <thead><tr><th>Checked</th><th>Unchecked (RuntimeException)</th></tr></thead>
       <tbody>
         <tr><td>Checked by the compiler at compile-time</td><td>Only discovered at run-time</td></tr>
@@ -635,7 +639,7 @@ class Main (
         <tr><td>Usually environmental (files, I/O, network)</td><td>Usually programming mistakes</td></tr>
         <tr><td><code>FileNotFoundException</code></td><td><code>ArithmeticException</code>, <code>ArrayIndexOutOfBoundsException</code></td></tr>
       </tbody>
-    </table>
+    </table></div>
   </section>
 
   <!-- 07 -->
@@ -1026,7 +1030,7 @@ Execution completed</code></pre>
     </div>
 
     <h3>Vocabulary, at a glance</h3>
-    <table class="ref">
+    <div class="tbl-wrap"><table class="ref">
       <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
       <tbody>
         <tr><td><code>Throwable</code></td><td>Root class of the whole hierarchy — anything throwable/catchable.</td></tr>
@@ -1036,7 +1040,7 @@ Execution completed</code></pre>
         <tr><td>Unchecked exception</td><td>A <code>RuntimeException</code>; only discovered when the program runs.</td></tr>
         <tr><td><code>getMessage()</code></td><td>Returns an exception instance's message as a <code>String</code>.</td></tr>
       </tbody>
-    </table>
+    </table></div>
 
     <div class="callout">
       <div class="callout-label">⭐ The easiest sentence to remember</div>

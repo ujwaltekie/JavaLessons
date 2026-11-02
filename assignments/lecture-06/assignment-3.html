@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Assignment — Always Close the Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --ok:#2F7D4F;
+    --ok-tint:#E7F3EB;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; text-align:center; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+
+  /* ---------- Analogy cards ---------- */
+  .analogy-card{
+    margin:22px 0 26px; border:1px solid #EBD3AE; border-radius:10px; overflow:hidden;
+    background:#FFFCF6; box-shadow:0 1px 3px rgba(180,83,9,0.07);
+  }
+  .ac-head{
+    display:flex; align-items:center; gap:11px; padding:11px 16px;
+    background:var(--accent-tint); border-bottom:1px solid #EBD3AE;
+  }
+  .ac-icon{
+    width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ac-icon svg{ width:16px; height:16px; }
+  .ac-kicker{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); line-height:1.2; }
+  .ac-title{ display:block; font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:16.5px; line-height:1.3; color:var(--ink); }
+  .ac-story{ margin:0; padding:14px 18px 6px; font-size:15px; }
+  .ac-map{ padding:6px 18px 16px; }
+  .ac-map-label{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:8px 0 7px; }
+  .ac-row{
+    display:grid; grid-template-columns:1fr 22px 1fr; align-items:center; gap:8px;
+    margin-bottom:6px; font-size:13.5px;
+  }
+  .ac-real{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:6px 10px; }
+  .ac-java{ background:var(--code-bg); color:var(--code-ink); border-radius:6px; padding:6px 10px; font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+  .ac-arrow{ text-align:center; color:var(--accent); font-weight:700; }
+  @media (max-width:560px){
+    .ac-row{ grid-template-columns:1fr; gap:3px; }
+    .ac-arrow{ transform:rotate(90deg); height:14px; line-height:14px; }
+  }
+
+  /* ---------- Checked exception table ---------- */
+  .filter-row{ display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 4px; }
+  .filter-chip{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; padding:5px 11px; border-radius:999px;
+    border:1px solid var(--border); background:var(--bg-raised); color:var(--muted); cursor:pointer;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .filter-chip:hover{ border-color:var(--border-strong); }
+  .filter-chip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  table.ref td.pkg{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--faint); white-space:nowrap; }
+  table.ref tr.hide{ display:none; }
+  td.exc-cell{ word-break:break-word; }
+  .pkg-sub{ display:block; margin-top:3px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); }
+  .pkg-sub .cat-tag{ font-family:'Inter',sans-serif; font-size:10px; }
+  .cat-tag{ font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
+
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .codeblock.out pre{ color:#D6A8A2; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:10px 13px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:12.5px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+
+  /* ---------- Hierarchy flowchart ---------- */
+  .hierarchy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 18px 16px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .hierarchy svg{ width:100%; height:auto; display:block; }
+  .hnode rect{
+    fill:var(--code-bg); stroke:#322C26; stroke-width:1.5; rx:8; cursor:pointer;
+    transition:fill var(--dur), stroke var(--dur);
+  }
+  .hnode text{ fill:var(--code-ink); font-family:'JetBrains Mono',monospace; font-size:13px; pointer-events:none; }
+  .hnode text.sub{ fill:#A69C8C; font-size:10.5px; }
+  .hnode:hover rect, .hnode.active rect{ stroke:var(--accent); fill:#2A241F; }
+  .hnode.active text{ fill:var(--accent-tint); }
+  .hline{ stroke:var(--border-strong); stroke-width:1.5; fill:none; }
+  .hierarchy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .hierarchy-chip{
+    font-size:12px; padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+    color:var(--muted); cursor:pointer; transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .hierarchy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .hierarchy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:38px; }
+  .hierarchy-desc strong{ color:var(--ink); }
+
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 320ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+  .answer-panel .verdict{
+    display:inline-block; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    padding:2px 9px; border-radius:4px; margin-bottom:8px;
+  }
+  .answer-panel .verdict.yes{ background:#E4F3E9; color:#2F7D4F; }
+  .answer-panel .verdict.no{ background:var(--warn-tint); color:var(--warn); }
+
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:500px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  .checklist{ list-style:none; margin:14px 0 20px; padding:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+    border-bottom:1px solid var(--border); font-size:14.5px;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .x{
+    flex-shrink:0; width:19px; height:19px; border-radius:50%; margin-top:1px;
+    background:var(--warn-tint); color:var(--warn); font-weight:700; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:27px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:11.5px; }
+  }
+
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0; }
+  .meta-pill{ font-size:12px; font-weight:600; color:var(--muted); background:#F5F1E9; border:1px solid var(--border); border-radius:999px; padding:3px 11px; }
+  .meta-pill.lvl{ background:var(--accent-tint); color:var(--accent); border-color:#EBD3AE; }
+  .topnav{ display:flex; justify-content:space-between; gap:12px; font-size:13.5px; padding-top:26px; }
+  .topnav a{ color:var(--muted); text-decoration:none; }
+  .topnav a:hover{ color:var(--accent); }
+  .concepts{ display:flex; flex-wrap:wrap; gap:7px; margin:0 0 8px; }
+  .concepts code{ font-size:12px; }
+  ol.tasks{ list-style:none; counter-reset:t; margin:12px 0 20px; padding:0; }
+  ol.tasks li{ counter-increment:t; position:relative; padding:12px 14px 12px 50px; margin-bottom:10px; background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); font-size:15px; }
+  ol.tasks li::before{ content:counter(t); position:absolute; left:14px; top:11px; width:24px; height:24px; border-radius:50%; background:var(--accent-tint); color:var(--accent); font-weight:700; font-size:12.5px; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; }
+  .rv-panel{ display:none; border:1px solid #EBD3AE; border-radius:var(--radius); background:#FFFCF6; padding:16px 18px 8px; margin:0 0 20px; }
+  .rv-panel.open{ display:block; }
+  .rv-panel > p{ font-size:14.5px; margin:0 0 10px; }
+  .rv-panel table.ref{ margin-top:4px; }
+  .self-check{ list-style:none; margin:12px 0 0; padding:0; }
+  .self-check li{ display:flex; gap:11px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border); font-size:14.5px; cursor:pointer; }
+  .self-check li:last-child{ border-bottom:none; }
+  .self-check .box{ flex-shrink:0; width:19px; height:19px; border:1.5px solid var(--border-strong); border-radius:5px; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:12px; color:transparent; background:var(--bg-raised); transition:all var(--dur); }
+  .self-check li.on .box{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .self-check li.on span.t{ color:var(--muted); text-decoration:line-through; text-decoration-color:var(--border-strong); }
+  .sc-progress{ font-size:13px; color:var(--muted); margin-top:10px; }
+  .asg-nav{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:8px 0 0; }
+  .asg-nav a{ display:block; text-decoration:none; color:inherit; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-raised); padding:14px 16px; transition:border-color var(--dur), box-shadow var(--dur); }
+  .asg-nav a:hover{ border-color:var(--border-strong); box-shadow:0 4px 16px rgba(34,31,27,0.07); }
+  .asg-nav .dir{ display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); margin-bottom:3px; }
+  .asg-nav .nm{ font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:15.5px; line-height:1.3; }
+  .asg-nav .next{ text-align:right; }
+  .asg-nav .empty{ visibility:hidden; }
+  .back-row{ text-align:center; margin-top:18px; font-size:13.5px; }
+  @media (max-width:560px){ .asg-nav{ grid-template-columns:1fr; } .asg-nav .next{ text-align:left; } }
+  .tbl-wrap{ overflow-x:auto; margin:14px 0 20px; }
+  .tbl-wrap table.ref{ margin:0; }
+  table.ref td code{ word-break:break-word; }
+  @media (max-width:600px){ table.ref th, table.ref td{ padding:8px 9px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-06.html">Read the lesson: Errors and Exceptions</a></nav>
+  <header class="masthead">
+    <p class="kicker">Assignment 3 of 5 · Errors and Exceptions</p>
+    <h1>Assignment — Always Close the Register</h1>
+    <p class="sub">Use finally for the work that must happen whether things go right or wrong.</p>
+    <div class="meta-row"><span class="meta-pill lvl">Medium</span><span class="meta-pill">About 30 min</span><span class="meta-pill">Java</span></div>
+  </header>
+  <hr class="rule" />
+  <section class="sec"><span class="sec-num">01</span><h2>The scenario</h2><p>A teacher opens the class register, looks up a student&rsquo;s mark, and <strong>always closes the register again</strong>, whether the student was found or not. Leaving it open would be a mess. In Java, that &ldquo;always do this at the end&rdquo; job belongs to the <code class="inline">finally</code> block.</p><div class="concepts"><code class="inline">try</code><code class="inline">catch</code><code class="inline">finally</code><code class="inline">order of execution</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Part A: write it</h2><p>Complete <code class="inline">readMark</code>. It must print <code class="inline">Opening register</code> first, then look up the mark, and print <code class="inline">Closing register</code> last <strong>in both cases</strong>.</p><ol class="tasks"><li>Wrap the lookup <code class="inline">marks[index]</code> in a <code class="inline">try</code> block.</li><li>If the index does not exist, catch the exception and print which position was missing.</li><li>Put <code class="inline">Closing register</code> in a <code class="inline">finally</code> block.</li></ol><div class="codeblock "><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>class Main {
+    static void readMark(int[] marks, int index) {
+        System.out.println("Opening register");
+        // TODO: try to print  "Mark: " + marks[index]
+        // TODO: catch ArrayIndexOutOfBoundsException and print
+        //       "No student at position " + index
+        // TODO: finally print "Closing register"
+    }
+
+    public static void main(String[] args) {
+        int[] marks = {72, 88, 95};
+        readMark(marks, 1);
+        System.out.println("---");
+        readMark(marks, 9);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Expected output</span></div><pre><code>Opening register
+Mark: 88
+Closing register
+---
+Opening register
+No student at position 9
+Closing register</code></pre></div><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock "><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>class Main {
+    static void readMark(int[] marks, int index) {
+        System.out.println("Opening register");
+        try {
+            System.out.println("Mark: " + marks[index]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("No student at position " + index);
+        } finally {
+            System.out.println("Closing register");
+        }
+    }
+
+    public static void main(String[] args) {
+        int[] marks = {72, 88, 95};
+        readMark(marks, 1);
+        System.out.println("---");
+        readMark(marks, 9);
+    }
+}</code></pre></div><p>For index <code>1</code> nothing goes wrong, <code>catch</code> is skipped, and <code>finally</code> still runs. For index <code>9</code> the <code>catch</code> runs, then <code>finally</code> runs.</p></div></section><section class="sec"><span class="sec-num">03</span><h2>Part B: trace the flow</h2><p>Without running it, write down every line this program prints. Pay close attention to which lines print for <code class="inline">test(1)</code> and which for <code class="inline">test(2)</code>.</p><div class="codeblock "><div class="cb-head"><span class="cb-lang">Trace.java</span><button class="copy-btn">Copy</button></div><pre><code>class Main {
+    static void test(int n) {
+        try {
+            System.out.println("A" + n);
+            if (n == 2) {
+                throw new IllegalStateException("boom");
+            }
+            System.out.println("B" + n);
+        } catch (IllegalStateException e) {
+            System.out.println("C" + n);
+        } finally {
+            System.out.println("D" + n);
+        }
+        System.out.println("E" + n);
+    }
+
+    public static void main(String[] args) {
+        test(1);
+        test(2);
+    }
+}</code></pre></div><button class="reveal-btn" data-label="Hint">Hint <span class="chev">▾</span></button><div class="rv-panel"><p>Draw two columns, one for each call. For each call, walk the lines in order. When <code>throw</code> runs, jump straight to the matching <code>catch</code>, skipping the rest of the <code>try</code>.</p></div><button class="reveal-btn" data-label="Show output + explanation">Show output + explanation <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Expected output</span></div><pre><code>A1
+B1
+D1
+E1
+A2
+C2
+D2
+E2</code></pre></div><p><strong>test(1):</strong> A1, B1 (no exception), <code>catch</code> skipped, D1 (finally), then E1 (the code after the whole block).</p><p><strong>test(2):</strong> A2, then <code>throw</code> fires so <strong>B2 is skipped</strong>, C2 (catch), D2 (finally), and E2 because the exception was handled and the method carries on.</p></div></section><section class="sec"><span class="sec-num">04</span><h2>Part C: think</h2><p>In your own words: <em>what is the difference between putting <code class="inline">System.out.println("Closing register")</code> in <code class="inline">finally</code> versus putting it on the line right after the whole <code class="inline">try/catch</code>?</em></p><button class="reveal-btn" data-label="Show answer">Show answer <span class="chev">▾</span></button><div class="rv-panel"><p>For a handled exception, both would print. The difference appears when something is <strong>not</strong> handled: if the exception type does not match any <code>catch</code>, or the <code>try</code> or <code>catch</code> block <code>return</code>s early, the line after the block is skipped, but <code>finally</code> <strong>still runs</strong>. That is why cleanup work (closing files, closing registers) belongs in <code>finally</code>.</p></div></section><section class="sec"><span class="sec-num">05</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t">My output for index 9 shows Opening, the position message, then Closing</span></li><li><span class="box">✓</span><span class="t"><code>Closing register</code> prints for both index 1 and index 9</span></li><li><span class="box">✓</span><span class="t">I traced Part B correctly, including that B2 never prints</span></li><li><span class="box">✓</span><span class="t">I can explain why cleanup code goes in <code>finally</code></span></li></ul><div class="sc-progress" id="scProg">0 of 4 done</div></section>
+  <section class="sec" style="margin-bottom:20px">
+    <div class="asg-nav"><a href="assignment-2.html"><span class="dir">← Previous</span><span class="nm">The Safe Calculator</span></a><a class="next" href="assignment-4.html"><span class="dir">Next →</span><span class="nm">The Mark Validator</span></a></div>
+    <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
+  </section>
+  <footer><span class="fn">Java Notes</span>Assignment 3 · Errors and Exceptions</footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','private','protected','this','extends','try','catch','finally','throw','throws']);
+    const TYPES = new Set(['String','System','out','args']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{ el.innerHTML = highlight(el.textContent); });
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent='Copied'; btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); },1400);
+      }).catch(()=>{ btn.textContent='Select & copy'; });
+    });
+  });
+  document.querySelectorAll('.reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling;
+    const label = btn.dataset.label;
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = (open ? 'Hide' : label) + ' ';
+    });
+  });
+  const items = document.querySelectorAll('.self-check li');
+  const prog = document.getElementById('scProg');
+  function upd(){ if(prog) prog.textContent = document.querySelectorAll('.self-check li.on').length + ' of ' + items.length + ' done'; }
+  items.forEach(li=>li.addEventListener('click', ()=>{ li.classList.toggle('on'); upd(); }));
+})();
+</script>
+</body>
+</html>
