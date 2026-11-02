@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Java Notes · Chapter — Working with Dates and Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --bg-raised:#FFFFFF;
+    --ink:#221F1B;
+    --muted:#65605A;
+    --faint:#948E84;
+    --border:#E7E2D8;
+    --border-strong:#D6CFC1;
+    --accent:#B45309;
+    --accent-ink:#FFFFFF;
+    --accent-tint:#FBEEDD;
+    --warn:#9F3D2E;
+    --warn-tint:#FBEAE5;
+    --ok:#2F7D4F;
+    --ok-tint:#E7F3EB;
+    --code-bg:#211D19;
+    --code-ink:#EDE7DC;
+    --code-key:#E8A855;
+    --code-str:#9CC08A;
+    --code-type:#8DB6D9;
+    --code-comment:#8A8378;
+    --code-fn:#D391A8;
+    --radius:8px;
+    --maxw:42rem;
+    --dur:160ms;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    font-size:16.5px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, pre, .mono{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;}
+
+  a{color:var(--accent); text-decoration:underline; text-decoration-color:var(--border-strong); text-underline-offset:2px;}
+  a:hover{ text-decoration-color:var(--accent); }
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+
+  .page{ max-width:var(--maxw); margin:0 auto; padding:0 24px 100px; }
+
+  .masthead{ padding:38px 0 26px; }
+  .masthead .kicker{
+    font-size:12.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:40px; margin:0 0 8px; letter-spacing:-0.01em; line-height:1.15;
+  }
+  .masthead .sub{ color:var(--muted); font-size:15px; margin:0; }
+  hr.rule{ border:none; border-top:1px solid var(--border); margin:0 0 34px; }
+
+  .hero-statement{
+    font-family:'Source Serif 4', Georgia, serif;
+    font-size:clamp(24px, 4vw, 32px);
+    line-height:1.42; font-weight:600; letter-spacing:-0.01em;
+    margin:0 0 18px;
+  }
+  .hero-statement em{ font-style:normal; color:var(--accent); }
+  .hero-sub{ color:var(--muted); font-size:16px; max-width:40rem; margin:0 0 26px; }
+
+  .flow-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 20px; margin:0 0 44px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  }
+  .flow-box .step{ padding:5px 14px; border-radius:6px; background:var(--accent-tint); color:var(--accent); font-weight:600; text-align:center; }
+  .flow-box .arrow{ color:var(--faint); font-size:14px; }
+
+  section.sec{ margin:0 0 58px; scroll-margin-top:24px; }
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    color:var(--accent); background:var(--accent-tint);
+    display:inline-block; padding:3px 9px; border-radius:5px;
+    margin-bottom:14px; letter-spacing:.02em;
+  }
+  .sec h2{
+    font-family:'Source Serif 4', Georgia, serif; font-weight:600;
+    font-size:23px; margin:0 0 16px; letter-spacing:-0.01em;
+  }
+  .sec h3{ font-size:16.5px; font-weight:600; margin:26px 0 10px; }
+  .sec > p{ margin:0 0 14px; }
+  .sec p.lede{ color:var(--muted); }
+
+  .callout{
+    border:1px solid var(--border); border-left:3px solid var(--accent);
+    background:var(--bg-raised); border-radius:var(--radius);
+    padding:15px 18px; margin:18px 0; box-shadow:0 1px 2px rgba(34,31,27,0.03);
+  }
+  .callout-label{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:700; color:var(--accent); margin-bottom:7px;
+    text-transform:uppercase; letter-spacing:.03em;
+  }
+  .callout p{ margin:0 0 6px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout.warn{ border-left-color:var(--warn); }
+  .callout.warn .callout-label{ color:var(--warn); }
+
+  /* ---------- Analogy cards ---------- */
+  .analogy-card{
+    margin:22px 0 26px; border:1px solid #EBD3AE; border-radius:10px; overflow:hidden;
+    background:#FFFCF6; box-shadow:0 1px 3px rgba(180,83,9,0.07);
+  }
+  .ac-head{
+    display:flex; align-items:center; gap:11px; padding:11px 16px;
+    background:var(--accent-tint); border-bottom:1px solid #EBD3AE;
+  }
+  .ac-icon{
+    width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .ac-icon svg{ width:16px; height:16px; }
+  .ac-kicker{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--accent); line-height:1.2; }
+  .ac-title{ display:block; font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:16.5px; line-height:1.3; color:var(--ink); }
+  .ac-story{ margin:0; padding:14px 18px 6px; font-size:15px; }
+  .ac-map{ padding:6px 18px 16px; }
+  .ac-map-label{ font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin:8px 0 7px; }
+  .ac-row{
+    display:grid; grid-template-columns:1fr 22px 1fr; align-items:center; gap:8px;
+    margin-bottom:6px; font-size:13.5px;
+  }
+  .ac-real{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:6px 10px; }
+  .ac-java{ background:var(--code-bg); color:var(--code-ink); border-radius:6px; padding:6px 10px; font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+  .ac-arrow{ text-align:center; color:var(--accent); font-weight:700; }
+  @media (max-width:560px){
+    .ac-row{ grid-template-columns:1fr; gap:3px; }
+    .ac-arrow{ transform:rotate(90deg); height:14px; line-height:14px; }
+  }
+
+  /* ---------- Checked exception table ---------- */
+  .filter-row{ display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 4px; }
+  .filter-chip{
+    font-family:'Inter',sans-serif; font-size:12.5px; font-weight:500; padding:5px 11px; border-radius:999px;
+    border:1px solid var(--border); background:var(--bg-raised); color:var(--muted); cursor:pointer;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .filter-chip:hover{ border-color:var(--border-strong); }
+  .filter-chip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  table.ref td.pkg{ font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--faint); white-space:nowrap; }
+  table.ref tr.hide{ display:none; }
+  td.exc-cell{ word-break:break-word; }
+  .pkg-sub{ display:block; margin-top:3px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--faint); }
+  .pkg-sub .cat-tag{ font-family:'Inter',sans-serif; font-size:10px; }
+  .cat-tag{ font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--accent); white-space:nowrap; }
+
+  .callout.analogy .callout-label{ color:var(--muted); }
+
+  .codeblock{
+    background:var(--code-bg); color:var(--code-ink);
+    border-radius:var(--radius); overflow:hidden;
+    margin:14px 0 18px; box-shadow:0 2px 10px rgba(34,31,27,0.06);
+  }
+  .codeblock .cb-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; font-size:12px; color:#A69C8C;
+    border-bottom:1px solid #322C26; background:#28221D;
+  }
+  .codeblock .cb-lang{ font-family:'JetBrains Mono',monospace; letter-spacing:.02em; }
+  .copy-btn{
+    background:transparent; border:1px solid #3A332B; color:#A69C8C;
+    border-radius:5px; padding:3px 9px; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif;
+    transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .copy-btn:hover{ border-color:#4E453A; color:#EDE7DC; }
+  .copy-btn.copied{ color:var(--code-str); border-color:var(--code-str); }
+  .codeblock pre{ margin:0; padding:15px 18px; overflow-x:auto; font-size:13.5px; line-height:1.65; }
+  .codeblock.small pre{ padding:11px 15px; }
+  .codeblock.out pre{ color:#D6A8A2; }
+  .tok-kw{color:var(--code-key); font-weight:500;}
+  .tok-type{color:var(--code-type);}
+  .tok-str{color:var(--code-str);}
+  .tok-com{color:var(--code-comment); font-style:italic;}
+  .tok-fn{color:var(--code-fn);}
+  code.inline{
+    background:var(--accent-tint); color:#8A4409; border-radius:4px;
+    padding:1.5px 6px; font-size:.9em; border:1px solid #F0DDBF;
+  }
+
+  table.ref{
+    width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:14px;
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden;
+  }
+  table.ref th, table.ref td{
+    text-align:left; padding:10px 13px; border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  table.ref th{
+    color:var(--muted); font-weight:600; font-size:12px;
+    background:#F5F1E9; border-bottom:1px solid var(--border-strong);
+  }
+  table.ref td code{ font-size:12.5px; }
+  table.ref tbody tr:last-child td{ border-bottom:none; }
+  table.ref tbody tr:hover{ background:#FCF8F0; }
+
+  /* ---------- Hierarchy flowchart ---------- */
+  .hierarchy{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:18px 18px 16px; margin:18px 0 22px;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .hierarchy svg{ width:100%; height:auto; display:block; }
+  .hnode rect{
+    fill:var(--code-bg); stroke:#322C26; stroke-width:1.5; rx:8; cursor:pointer;
+    transition:fill var(--dur), stroke var(--dur);
+  }
+  .hnode text{ fill:var(--code-ink); font-family:'JetBrains Mono',monospace; font-size:13px; pointer-events:none; }
+  .hnode text.sub{ fill:#A69C8C; font-size:10.5px; }
+  .hnode:hover rect, .hnode.active rect{ stroke:var(--accent); fill:#2A241F; }
+  .hnode.active text{ fill:var(--accent-tint); }
+  .hline{ stroke:var(--border-strong); stroke-width:1.5; fill:none; }
+  .hierarchy-legend{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .hierarchy-chip{
+    font-size:12px; padding:5px 10px; border-radius:6px; border:1px solid var(--border);
+    color:var(--muted); cursor:pointer; transition:background var(--dur), color var(--dur), border-color var(--dur);
+  }
+  .hierarchy-chip.active{ border-color:var(--border-strong); background:var(--accent-tint); color:var(--ink); }
+  .hierarchy-desc{ margin-top:12px; font-size:14px; color:var(--muted); min-height:38px; }
+  .hierarchy-desc strong{ color:var(--ink); }
+
+  .challenge{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); margin:18px 0 26px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(34,31,27,0.04);
+  }
+  .challenge-head{
+    display:flex; align-items:center; gap:8px;
+    padding:13px 17px; border-bottom:1px solid var(--border);
+    font-size:13.5px; font-weight:700; color:var(--ink);
+    background:#FCFAF5;
+  }
+  .challenge-tag{
+    font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-tint);
+    padding:2px 8px; border-radius:4px;
+  }
+  .challenge-body{ padding:16px 17px 8px; }
+  .challenge-body p{ margin:0 0 11px; font-size:15px; }
+  .reveal-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--accent); color:var(--accent-ink); border:none; border-radius:6px;
+    padding:9px 16px; font-size:13.5px; font-weight:600; cursor:pointer;
+    margin:3px 0 18px; font-family:'Inter',sans-serif;
+    transition:filter var(--dur);
+  }
+  .reveal-btn:hover{ filter:brightness(1.08); }
+  .reveal-btn .chev{ transition:transform var(--dur); }
+  .reveal-btn.open .chev{ transform:rotate(180deg); }
+  .answer-panel{
+    max-height:0; overflow:hidden; opacity:0;
+    transition:max-height 320ms ease, opacity 200ms ease;
+    border-top:1px dashed var(--border-strong);
+    background:var(--accent-tint);
+    margin:0 -17px; padding:0 17px;
+  }
+  .answer-panel.open{ max-height:900px; opacity:1; padding:15px 17px 17px; margin-top:0;}
+  .answer-panel p{ margin:0 0 8px; font-size:14.5px; }
+  .answer-panel strong{ color:var(--accent); }
+  .answer-panel .verdict{
+    display:inline-block; font-weight:700; font-size:12.5px; letter-spacing:.02em;
+    padding:2px 9px; border-radius:4px; margin-bottom:8px;
+  }
+  .answer-panel .verdict.yes{ background:#E4F3E9; color:#2F7D4F; }
+  .answer-panel .verdict.no{ background:var(--warn-tint); color:var(--warn); }
+
+  .selftest-bar{
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 22px; font-size:14px; color:var(--muted);
+  }
+  .selftest-track{ flex:1; height:6px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .selftest-fill{ height:100%; width:0%; background:var(--accent); transition:width 260ms ease; }
+  .qcard{
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:12px; background:var(--bg-raised); overflow:hidden;
+  }
+  .qcard-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 17px; cursor:pointer; font-size:14.5px; font-weight:500;
+  }
+  .qcard-head .qn{ color:var(--faint); font-family:'JetBrains Mono',monospace; margin-right:9px; }
+  .qcard .check{
+    width:19px; height:19px; border-radius:50%; border:1.5px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:11px; color:transparent; transition:all var(--dur);
+  }
+  .qcard.done .check{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .qcard-answer{
+    max-height:0; overflow:hidden; opacity:0; transition:max-height 240ms ease, opacity 200ms ease;
+    border-top:1px solid transparent; background:#FCFAF5;
+  }
+  .qcard-answer.open{ max-height:500px; opacity:1; border-top-color:var(--border); padding:13px 17px 15px; }
+
+  .compare{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0 20px; }
+  .compare-col{
+    border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; background:var(--bg-raised);
+  }
+  .compare-col h4{ margin:0 0 9px; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.03em; }
+  .compare-col code{ display:block; font-size:13.5px; margin-bottom:4px; }
+  @media (max-width:560px){ .compare{ grid-template-columns:1fr; } }
+
+  .diagram-box{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:17px; margin:16px 0 22px;
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);
+    overflow-x:auto; white-space:pre;
+  }
+
+  .recap-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0; }
+  .recap-card{
+    border:1px solid var(--border); border-radius:var(--radius);
+    background:var(--bg-raised); padding:15px 16px;
+  }
+  .recap-card h4{
+    margin:0 0 6px; font-size:14px; font-family:'JetBrains Mono',monospace;
+    color:var(--accent); font-weight:600;
+  }
+  .recap-card p{ margin:0; font-size:13.5px; color:var(--muted); line-height:1.55; }
+  @media (max-width:560px){ .recap-grid{ grid-template-columns:1fr; } }
+
+  .checklist{ list-style:none; margin:14px 0 20px; padding:0; }
+  .checklist li{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 0;
+    border-bottom:1px solid var(--border); font-size:14.5px;
+  }
+  .checklist li:last-child{ border-bottom:none; }
+  .checklist .x{
+    flex-shrink:0; width:19px; height:19px; border-radius:50%; margin-top:1px;
+    background:var(--warn-tint); color:var(--warn); font-weight:700; font-size:12px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  hr.div{ border:none; border-top:1px solid var(--border); margin:40px 0; }
+
+  footer{
+    text-align:center; padding:44px 0 20px; color:var(--faint); font-size:13px;
+    border-top:1px solid var(--border); margin-top:20px;
+  }
+  footer .fn{ font-weight:600; color:var(--muted); display:block; margin-bottom:3px; }
+
+  @media (max-width:600px){
+    .masthead h1{ font-size:27px; }
+    .compare{ grid-template-columns:1fr; }
+    .flow-box{ font-size:11.5px; }
+  }
+
+  .ac-java code{ background:none; border:0; padding:0; color:inherit; font-size:inherit; }
+  .lab{ border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-raised); margin:20px 0 26px; overflow:hidden; box-shadow:0 1px 3px rgba(34,31,27,0.04); }
+  .lab-head{ display:flex; align-items:center; gap:8px; padding:12px 17px; border-bottom:1px solid var(--border); font-size:13.5px; font-weight:700; background:#FCFAF5; }
+  .lab-tag{ font-size:10.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#fff; background:var(--accent); padding:2px 8px; border-radius:4px; }
+  .lab-body{ padding:16px 17px 17px; }
+  .fields{ display:flex; flex-wrap:wrap; gap:12px; margin-bottom:13px; }
+  .field{ display:flex; flex-direction:column; gap:4px; font-size:11.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--muted); }
+  .field input, .field select{ font-family:'JetBrains Mono',monospace; font-size:14px; padding:7px 9px; border:1px solid var(--border-strong); border-radius:6px; background:#fff; color:var(--ink); min-width:0; }
+  .field input[type=number]{ width:92px; }
+  .field input.wide{ width:min(300px, 80vw); }
+  .field input:focus, .field select:focus{ outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent); }
+  .lab-out{ background:var(--code-bg); color:var(--code-ink); border-radius:var(--radius); padding:12px 15px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.75; overflow-x:auto; white-space:pre; }
+  .lab-out .k{ color:#A69C8C; }
+  .lab-out .v{ color:var(--code-key); }
+  .lab-out.err{ color:#D6A8A2; white-space:pre-wrap; }
+  .lab-note{ margin:10px 0 0; font-size:13px; color:var(--muted); }
+  .presets{ display:flex; flex-wrap:wrap; gap:7px; margin:0 0 13px; }
+  .big-preview{ font-family:'JetBrains Mono',monospace; font-size:19px; font-weight:600; color:var(--accent); background:var(--accent-tint); border:1px solid #EBD3AE; border-radius:var(--radius); padding:12px 15px; margin-bottom:12px; overflow-x:auto; white-space:pre; min-height:52px; }
+  .big-preview.err{ color:var(--warn); background:var(--warn-tint); border-color:#E8C4BB; font-size:14px; white-space:pre-wrap; }
+  .tokens{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tk{ display:flex; flex-direction:column; align-items:center; border:1px solid var(--border); border-radius:6px; overflow:hidden; font-family:'JetBrains Mono',monospace; font-size:12.5px; }
+  .tk .s{ background:var(--code-bg); color:var(--code-key); padding:3px 9px; width:100%; text-align:center; }
+  .tk .o{ padding:3px 9px; background:#fff; width:100%; text-align:center; white-space:pre; }
+  .tk.lit .s{ background:#F5F1E9; color:var(--faint); }
+  .tk.bad .s{ background:var(--warn); color:#fff; }
+  .pick-goals{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .pick-goals button{ font-family:'Inter',sans-serif; font-size:13px; font-weight:500; padding:7px 12px; border-radius:7px; border:1px solid var(--border-strong); background:#fff; color:var(--ink); cursor:pointer; text-align:left; transition:background var(--dur), border-color var(--dur), color var(--dur); }
+  .pick-goals button:hover{ border-color:var(--accent); }
+  .pick-goals button.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .pick-result{ border:1px solid #EBD3AE; background:#FFFCF6; border-radius:var(--radius); padding:13px 16px 4px; }
+  .pick-result .cls{ font-family:'JetBrains Mono',monospace; font-weight:600; font-size:16px; color:var(--accent); margin:0 0 6px; }
+  .pick-result p{ margin:0 0 8px; font-size:14.5px; }
+  .pick-result .codeblock{ margin:8px 0 12px; }
+  .answer-panel.open{ max-height:1600px; }
+  .compare-col code.res{ color:var(--accent); font-weight:600; }
+  .tbl-wrap{ overflow-x:auto; margin:14px 0 20px; }
+  .tbl-wrap table.ref{ margin:0; }
+  table.ref td code{ word-break:break-word; }
+  @media (max-width:600px){ table.ref th, table.ref td{ padding:8px 9px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <p class="kicker">Java Notes</p>
+    <h1>Chapter — Working with Dates and Times</h1>
+    <p class="sub">Create dates and times, write them in any style, and measure the gap between them.</p>
+  </header>
+  <hr class="rule" />
+  <p class="hero-statement">A date is easy to <em>read</em> and surprisingly easy to get <em>wrong</em>.</p>
+  <p class="hero-sub">Birthdays, deadlines, exam timetables, bell schedules: dates and times are everywhere. Java&rsquo;s <code class="inline">java.time</code> package gives you ready-made classes that know how many days are in each month, which years are leap years, and how to write a date in any style you like.</p>
+  <div class="flow-box">
+    <span class="step">Create a date or time</span><span class="arrow">↓</span>
+    <span class="step">Read it or change it</span><span class="arrow">↓</span>
+    <span class="step">Write it the way people expect</span><span class="arrow">↓</span>
+    <span class="step">Measure the gap between two moments</span>
+  </div>
+  <section class="sec" id="d01"><span class="sec-num">01</span><h2>Meet the <code class="inline">java.time</code> package</h2><p class="lede">Java comes with a built-in package called <code class="inline">java.time</code> that holds ready-made classes for working with dates and times. You don&rsquo;t install anything; you just <code class="inline">import</code> the class you need. Six classes do almost all the work. Click each box to see what it&rsquo;s for.</p><div class="hierarchy">
+  <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Map of the six java.time classes">
+    <text x="360" y="14" text-anchor="middle" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.07em;fill:#948E84">STORE A DATE / TIME</text>
+    <path class="hline" d="M 120 76 L 120 108 L 360 108 L 360 136"/>
+    <path class="hline" d="M 360 76 L 360 136"/>
+    <path class="hline" d="M 600 76 L 600 108 L 360 108 L 360 136"/>
+    <path class="hline" stroke-dasharray="5 4" d="M 50 76 L 50 268 L 90 268"/>
+    <path class="hline" stroke-dasharray="5 4" d="M 670 76 L 670 268 L 630 268"/>
+    <text x="360" y="204" text-anchor="middle" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.07em;fill:#948E84">MEASURE THE GAP</text>
+    <g class="hnode" data-node="LocalDate"><rect x="30" y="26" width="180" height="50"></rect><text x="120" y="48" text-anchor="middle">LocalDate</text><text x="120" y="63" text-anchor="middle" class="sub">year · month · day</text></g>
+    <g class="hnode" data-node="LocalDateTime"><rect x="270" y="26" width="180" height="50"></rect><text x="360" y="48" text-anchor="middle">LocalDateTime</text><text x="360" y="63" text-anchor="middle" class="sub">date + time together</text></g>
+    <g class="hnode" data-node="LocalTime"><rect x="510" y="26" width="180" height="50"></rect><text x="600" y="48" text-anchor="middle">LocalTime</text><text x="600" y="63" text-anchor="middle" class="sub">hour · minute · second</text></g>
+    <g class="hnode" data-node="DateTimeFormatter"><rect x="190" y="136" width="340" height="50"></rect><text x="360" y="158" text-anchor="middle">DateTimeFormatter</text><text x="360" y="173" text-anchor="middle" class="sub">format() to text · parse() from text</text></g>
+    <g class="hnode" data-node="Period"><rect x="90" y="240" width="220" height="56"></rect><text x="200" y="263" text-anchor="middle">Period</text><text x="200" y="279" text-anchor="middle" class="sub">gap between dates (y · m · d)</text></g>
+    <g class="hnode" data-node="Duration"><rect x="410" y="240" width="220" height="56"></rect><text x="520" y="263" text-anchor="middle">Duration</text><text x="520" y="279" text-anchor="middle" class="sub">gap between times (seconds)</text></g>
+  </svg>
+  <div class="hierarchy-legend">
+    <div class="hierarchy-chip" data-node="LocalDate">LocalDate</div><div class="hierarchy-chip" data-node="LocalTime">LocalTime</div><div class="hierarchy-chip" data-node="LocalDateTime">LocalDateTime</div>
+    <div class="hierarchy-chip" data-node="DateTimeFormatter">DateTimeFormatter</div><div class="hierarchy-chip" data-node="Period">Period</div><div class="hierarchy-chip" data-node="Duration">Duration</div>
+  </div>
+  <div class="hierarchy-desc" id="classDesc">Click a box above to see what it means.</div>
+</div><p>Three classes <strong>hold</strong> a moment in time, one class <strong>writes and reads</strong> it as text, and two classes <strong>measure</strong> the gap between two moments. The rest of this chapter walks through them in that order.</p><div class="callout "><div class="callout-label">Importing</div><p>Each class lives in <code class="inline">java.time</code> (the formatter is in <code class="inline">java.time.format</code>). Import the ones you use, like <code class="inline">import java.time.LocalDate;</code>. If you use many, <code class="inline">import java.time.*;</code> brings in the whole package.</p></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">A stationery box with six tools</span></div></div><p class="ac-story">Think about the tools you use to keep track of school life: the calendar on the wall, the clock above the board, your exam timetable, the way you write the date in your notebook, an age counter, and the PE teacher&rsquo;s stopwatch. Each tool does <em>one</em> job. <code>java.time</code> gives you one class per job.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Wall calendar</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDate</code></span></div><div class="ac-row"><span class="ac-real">Clock above the board</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalTime</code></span></div><div class="ac-row"><span class="ac-real">Exam timetable entry (date and time)</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDateTime</code></span></div><div class="ac-row"><span class="ac-real">The style you write the date in</span><span class="ac-arrow">→</span><span class="ac-java"><code>DateTimeFormatter</code></span></div><div class="ac-row"><span class="ac-real">&ldquo;You are 16 years, 4 months, 12 days old&rdquo;</span><span class="ac-arrow">→</span><span class="ac-java"><code>Period</code></span></div><div class="ac-row"><span class="ac-real">PE stopwatch</span><span class="ac-arrow">→</span><span class="ac-java"><code>Duration</code></span></div></div></aside></section><section class="sec" id="d02"><span class="sec-num">02</span><h2><code class="inline">LocalDate</code>: representing a date</h2><p class="lede">A <code class="inline">LocalDate</code> object holds a valid date: a <strong>year</strong>, a <strong>month</strong> and a <strong>day</strong>. The <code class="inline">of()</code> method creates one from the numbers you give it.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj = LocalDate.of(2019, 4, 13);
+        System.out.println(dateObj);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2019-04-13</code></pre></div><p>The order is always <strong>year, month, day</strong>, and months are numbered <strong>1 to 12</strong> (April is <code class="inline">4</code>, not 3). Java prints a date as <code class="inline">yyyy-MM-dd</code>.</p><h3>Invalid dates are rejected</h3><p>If the date does not exist, <code class="inline">of()</code> refuses to create it and throws a <code class="inline">DateTimeException</code>.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj = LocalDate.of(2022, 2, 31);
+        System.out.println(dateObj);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>Exception in thread "main" java.time.DateTimeException: Invalid date 'FEBRUARY 31'</code></pre></div><p>February never has 31 days, so Java stops right there. This is exactly the kind of runtime problem from the previous chapter: <code class="inline">DateTimeException</code> is an <strong>unchecked</strong> exception (it extends <code class="inline">RuntimeException</code>), so the compiler doesn&rsquo;t force you to catch it, but you can with <code class="inline">try/catch</code>.</p><div class="tbl-wrap"><table class="ref"><thead><tr><th>You write</th><th>Java says</th></tr></thead><tbody><tr><td><code class="inline">LocalDate.of(2023, 4, 31)</code></td><td><code>Invalid date 'APRIL 31'</code></td></tr><tr><td><code class="inline">LocalDate.of(2023, 2, 29)</code></td><td><code>Invalid date 'February 29' as '2023' is not a leap year</code></td></tr><tr><td><code class="inline">LocalDate.of(2023, 13, 1)</code></td><td><code>Invalid value for MonthOfYear (valid values 1 - 12): 13</code></td></tr><tr><td><code class="inline">LocalDate.of(2023, 5, 32)</code></td><td><code>Invalid value for DayOfMonth (valid values 1 - 28/31): 32</code></td></tr></tbody></table></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">One page of the school calendar</span></div></div><p class="ac-story">A calendar page shows a day, a month and a year, and nothing else: no hours, no minutes. And you will never find a page for 31 February. That day doesn&rsquo;t exist, so no printer would ever print it. <code>LocalDate.of()</code> works the same way: it only accepts days that really exist.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">One calendar page</span><span class="ac-arrow">→</span><span class="ac-java">a <code>LocalDate</code> object</span></div><div class="ac-row"><span class="ac-real">Asking the printer for a 31 February page</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDate.of(2022, 2, 31)</code></span></div><div class="ac-row"><span class="ac-real">&ldquo;That day doesn&rsquo;t exist!&rdquo;</span><span class="ac-arrow">→</span><span class="ac-java"><code>DateTimeException</code></span></div></div></aside></section><section class="sec" id="d03"><span class="sec-num">03</span><h2>Today&rsquo;s date with <code class="inline">now()</code></h2><p class="lede">Don&rsquo;t want to type a date? <code class="inline">LocalDate.now()</code> reads your computer&rsquo;s clock and gives you today&rsquo;s date.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj = LocalDate.now();
+        System.out.println(dateObj);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output (yours will show today's date)</span></div><pre><code>2022-12-20</code></pre></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Glancing at the date on your phone</span></div></div><p class="ac-story">Your phone&rsquo;s lock screen always shows <em>today&rsquo;s</em> date, so what you see changes every day. <code>LocalDate.now()</code> is the same glance, taken from inside your program. Run it tomorrow and it prints a different answer.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Lock-screen date</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDate.now()</code></span></div><div class="ac-row"><span class="ac-real">It shows today, not a fixed day</span><span class="ac-arrow">→</span><span class="ac-java">the value comes from the computer&rsquo;s clock</span></div><div class="ac-row"><span class="ac-real">Different tomorrow</span><span class="ac-arrow">→</span><span class="ac-java">the output isn&rsquo;t the same on every run</span></div></div></aside></section><section class="sec" id="d04"><span class="sec-num">04</span><h2>Useful methods of a <code class="inline">LocalDate</code></h2><p class="lede">Once you have a <code class="inline">LocalDate</code>, you can ask it questions and do date arithmetic.</p><div class="tbl-wrap"><table class="ref"><thead><tr><th>Method</th><th>What it returns</th></tr></thead><tbody><tr><td><code class="inline">getYear()</code></td><td>The year (2000, 2022…)</td></tr><tr><td><code class="inline">getMonth()</code></td><td>The month as a name (AUGUST, SEPTEMBER…)</td></tr><tr><td><code class="inline">getMonthValue()</code></td><td>The month as a number (1 to 12)</td></tr><tr><td><code class="inline">getDayOfMonth()</code></td><td>The day of the month (1 to 31)</td></tr><tr><td><code class="inline">getDayOfWeek()</code></td><td>The day of the week as a name (MONDAY, TUESDAY…)</td></tr><tr><td><code class="inline">getDayOfWeek().getValue()</code></td><td>The day of the week as a number (MONDAY = 1 … SUNDAY = 7). <code>getValue()</code> is called on the day returned by <code>getDayOfWeek()</code>.</td></tr><tr><td><code class="inline">plusDays(days)</code></td><td>A new date with days added</td></tr><tr><td><code class="inline">plusMonths(months)</code></td><td>A new date with months added</td></tr><tr><td><code class="inline">plusYears(years)</code></td><td>A new date with years added</td></tr><tr><td><code class="inline">compareTo(date)</code></td><td>Negative if this date is earlier than the given one, positive if later, 0 if the same</td></tr></tbody></table></div><div class="lab" id="dateLab"><div class="lab-head"><span class="lab-tag">Live lab</span> Date Lab: build a LocalDate and poke it</div>
+<div class="lab-body">
+  <div class="fields">
+    <label class="field">year<input type="number" id="dlY" value="2019" min="1" max="9999"></label>
+    <label class="field">month<select id="dlM"></select></label>
+    <label class="field">day<input type="number" id="dlD" value="13" min="1" max="40"></label>
+    <label class="field">n (for plus…)<input type="number" id="dlN" value="5"></label>
+  </div>
+  <div class="lab-out" id="dlOut"></div>
+  <p class="lab-note">Try year 2022, month 2, day 31. Then try 2024-01-31 with n = 1 for <code>plusMonths</code>.</p>
+</div></div><h3>Example 1: reading the parts of a date</h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj = LocalDate.of(2019, 4, 13);
+        System.out.println(dateObj.getYear());
+        System.out.println(dateObj.getMonth());
+        System.out.println(dateObj.getDayOfWeek());
+        System.out.println(dateObj.getDayOfWeek().getValue());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2019
+APRIL
+SATURDAY
+6</code></pre></div><h3>Example 2: adding to a date</h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj = LocalDate.of(2019, 4, 13);
+        System.out.println(dateObj.plusYears(5));
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2024-04-13</code></pre></div><p>Java handles month lengths and leap years for you. If adding months lands on a day that doesn&rsquo;t exist, it simply uses the last day of that month:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        System.out.println(LocalDate.of(2023, 1, 31).plusMonths(1));
+        System.out.println(LocalDate.of(2024, 1, 31).plusMonths(1));
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2023-02-28
+2024-02-29</code></pre></div><h3>Example 3: comparing two dates</h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate dateObj1 = LocalDate.of(2019, 4, 13);
+        LocalDate dateObj2 = LocalDate.of(2020, 4, 13);
+        if (dateObj1.compareTo(dateObj2) &lt; 0) {
+            System.out.println("dateObj1 &lt; dateObj2");
+        } else if (dateObj1.compareTo(dateObj2) &gt; 0) {
+            System.out.println("dateObj1 &gt; dateObj2");
+        } else {
+            System.out.println("dateObj1 == dateObj2");
+        }
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>dateObj1 &lt; dateObj2</code></pre></div><p><code class="inline">dateObj1</code> is earlier than <code class="inline">dateObj2</code>, so <code class="inline">dateObj1.compareTo(dateObj2) < 0</code> is true. Only the <em>sign</em> of the result matters (negative, zero or positive), not its exact size.</p><div class="callout warn"><div class="callout-label">The one that surprises everyone: dates never change</div><p><code class="inline">plusDays()</code>, <code class="inline">plusMonths()</code> and <code class="inline">plusYears()</code> <strong>do not modify</strong> the original date. They hand back a <em>new</em> <code class="inline">LocalDate</code>. If you ignore the returned value, nothing happens:</p></div><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate x = LocalDate.of(2024, 3, 1);
+        x.plusDays(10);           // result thrown away
+        System.out.println(x);
+
+        x = x.plusDays(10);       // keep the new date
+        System.out.println(x);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2024-03-01
+2024-03-11</code></pre></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Marking a deadline on a photocopy</span></div></div><p class="ac-story">You photocopy the calendar page and circle the date 10 days later <em>on the copy</em>. The original page on the wall hasn&rsquo;t changed at all. <code>plusDays()</code> works like that: it hands you a new date and leaves the original alone. To keep the new one, you have to put the copy somewhere (store it in a variable).</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">The original calendar page</span><span class="ac-arrow">→</span><span class="ac-java"><code>x</code></span></div><div class="ac-row"><span class="ac-real">A photocopy with a date circled 10 days later</span><span class="ac-arrow">→</span><span class="ac-java"><code>x.plusDays(10)</code></span></div><div class="ac-row"><span class="ac-real">Putting the copy in your folder</span><span class="ac-arrow">→</span><span class="ac-java"><code>x = x.plusDays(10);</code></span></div></div></aside></section><section class="sec" id="d05"><span class="sec-num">05</span><h2><code class="inline">LocalTime</code>: representing a time</h2><p class="lede">A <code class="inline">LocalTime</code> holds a valid time of day: <strong>hours</strong>, <strong>minutes</strong> and <strong>seconds</strong>, with no date attached.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalTime;
+
+class Main {
+    public static void main(String[] args) {
+        LocalTime timeObj = LocalTime.of(11, 34, 56);
+        System.out.println(timeObj);
+        System.out.println(timeObj.getHour());
+        System.out.println(timeObj.getMinute());
+        System.out.println(timeObj.getSecond());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>11:34:56
+11
+34
+56</code></pre></div><p>Hours use the <strong>24-hour clock</strong> (0 to 23), so 1 PM is <code class="inline">13</code>. Out-of-range values such as <code class="inline">LocalTime.of(25, 0)</code> throw a <code class="inline">DateTimeException</code> too.</p><div class="tbl-wrap"><table class="ref"><thead><tr><th>Method</th><th>What it returns</th></tr></thead><tbody><tr><td><code class="inline">now()</code></td><td>The current time</td></tr><tr><td><code class="inline">getHour()</code></td><td>The hour value</td></tr><tr><td><code class="inline">getMinute()</code></td><td>The minute value</td></tr><tr><td><code class="inline">getSecond()</code></td><td>The second value</td></tr><tr><td><code class="inline">plusHours(hours)</code></td><td>A new time with hours added</td></tr><tr><td><code class="inline">plusMinutes(minutes)</code></td><td>A new time with minutes added</td></tr><tr><td><code class="inline">plusSeconds(seconds)</code></td><td>A new time with seconds added</td></tr><tr><td><code class="inline">compareTo(time)</code></td><td>Negative if this time is earlier than the given one, positive if later, 0 if the same</td></tr></tbody></table></div><div class="lab" id="timeLab"><div class="lab-head"><span class="lab-tag">Live lab</span> Time Machine: add time to a LocalTime</div>
+<div class="lab-body">
+  <div class="fields">
+    <label class="field">time<input type="time" id="tlT" value="11:34:56" step="1"></label>
+    <label class="field">n (for plus…)<input type="number" id="tlN" value="15"></label>
+  </div>
+  <div class="lab-out" id="tlOut"></div>
+  <p class="lab-note">Start at 23:00 and add 2 hours. Notice there is no &ldquo;next day&rdquo;: a <code>LocalTime</code> just wraps around.</p>
+</div></div><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalTime;
+
+class Main {
+    public static void main(String[] args) {
+        LocalTime timeObj = LocalTime.of(11, 34, 56);
+        System.out.println(timeObj.plusMinutes(45));
+        System.out.println(timeObj.plusHours(15));
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>12:19:56
+02:34:56</code></pre></div><p>Adding 15 hours to 11:34 passes midnight, so the answer wraps around to <code class="inline">02:34:56</code>. A time has no date, so there is no &ldquo;next day&rdquo; to remember.</p><div class="callout "><div class="callout-label">Zero seconds are not printed</div><p><code class="inline">LocalTime.of(9, 5, 0)</code> prints as <code class="inline">09:05</code>, not <code class="inline">09:05:00</code>. It&rsquo;s the same time; Java just leaves off seconds that are zero.</p></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">The clock above the blackboard</span></div></div><p class="ac-story">A wall clock shows hours, minutes and seconds but <em>no day</em>. After 11:59 PM its hands simply carry on from 12:00 AM. <code>LocalTime</code> behaves the same: add 15 hours to 11:34 and it wraps around past midnight to 02:34.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">The wall clock</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalTime</code></span></div><div class="ac-row"><span class="ac-real">Hands passing 12 and starting again</span><span class="ac-arrow">→</span><span class="ac-java"><code>plusHours()</code> wrapping past midnight</span></div><div class="ac-row"><span class="ac-real">A clock has no calendar</span><span class="ac-arrow">→</span><span class="ac-java">a <code>LocalTime</code> has no date part</span></div></div></aside></section><section class="sec" id="d06"><span class="sec-num">06</span><h2><code class="inline">LocalDateTime</code>: date and time together</h2><p class="lede">When you need both a date <em>and</em> a time (an exam start, a bus departure, a log entry), use <code class="inline">LocalDateTime</code>.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDateTime dateTimeObj = LocalDateTime.of(2018, 11, 28, 10, 15, 26);
+        System.out.println(dateTimeObj);
+        System.out.println(dateTimeObj.getYear());
+        System.out.println(dateTimeObj.getMonthValue());
+        System.out.println(dateTimeObj.getHour());
+        System.out.println(dateTimeObj.getMinute());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2018-11-28T10:15:26
+2018
+11
+10
+15</code></pre></div><p>The arguments are <code class="inline">year, month, day, hour, minute, second</code>. When printed, the date and time are joined by the letter <code class="inline">T</code>. A <code class="inline">LocalDateTime</code> has all the getters of a <code class="inline">LocalDate</code> (<code class="inline">getYear()</code>, <code class="inline">getMonth()</code>&hellip;) <em>and</em> of a <code class="inline">LocalTime</code> (<code class="inline">getHour()</code>, <code class="inline">getMinute()</code>&hellip;), and <code class="inline">LocalDateTime.now()</code> gives you the current date and time.</p><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">An exam admit card</span></div></div><p class="ac-story">Your admit card doesn&rsquo;t just say &ldquo;Maths, 9:30 AM&rdquo; (that could be any day) or just &ldquo;14 March&rdquo; (that could be any time). It lists both: <strong>14 March, 9:30 AM</strong>. <code>LocalDateTime</code> is that complete entry: a date and a time together.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">&ldquo;14 March&rdquo;</span><span class="ac-arrow">→</span><span class="ac-java">the date part (like <code>LocalDate</code>)</span></div><div class="ac-row"><span class="ac-real">&ldquo;9:30 AM&rdquo;</span><span class="ac-arrow">→</span><span class="ac-java">the time part (like <code>LocalTime</code>)</span></div><div class="ac-row"><span class="ac-real">The whole line on the admit card</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDateTime</code></span></div></div></aside></section><section class="sec" id="d07"><span class="sec-num">07</span><h2><code class="inline">DateTimeFormatter</code>: formatting</h2><p class="lede">The default look of a date (<code class="inline">2022-09-13</code>) isn&rsquo;t always what you want to show people. <code class="inline">DateTimeFormatter.ofPattern()</code> builds a formatter from a <strong>pattern</strong> made of letters like <code class="inline">dd</code>, <code class="inline">MMM</code> and <code class="inline">yyyy</code>, and <code class="inline">format()</code> uses it to turn a date or time into a <code class="inline">String</code>.</p><div class="tbl-wrap"><table class="ref"><thead><tr><th>Pattern</th><th>Meaning</th><th>Example</th></tr></thead><tbody><tr><td><code class="inline">yyyy</code></td><td>year with century</td><td>2014, 2015</td></tr><tr><td><code class="inline">yy</code></td><td>year without century</td><td>14, 15</td></tr><tr><td><code class="inline">MMMM</code></td><td>month as full name</td><td>January, February</td></tr><tr><td><code class="inline">MMM</code></td><td>month as abbreviated name</td><td>Jan, Feb</td></tr><tr><td><code class="inline">MM</code></td><td>month, zero-padded</td><td>01, 02, …, 12</td></tr><tr><td><code class="inline">M</code></td><td>month, no padding</td><td>1, 2, …, 12</td></tr><tr><td><code class="inline">dd</code></td><td>day of month, zero-padded</td><td>01, 02, …, 31</td></tr><tr><td><code class="inline">d</code></td><td>day of month, no padding</td><td>1, 2, …, 31</td></tr><tr><td><code class="inline">a</code></td><td>AM or PM</td><td>AM, PM</td></tr><tr><td><code class="inline">HH</code></td><td>hour on the 24-hour clock, zero-padded</td><td>00, 01, …, 23</td></tr><tr><td><code class="inline">H</code></td><td>hour on the 24-hour clock, no padding</td><td>0, 1, …, 23</td></tr><tr><td><code class="inline">hh</code></td><td>hour on the 12-hour clock, zero-padded</td><td>01, 02, …, 12</td></tr><tr><td><code class="inline">h</code></td><td>hour on the 12-hour clock, no padding</td><td>1, 2, …, 12</td></tr><tr><td><code class="inline">mm</code></td><td>minute, zero-padded</td><td>00, 01, …, 59</td></tr><tr><td><code class="inline">m</code></td><td>minute, no padding</td><td>0, 1, …, 59</td></tr><tr><td><code class="inline">ss</code></td><td>second, zero-padded</td><td>00, 01, …, 59</td></tr><tr><td><code class="inline">s</code></td><td>second, no padding</td><td>0, 1, …, 59</td></tr></tbody></table></div><div class="callout warn"><div class="callout-label">Capital or small? It matters!</div><p><code class="inline">MM</code> is the <strong>month</strong>, but <code class="inline">mm</code> is the <strong>minute</strong>. <code class="inline">HH</code> is the 24-hour clock; <code class="inline">hh</code> is the 12-hour clock (use it together with <code class="inline">a</code> so people know AM from PM). Also write <code class="inline">yyyy</code>, not <code class="inline">YYYY</code>: the capital version means something different (a &ldquo;week-based year&rdquo;) and gives the wrong year for some dates near New Year, such as 30 December 2024 printing as 2025.</p></div><div class="lab" id="fmtLab"><div class="lab-head"><span class="lab-tag">Live lab</span> Pattern Lab: write a pattern, see the result</div>
+<div class="lab-body">
+  <div class="fields">
+    <label class="field">date and time<input type="datetime-local" id="flDT" value="2022-09-13T13:23:46" step="1"></label>
+    <label class="field">pattern<input type="text" id="flP" class="wide" value="dd MMM yyyy hh:mm:ss a" spellcheck="false" autocomplete="off"></label>
+  </div>
+  <div class="presets" id="flPresets"></div>
+  <div class="big-preview" id="flOut"></div>
+  <div class="tokens" id="flTokens"></div>
+  <p class="lab-note">Each coloured label is one piece of the pattern, with what it turned into underneath. Try <code>mm/dd/yyyy</code> (lowercase!) and see what happens.</p>
+</div></div><h3>Example 1: date and time</h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDateTime now = LocalDateTime.of(2022, 9, 13, 13, 23, 46);
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("dd MMM yyyy hh:mm:ss a");
+        String formattedDateTime = now.format(format1);
+        System.out.println(formattedDateTime);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>13 Sep 2022 01:23:46 PM</code></pre></div><p>We used a fixed date-time here so the output is always the same. Swap in <code class="inline">LocalDateTime.now()</code> to format the current moment instead.</p><h3>Example 2: just a date</h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate now = LocalDate.of(2022, 9, 13);
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        String formattedDate = now.format(format1);
+        System.out.println(formattedDate);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>13 September 2022</code></pre></div><p><code class="inline">format()</code> works on <code class="inline">LocalDate</code>, <code class="inline">LocalTime</code> and <code class="inline">LocalDateTime</code>, but the pattern must only use letters the object has. A <code class="inline">LocalDate</code> has no hours, so formatting it with <code class="inline">HH:mm</code> throws an <code class="inline">UnsupportedTemporalTypeException</code>.</p><h3>The classic slip: <code class="inline">mm</code> vs <code class="inline">MM</code></h3><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDateTime t = LocalDateTime.of(2022, 9, 13, 13, 23, 46);
+        System.out.println(t.format(DateTimeFormatter.ofPattern("mm/dd/yyyy")));
+        System.out.println(t.format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>23/13/2022
+09/13/2022</code></pre></div><p>The first line shows <strong>23</strong> where the month should be: that&rsquo;s the <em>minutes</em> (13:<strong>23</strong>:46). Java doesn&rsquo;t complain; it just prints the wrong thing.</p><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">One birthday, many ways to write it</span></div></div><p class="ac-story">The same day can be written <strong>13/09/2022</strong>, <strong>09/13/2022</strong>, <strong>13 Sep 2022</strong> or <strong>September 13, 2022</strong>. The day itself never changed, only how it&rsquo;s written down. A <code>DateTimeFormatter</code> is your &ldquo;writing style&rdquo;: you pick the style once (the pattern) and Java writes dates that way.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">The actual day</span><span class="ac-arrow">→</span><span class="ac-java">a <code>LocalDate</code> object</span></div><div class="ac-row"><span class="ac-real">Your chosen writing style</span><span class="ac-arrow">→</span><span class="ac-java"><code>DateTimeFormatter.ofPattern(&hellip;)</code></span></div><div class="ac-row"><span class="ac-real">Writing the day down in that style</span><span class="ac-arrow">→</span><span class="ac-java"><code>date.format(formatter)</code></span></div></div></aside></section><section class="sec" id="d08"><span class="sec-num">08</span><h2>Parsing: turning text into a date</h2><p class="lede">Formatting goes from object to text. <strong>Parsing</strong> goes the other way: from a <code class="inline">String</code> to a date, time or date-time object. You give <code class="inline">parse()</code> the text and a formatter that describes how the text is written.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        String dateStr = "28 November 2018";
+        DateTimeFormatter format1 = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+        LocalDate date = LocalDate.parse(dateStr, format1);
+        System.out.println(date);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2018-11-28</code></pre></div><p>The pattern must describe the text <em>exactly</em>. The same text can mean two different dates depending on the pattern:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        String text = "03/04/2024";
+        System.out.println(LocalDate.parse(text, DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        System.out.println(LocalDate.parse(text, DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>2024-04-03
+2024-03-04</code></pre></div><p>And when the text doesn&rsquo;t fit the pattern, Java refuses with a <code class="inline">DateTimeParseException</code> instead of guessing:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+class Main {
+    public static void main(String[] args) {
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        LocalDate d = LocalDate.parse("28/11/2018", f);
+        System.out.println(d);
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>Exception in thread "main" java.time.format.DateTimeParseException: Text '28/11/2018' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 28</code></pre></div><p>The pattern said the first number is the month, and there is no month 28. Like <code class="inline">DateTimeException</code>, this exception is unchecked, so <code class="inline">try/catch</code> is how you protect your program when the text comes from a user.</p><div class="callout "><div class="callout-label">Shortcut for the standard format</div><p>If the text is already in Java&rsquo;s own <code class="inline">yyyy-MM-dd</code> style, you can skip the formatter: <code class="inline">LocalDate.parse("2018-11-28")</code> just works. Same for <code class="inline">LocalTime.parse("09:30")</code>.</p></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Reading a friend&rsquo;s date: 03/04, March or April?</span></div></div><p class="ac-story">Your friend texts <strong>03/04/2024</strong>. Is that 3 April or 4 March? You can&rsquo;t tell without knowing <em>their</em> writing style. Java has exactly the same problem, so you must tell it the style. If the text doesn&rsquo;t fit the style, Java refuses rather than guessing.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Your friend&rsquo;s text message</span><span class="ac-arrow">→</span><span class="ac-java">a <code>String</code></span></div><div class="ac-row"><span class="ac-real">Knowing their writing style</span><span class="ac-arrow">→</span><span class="ac-java">the pattern in a <code>DateTimeFormatter</code></span></div><div class="ac-row"><span class="ac-real">Working out the real date</span><span class="ac-arrow">→</span><span class="ac-java"><code>LocalDate.parse(text, formatter)</code></span></div><div class="ac-row"><span class="ac-real">Text that can&rsquo;t be that style</span><span class="ac-arrow">→</span><span class="ac-java"><code>DateTimeParseException</code></span></div></div></aside></section><section class="sec" id="d09"><span class="sec-num">09</span><h2><code class="inline">Period</code>: difference between dates</h2><p class="lede">How long from one date to another? <code class="inline">Period.between(start, end)</code> answers in calendar units: <strong>years, months and days</strong>.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+import java.time.Period;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate startDate = LocalDate.of(2020, 2, 20);
+        LocalDate endDate = LocalDate.of(2021, 10, 21);
+        Period period = Period.between(startDate, endDate);
+        System.out.println("Years: " + period.getYears());
+        System.out.println("Months: " + period.getMonths());
+        System.out.println("Days: " + period.getDays());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>Years: 1
+Months: 8
+Days: 1</code></pre></div><p>From 20 Feb 2020 to 21 Oct 2021 is 1 year (to 20 Feb 2021), plus 8 months (to 20 Oct 2021), plus 1 more day. Notice the result is split into three separate numbers; <code class="inline">getDays()</code> is <em>not</em> the total number of days.</p><div class="lab" id="periodLab"><div class="lab-head"><span class="lab-tag">Live lab</span> Period Lab: gap between two dates</div>
+<div class="lab-body">
+  <div class="fields">
+    <label class="field">start date<input type="date" id="plA" value="2020-02-20"></label>
+    <label class="field">end date<input type="date" id="plB" value="2021-10-21"></label>
+  </div>
+  <div class="lab-out" id="plOut"></div>
+  <p class="lab-note">Swap the dates and the numbers turn negative. <code>Period.between(start, end)</code> counts from the first to the second.</p>
+</div></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">Your age in years, months and days</span></div></div><p class="ac-story">When someone asks how old you are, you can answer &ldquo;16 years, 4 months and 12 days.&rdquo; That&rsquo;s counted in <em>calendar</em> units. <code>Period.between()</code> gives exactly that kind of answer for any two dates.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Your birthday</span><span class="ac-arrow">→</span><span class="ac-java">the start date</span></div><div class="ac-row"><span class="ac-real">Today</span><span class="ac-arrow">→</span><span class="ac-java">the end date</span></div><div class="ac-row"><span class="ac-real">&ldquo;16 years, 4 months, 12 days&rdquo;</span><span class="ac-arrow">→</span><span class="ac-java">a <code>Period</code> (<code>getYears()</code>, <code>getMonths()</code>, <code>getDays()</code>)</span></div></div></aside></section><section class="sec" id="d10"><span class="sec-num">10</span><h2><code class="inline">Duration</code>: difference between times</h2><p class="lede">For the gap between two <em>times</em>, use <code class="inline">Duration.between(start, end)</code>. It measures exact length of time, and <code class="inline">getSeconds()</code> tells you how many seconds that is.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.Duration;
+import java.time.LocalTime;
+
+class Main {
+    public static void main(String[] args) {
+        LocalTime startTime = LocalTime.of(10, 30, 30);
+        LocalTime endTime = LocalTime.of(10, 31, 30);
+        Duration duration = Duration.between(startTime, endTime);
+        System.out.println(duration.getSeconds());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>60</code></pre></div><p>Seconds are not always the most convenient unit, so <code class="inline">Duration</code> can also report whole minutes and hours:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.Duration;
+import java.time.LocalTime;
+
+class Main {
+    public static void main(String[] args) {
+        Duration school = Duration.between(LocalTime.of(8, 0), LocalTime.of(17, 30));
+        System.out.println(school.getSeconds());
+        System.out.println(school.toMinutes());
+        System.out.println(school.toHours());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>34200
+570
+9</code></pre></div><div class="lab" id="durLab"><div class="lab-head"><span class="lab-tag">Live lab</span> Stopwatch Lab: gap between two times</div>
+<div class="lab-body">
+  <div class="fields">
+    <label class="field">start time<input type="time" id="dulA" value="10:30:30" step="1"></label>
+    <label class="field">end time<input type="time" id="dulB" value="10:31:30" step="1"></label>
+  </div>
+  <div class="lab-out" id="dulOut"></div>
+</div></div><div class="callout warn"><div class="callout-label">Match the tool to the type</div><p><code class="inline">Period</code> is for <strong>dates</strong> and <code class="inline">Duration</code> is for <strong>times</strong> (or date-times). Asking <code class="inline">Duration.between()</code> for the gap between two plain <code class="inline">LocalDate</code> objects fails with an <code class="inline">UnsupportedTemporalTypeException</code>, because a date has no seconds to count.</p></div><aside class="analogy-card"><div class="ac-head"><span class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></span><div><span class="ac-kicker">Think of it like…</span><span class="ac-title">The stopwatch on sports day</span></div></div><p class="ac-story">A stopwatch doesn&rsquo;t care about months or calendars. It counts exact seconds from the start button to the stop button. <code>Duration</code> works that way: it measures the exact length of time between two times.</p><div class="ac-map"><div class="ac-map-label">Real life → Java</div><div class="ac-row"><span class="ac-real">Pressing START</span><span class="ac-arrow">→</span><span class="ac-java">the start time</span></div><div class="ac-row"><span class="ac-real">Pressing STOP</span><span class="ac-arrow">→</span><span class="ac-java">the end time</span></div><div class="ac-row"><span class="ac-real">The number on the display</span><span class="ac-arrow">→</span><span class="ac-java"><code>duration.getSeconds()</code></span></div></div></aside></section><section class="sec" id="d11"><span class="sec-num">11</span><h2>Choosing the right class</h2><p class="lede">With six classes it&rsquo;s easy to grab the wrong one. Start from what you want to <em>do</em>, and the right class follows.</p><div class="lab" id="pickLab"><div class="lab-head"><span class="lab-tag">Try it</span> Which class do I need?</div>
+<div class="lab-body">
+  <div class="pick-goals" id="pickGoals"></div>
+  <div class="pick-result" id="pickResult"><p>Pick a goal above.</p></div>
+</div></div><div class="tbl-wrap"><table class="ref"><thead><tr><th>I want to…</th><th>Use</th></tr></thead><tbody><tr><td>Store a birthday, a deadline, a holiday</td><td><code class="inline">LocalDate</code></td></tr><tr><td>Store a bell time, an alarm time</td><td><code class="inline">LocalTime</code></td></tr><tr><td>Store an exact moment (date <em>and</em> time)</td><td><code class="inline">LocalDateTime</code></td></tr><tr><td>Show a date or time in a particular style</td><td><code class="inline">DateTimeFormatter</code> + <code class="inline">format()</code></td></tr><tr><td>Turn text typed by a user into a date or time</td><td><code class="inline">DateTimeFormatter</code> + <code class="inline">parse()</code></td></tr><tr><td>Find years / months / days between two dates</td><td><code class="inline">Period.between()</code></td></tr><tr><td>Find seconds between two times</td><td><code class="inline">Duration.between()</code></td></tr></tbody></table></div></section><section class="sec" id="d12"><span class="sec-num">12</span><h2>Common mistakes</h2><ul class="checklist"><li><span class="x">✕</span><span><strong>Counting months from 0.</strong> January is <code class="inline">1</code> and December is <code class="inline">12</code>. <code class="inline">LocalDate.of(2023, 0, 5)</code> is an error.</span></li><li><span class="x">✕</span><span><strong>Forgetting that dates never change.</strong> <code class="inline">date.plusDays(5);</code> on its own does nothing. Store the result: <code class="inline">date = date.plusDays(5);</code>.</span></li><li><span class="x">✕</span><span><strong>Mixing up <code class="inline">MM</code> and <code class="inline">mm</code>.</strong> Capital <code class="inline">MM</code> is the month, small <code class="inline">mm</code> is the minute. The wrong one prints silently, with no error.</span></li><li><span class="x">✕</span><span><strong>Parsing with the wrong pattern.</strong> The pattern has to match the text exactly: <code class="inline">dd/MM/yyyy</code> for &ldquo;28/11/2018&rdquo;, not <code class="inline">MM/dd/yyyy</code>.</span></li><li><span class="x">✕</span><span><strong>Using time letters on a <code class="inline">LocalDate</code>.</strong> A date has no hours, so <code class="inline">HH:mm</code> throws an exception. Use a <code class="inline">LocalDateTime</code> if you need both.</span></li><li><span class="x">✕</span><span><strong>Using <code class="inline">Duration</code> for dates (or <code class="inline">Period</code> for times).</strong> <code class="inline">Period</code> is for dates, <code class="inline">Duration</code> is for times.</span></li><li><span class="x">✕</span><span><strong>Forgetting the import.</strong> <code class="inline">LocalDate</code>, <code class="inline">Period</code> and the rest all need an <code class="inline">import</code> (or <code class="inline">import java.time.*;</code>).</span></li></ul></section><section class="sec" id="d13"><span class="sec-num">13</span><h2>Try it: nine quick challenges</h2><p class="lede">Work each one out yourself before revealing the answer.</p><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Spot the problem</span> Will this run?</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDate d = LocalDate.of(2023, 4, 31);</code></pre></div><p>What happens when this line runs?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p>It throws <code class="inline">DateTimeException: Invalid date 'APRIL 31'</code>. April has only 30 days.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Guess the output</span> Month-end maths</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDate d = LocalDate.of(2024, 1, 31);
+System.out.println(d.plusMonths(1));</code></pre></div><p>Does it print an error, or a date? Which one?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p><code class="inline">2024-02-29</code>. There is no 31 February, so Java uses the last day of the month, and 2024 is a leap year.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Guess the output</span> The unchanged date</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDate x = LocalDate.of(2024, 3, 1);
+x.plusDays(10);
+System.out.println(x);</code></pre></div><p>What prints?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p><code class="inline">2024-03-01</code>. The new date returned by <code class="inline">plusDays(10)</code> was thrown away, and <code class="inline">x</code> was never changed. You&rsquo;d need <code class="inline">x = x.plusDays(10);</code>.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Pick the pattern</span> Write the pattern</div><div class="challenge-body"><p>Today is 13 September 2022. Write the pattern that produces each text:</p><p>(a) <code class="inline">13 Sep 2022</code> &nbsp; (b) <code class="inline">09/13/2022</code> &nbsp; (c) <code class="inline">1:23 PM</code></p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p>(a) <code class="inline">dd MMM yyyy</code> &nbsp; (b) <code class="inline">MM/dd/yyyy</code> &nbsp; (c) <code class="inline">h:mm a</code> (at 13:23 on the 12-hour clock).</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Spot the mistake</span> Why is the month 23?</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDateTime t = LocalDateTime.of(2022, 9, 13, 13, 23, 46);
+System.out.println(t.format(DateTimeFormatter.ofPattern("mm/dd/yyyy")));</code></pre></div><p>Someone wanted <code class="inline">09/13/2022</code> but got <code class="inline">23/13/2022</code>. What went wrong?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p>Small <code class="inline">mm</code> means <strong>minutes</strong> (the time was 13:<strong>23</strong>:46). The month needs capital <code class="inline">MM</code>.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Parse it</span> Will this parse?</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDate d = LocalDate.parse("28/11/2018",
+        DateTimeFormatter.ofPattern("MM/dd/yyyy"));</code></pre></div><p>Does this work? If not, how do you fix it?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p>No: <code class="inline">DateTimeParseException</code>. The pattern says the first number is the month, and there is no month 28. Use <code class="inline">dd/MM/yyyy</code>.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Predict the result</span> How far apart?</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalDate a = LocalDate.of(2023, 1, 15);
+LocalDate b = LocalDate.of(2023, 3, 10);
+Period p = Period.between(a, b);</code></pre></div><p>What are <code class="inline">p.getYears()</code>, <code class="inline">p.getMonths()</code> and <code class="inline">p.getDays()</code>?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p><strong>0 years, 1 month, 23 days.</strong> 15 January + 1 month is 15 February; from 15 February to 10 March is 23 days (13 days left in a 28-day February, plus 10).</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Predict the result</span> Seconds on the stopwatch</div><div class="challenge-body"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>LocalTime a = LocalTime.of(9, 15, 0);
+LocalTime b = LocalTime.of(10, 45, 30);
+System.out.println(Duration.between(a, b).getSeconds());</code></pre></div><p>What prints?</p><button class="reveal-btn">Reveal answer <span class="chev">▾</span></button><div class="answer-panel"><p><code class="inline">5430</code>. That is 1 hour (3600) + 30 minutes (1800) + 30 seconds.</p></div></div></div><div class="challenge"><div class="challenge-head"><span class="challenge-tag">Try it yourself</span> Birthday weekday</div><div class="challenge-body"><p>Write code that prints the <strong>day of the week</strong> that 15 August 2030 falls on.</p><button class="reveal-btn">Reveal one possible answer <span class="chev">▾</span></button><div class="answer-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+
+class Main {
+    public static void main(String[] args) {
+        LocalDate d = LocalDate.of(2030, 8, 15);
+        System.out.println(d.getDayOfWeek());
+    }
+}</code></pre></div><div class="codeblock out small"><div class="cb-head"><span class="cb-lang">Output</span></div><pre><code>THURSDAY</code></pre></div></div></div></div></section><section class="sec" id="d14"><span class="sec-num">14</span><h2>Final self-test</h2><p class="lede">Try answering these without scrolling back up.</p><div class="selftest-bar"><span id="selftestCount">0 / 6 answered</span><div class="selftest-track"><div class="selftest-fill" id="selftestFill"></div></div></div><div id="selftestList"></div></section><section class="sec" id="d15"><span class="sec-num">15</span><h2>Chapter recap</h2><div class="recap-grid"><div class="recap-card"><h4>LocalDate</h4><p>A date: year, month, day. Create with <code class="inline">of()</code> or <code class="inline">now()</code>.</p></div><div class="recap-card"><h4>LocalTime</h4><p>A time of day: hour, minute, second. Wraps around at midnight.</p></div><div class="recap-card"><h4>LocalDateTime</h4><p>A date and a time together. Printed with a <code class="inline">T</code> between them.</p></div><div class="recap-card"><h4>plus… / compareTo</h4><p><code class="inline">plusDays</code> and friends return a <em>new</em> object. <code class="inline">compareTo</code> tells earlier, later or equal.</p></div><div class="recap-card"><h4>DateTimeFormatter</h4><p><code class="inline">ofPattern()</code> builds the style. <code class="inline">format()</code> writes text, <code class="inline">parse()</code> reads it.</p></div><div class="recap-card"><h4>Pattern letters</h4><p><code class="inline">MM</code> month, <code class="inline">mm</code> minute, <code class="inline">HH</code> 24-hour, <code class="inline">hh</code> 12-hour with <code class="inline">a</code>.</p></div><div class="recap-card"><h4>Period</h4><p>Gap between two dates as years, months and days.</p></div><div class="recap-card"><h4>Duration</h4><p>Gap between two times; <code class="inline">getSeconds()</code> for the length.</p></div></div><h3>Quick reference</h3><div class="tbl-wrap"><table class="ref"><thead><tr><th>Class</th><th>Package</th><th>Use it for</th></tr></thead><tbody><tr><td><code class="inline">LocalDate</code></td><td>java.time</td><td>A date only</td></tr><tr><td><code class="inline">LocalTime</code></td><td>java.time</td><td>A time only</td></tr><tr><td><code class="inline">LocalDateTime</code></td><td>java.time</td><td>A date and a time</td></tr><tr><td><code class="inline">DateTimeFormatter</code></td><td>java.time.format</td><td>Formatting and parsing text</td></tr><tr><td><code class="inline">Period</code></td><td>java.time</td><td>Difference between dates</td></tr><tr><td><code class="inline">Duration</code></td><td>java.time</td><td>Difference between times</td></tr></tbody></table></div><div class="callout "><div class="callout-label">⭐ The easiest sentence to remember</div><p><strong>Pick <code class="inline">LocalDate</code>, <code class="inline">LocalTime</code> or <code class="inline">LocalDateTime</code> to hold the moment, <code class="inline">DateTimeFormatter</code> to write or read it as text, and <code class="inline">Period</code> (dates) or <code class="inline">Duration</code> (times) to measure the gap. Remember that dates never change: every <code class="inline">plus…</code> gives you a new one.</strong></p></div></section>
+  <footer><span class="fn">Java Notes</span>Working with Dates and Times</footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var DT = (function(){
+  "use strict";
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var DAYS = ["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY","SUNDAY"];
+  function fdiv(a,b){ return Math.floor(a/b); }
+  function fmod(a,b){ return a - Math.floor(a/b)*b; }
+  function isLeap(y){ return (y%4===0 && y%100!==0) || y%400===0; }
+  function lenMonth(y,m){ return [31, isLeap(y)?29:28, 31,30,31,30,31,31,30,31,30,31][m-1]; }
+  function toEpoch(y,m,d){
+    y -= (m<=2) ? 1 : 0;
+    var era = fdiv(y,400), yoe = y - era*400;
+    var doy = fdiv(153*(m + (m>2 ? -3 : 9)) + 2, 5) + d - 1;
+    var doe = yoe*365 + fdiv(yoe,4) - fdiv(yoe,100) + doy;
+    return era*146097 + doe - 719468;
+  }
+  function fromEpoch(z){
+    z += 719468;
+    var era = fdiv(z,146097), doe = z - era*146097;
+    var yoe = fdiv(doe - fdiv(doe,1460) + fdiv(doe,36524) - fdiv(doe,146096), 365);
+    var y = yoe + era*400;
+    var doy = doe - (365*yoe + fdiv(yoe,4) - fdiv(yoe,100));
+    var mp = fdiv(5*doy+2,153);
+    var d = doy - fdiv(153*mp+2,5) + 1;
+    var m = mp<10 ? mp+3 : mp-9;
+    return {y: y + (m<=2 ? 1 : 0), m: m, d: d};
+  }
+  function pad(n,w){ var s = String(Math.abs(n)); while(s.length<w) s = "0"+s; return (n<0?"-":"")+s; }
+  function iso(o){ return pad(o.y,4)+"-"+pad(o.m,2)+"-"+pad(o.d,2); }
+  function of(y,m,d){
+    if(m<1||m>12) return {ok:false, msg:"Invalid value for MonthOfYear (valid values 1 - 12): "+m};
+    if(d<1||d>31) return {ok:false, msg:"Invalid value for DayOfMonth (valid values 1 - 28/31): "+d};
+    if(d>lenMonth(y,m)){
+      if(d===29) return {ok:false, msg:"Invalid date 'February 29' as '"+y+"' is not a leap year"};
+      return {ok:false, msg:"Invalid date '"+MONTHS[m-1].toUpperCase()+" "+d+"'"};
+    }
+    return {ok:true, v:{y:y,m:m,d:d}};
+  }
+  function plusDays(o,n){ return fromEpoch(toEpoch(o.y,o.m,o.d)+n); }
+  function plusMonths(o,n){
+    var total = o.y*12 + (o.m-1) + n;
+    var ny = fdiv(total,12), nm = fmod(total,12)+1;
+    return {y:ny, m:nm, d:Math.min(o.d, lenMonth(ny,nm))};
+  }
+  function plusYears(o,n){ var ny=o.y+n; return {y:ny, m:o.m, d:Math.min(o.d, lenMonth(ny,o.m))}; }
+  function dow(o){ return fmod(toEpoch(o.y,o.m,o.d)+3,7)+1; }
+  function period(a,b){
+    var total = (b.y*12+b.m-1) - (a.y*12+a.m-1);
+    var days = b.d - a.d;
+    if(total>0 && days<0){
+      total--;
+      var calc = plusMonths(a,total);
+      days = toEpoch(b.y,b.m,b.d) - toEpoch(calc.y,calc.m,calc.d);
+    } else if(total<0 && days>0){
+      total++;
+      days -= lenMonth(b.y,b.m);
+    }
+    var years = Math.trunc(total/12), months = total % 12;
+    return {years:years===0?0:years, months:months===0?0:months, days:days===0?0:days};
+  }
+  function fmt(dt, pattern){
+    var out = "", i = 0, bad = [], parts = [];
+    var h12 = dt.H%12===0 ? 12 : dt.H%12;
+    while(i<pattern.length){
+      var c = pattern[i];
+      if(c==="'"){
+        var j = pattern.indexOf("'", i+1);
+        if(j===-1){ return {error:"IllegalArgumentException: Pattern ends with an incomplete string literal"}; }
+        var lit = (j===i+1) ? "'" : pattern.slice(i+1,j); out += lit; parts.push({src:pattern.slice(i,j+1), val:lit, lit:true});
+        i = j+1; continue;
+      }
+      if(/[A-Za-z]/.test(c)){
+        var k = i; while(k<pattern.length && pattern[k]===c) k++;
+        var run = pattern.slice(i,k), n = run.length, t = null;
+        if(c==="y" && n===4) t = pad(dt.y,4);
+        else if(c==="y" && n===2) t = pad(fmod(dt.y,100),2);
+        else if(c==="M" && n===4) t = MONTHS[dt.m-1];
+        else if(c==="M" && n===3) t = MONTHS[dt.m-1].slice(0,3);
+        else if(c==="M" && n===2) t = pad(dt.m,2);
+        else if(c==="M" && n===1) t = String(dt.m);
+        else if(c==="d" && n===2) t = pad(dt.d,2);
+        else if(c==="d" && n===1) t = String(dt.d);
+        else if(c==="a" && n===1) t = dt.H<12 ? "AM" : "PM";
+        else if(c==="H" && n===2) t = pad(dt.H,2);
+        else if(c==="H" && n===1) t = String(dt.H);
+        else if(c==="h" && n===2) t = pad(h12,2);
+        else if(c==="h" && n===1) t = String(h12);
+        else if(c==="m" && n===2) t = pad(dt.mi,2);
+        else if(c==="m" && n===1) t = String(dt.mi);
+        else if(c==="s" && n===2) t = pad(dt.s,2);
+        else if(c==="s" && n===1) t = String(dt.s);
+        if(t===null){ bad.push(run); out += run; parts.push({src:run, val:null}); } else { out += t; parts.push({src:run, val:t}); }
+        i = k; continue;
+      }
+      out += c; parts.push({src:c, val:c, lit:true}); i++;
+    }
+    return {text: out, unsupported: bad, parts: parts};
+  }
+  function seconds(h1,m1,s1,h2,m2,s2){ return (h2*3600+m2*60+s2)-(h1*3600+m1*60+s1); }
+  return {MONTHS:MONTHS, DAYS:DAYS, isLeap:isLeap, lenMonth:lenMonth, toEpoch:toEpoch, fromEpoch:fromEpoch, pad:pad, iso:iso, of:of,
+          plusDays:plusDays, plusMonths:plusMonths, plusYears:plusYears, dow:dow, period:period, fmt:fmt, seconds:seconds};
+})();
+
+
+
+  function highlight(code){
+    const KEYWORDS = new Set(['void','int','double','boolean','new','return','if','else','for','while','class','public','static','private','protected','this','extends','try','catch','finally','throw','throws','import']);
+    const TYPES = new Set(['String','System','out','args','LocalDate','LocalTime','LocalDateTime','DateTimeFormatter','Period','Duration','DateTimeException']);
+    const escaped = code.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const pattern = /("(?:[^"\\]|\\.)*")|(\/\/[^\n]*)|\b([A-Za-z_]\w*)\b(?=\s*\()|\b([A-Za-z_]\w*)\b/g;
+    return escaped.replace(pattern, (match, str, comment, fnCall, word) => {
+      if(str !== undefined) return `<span class="tok-str">${str}</span>`;
+      if(comment !== undefined) return `<span class="tok-com">${comment}</span>`;
+      if(fnCall !== undefined){
+        if(KEYWORDS.has(fnCall)) return `<span class="tok-kw">${fnCall}</span>`;
+        return `<span class="tok-fn">${fnCall}</span>`;
+      }
+      if(word !== undefined){
+        if(KEYWORDS.has(word)) return `<span class="tok-kw">${word}</span>`;
+        if(TYPES.has(word)) return `<span class="tok-type">${word}</span>`;
+        return word;
+      }
+      return match;
+    });
+  }
+  document.querySelectorAll('.codeblock pre code').forEach(el=>{ el.innerHTML = highlight(el.textContent); });
+  document.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.closest('.codeblock').querySelector('code').textContent;
+      navigator.clipboard.writeText(code).then(()=>{
+        btn.textContent='Copied'; btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); },1400);
+      }).catch(()=>{ btn.textContent='Select & copy'; });
+    });
+  });
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const row = (k, v) => `<span class="k">${esc(k)}</span> <span class="v">${esc(v)}</span>`;
+  function parseDateInput(v){ const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v||""); return m ? {y:+m[1], m:+m[2], d:+m[3]} : null; }
+  function timeStr(h,mi,s){ return DT.pad(h,2)+":"+DT.pad(mi,2)+(s? ":"+DT.pad(s,2) : ""); }
+
+  /* ---------- class map ---------- */
+  const classInfo = {
+    LocalDate: "<strong>LocalDate</strong>: a date with no time. Holds a year, month and day. <code class=\"inline\">LocalDate.of(2019, 4, 13)</code>",
+    LocalTime: "<strong>LocalTime</strong>: a time with no date. Holds hours, minutes and seconds. <code class=\"inline\">LocalTime.of(11, 34, 56)</code>",
+    LocalDateTime: "<strong>LocalDateTime</strong>: a date and a time together. <code class=\"inline\">LocalDateTime.of(2018, 11, 28, 10, 15, 26)</code>",
+    DateTimeFormatter: "<strong>DateTimeFormatter</strong>: describes how a date or time is <em>written</em>. <code class=\"inline\">format()</code> turns an object into text; <code class=\"inline\">parse()</code> turns text into an object.",
+    Period: "<strong>Period</strong>: the gap between two <em>dates</em> as years, months and days. <code class=\"inline\">Period.between(start, end)</code>",
+    Duration: "<strong>Duration</strong>: the gap between two <em>times</em>, e.g. in seconds. <code class=\"inline\">Duration.between(start, end)</code>"
+  };
+  function setClass(node){
+    document.querySelectorAll('.hnode, .hierarchy-chip').forEach(el=> el.classList.toggle('active', el.dataset.node === node));
+    $('classDesc').innerHTML = node ? classInfo[node] : 'Click a box above to see what it means.';
+  }
+  document.querySelectorAll('.hnode, .hierarchy-chip').forEach(el=> el.addEventListener('click', ()=> setClass(el.dataset.node)));
+
+  /* ---------- date lab ---------- */
+  const monthSel = $('dlM');
+  DT.MONTHS.forEach((n,i)=>{ const o=document.createElement('option'); o.value=i+1; o.textContent=(i+1)+" · "+n; monthSel.appendChild(o); });
+  monthSel.value = 4;
+  function dateLab(){
+    const y = parseInt($('dlY').value,10), m = parseInt(monthSel.value,10), d = parseInt($('dlD').value,10), n = parseInt($('dlN').value,10) || 0;
+    const el = $('dlOut');
+    if(!Number.isFinite(y) || !Number.isFinite(d)){ el.className='lab-out err'; el.textContent='Enter a year and a day.'; return; }
+    const r = DT.of(y,m,d);
+    if(!r.ok){ el.className='lab-out err'; el.textContent = `LocalDate.of(${y}, ${m}, ${d})\nException in thread "main" java.time.DateTimeException: ${r.msg}`; return; }
+    el.className='lab-out';
+    const v = r.v, dw = DT.dow(v);
+    el.innerHTML = [
+      row(`LocalDate.of(${y}, ${m}, ${d})`, "→ "+DT.iso(v)),
+      row("getYear()", "→ "+v.y),
+      row("getMonth()", "→ "+DT.MONTHS[v.m-1].toUpperCase()),
+      row("getMonthValue()", "→ "+v.m),
+      row("getDayOfMonth()", "→ "+v.d),
+      row("getDayOfWeek()", "→ "+DT.DAYS[dw-1]),
+      row("getDayOfWeek().getValue()", "→ "+dw),
+      row(`plusDays(${n})`, "→ "+DT.iso(DT.plusDays(v,n))),
+      row(`plusMonths(${n})`, "→ "+DT.iso(DT.plusMonths(v,n))),
+      row(`plusYears(${n})`, "→ "+DT.iso(DT.plusYears(v,n)))
+    ].join("\n");
+  }
+  ['dlY','dlM','dlD','dlN'].forEach(id=> $(id).addEventListener('input', dateLab)); dateLab();
+
+  /* ---------- time lab ---------- */
+  function timeLab(){
+    const mt = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec($('tlT').value || "");
+    const n = parseInt($('tlN').value,10) || 0, el = $('tlOut');
+    if(!mt){ el.className='lab-out err'; el.textContent='Pick a time.'; return; }
+    el.className='lab-out';
+    const h=+mt[1], mi=+mt[2], s=+(mt[3]||0), base = h*3600+mi*60+s;
+    const add = x => { const t = ((base + x) % 86400 + 86400) % 86400; return timeStr(Math.floor(t/3600), Math.floor(t%3600/60), t%60); };
+    el.innerHTML = [
+      row(`LocalTime.of(${h}, ${mi}, ${s})`, "→ "+timeStr(h,mi,s)),
+      row(`plusHours(${n})`, "→ "+add(n*3600)),
+      row(`plusMinutes(${n})`, "→ "+add(n*60)),
+      row(`plusSeconds(${n})`, "→ "+add(n))
+    ].join("\n");
+  }
+  ['tlT','tlN'].forEach(id=> $(id).addEventListener('input', timeLab)); timeLab();
+
+  /* ---------- format lab ---------- */
+  const presets = ["dd MMM yyyy hh:mm:ss a","dd MMMM yyyy","MM/dd/yyyy","dd/MM/yy","HH:mm:ss","h:mm a","MMMM d, yyyy","mm/dd/yyyy"];
+  presets.forEach(p=>{
+    const b=document.createElement('button'); b.type='button'; b.className='filter-chip'; b.textContent=p;
+    b.addEventListener('click', ()=>{ $('flP').value=p; fmtLab(); });
+    $('flPresets').appendChild(b);
+  });
+  function fmtLab(){
+    const mt = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/.exec($('flDT').value || "");
+    const out = $('flOut'), toks = $('flTokens');
+    toks.innerHTML = '';
+    if(!mt){ out.className='big-preview err'; out.textContent='Pick a date and time.'; return; }
+    const dt = {y:+mt[1], m:+mt[2], d:+mt[3], H:+mt[4], mi:+mt[5], s:+(mt[6]||0)};
+    const r = DT.fmt(dt, $('flP').value);
+    if(r.error){ out.className='big-preview err'; out.textContent=r.error; return; }
+    out.className='big-preview'; out.textContent = r.text || '(empty pattern)';
+    r.parts.forEach(p=>{
+      const d = document.createElement('div');
+      d.className = 'tk' + (p.lit ? ' lit' : '') + (p.val===null ? ' bad' : '');
+      d.innerHTML = `<span class="s">${esc(p.src)}</span><span class="o">${p.val===null ? 'not in table' : esc(p.val).replace(/ /g,'␣')}</span>`;
+      toks.appendChild(d);
+    });
+    if(r.unsupported.length){
+      const n = document.createElement('p'); n.className='lab-note'; n.style.flexBasis='100%';
+      n.textContent = 'Red pieces aren’t in this chapter’s table, so this lab leaves them as typed. Real Java may treat them differently.';
+      toks.appendChild(n);
+    }
+  }
+  ['flDT','flP'].forEach(id=> $(id).addEventListener('input', fmtLab)); fmtLab();
+
+  /* ---------- period lab ---------- */
+  function periodLab(){
+    const a = parseDateInput($('plA').value), b = parseDateInput($('plB').value), el = $('plOut');
+    if(!a || !b){ el.className='lab-out err'; el.textContent='Pick two dates.'; return; }
+    el.className='lab-out';
+    const p = DT.period(a,b);
+    el.innerHTML = [
+      row(`Period.between(LocalDate.of(${a.y}, ${a.m}, ${a.d}), LocalDate.of(${b.y}, ${b.m}, ${b.d}))`, ""),
+      row("Years:", p.years), row("Months:", p.months), row("Days:", p.days)].join("\n");
+  }
+  ['plA','plB'].forEach(id=> $(id).addEventListener('input', periodLab)); periodLab();
+
+  /* ---------- duration lab ---------- */
+  function durLab(){
+    const f = v => { const m=/^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(v||""); return m ? [+m[1],+m[2],+(m[3]||0)] : null; };
+    const a = f($('dulA').value), b = f($('dulB').value), el = $('dulOut');
+    if(!a || !b){ el.className='lab-out err'; el.textContent='Pick two times.'; return; }
+    el.className='lab-out';
+    const sec = DT.seconds(a[0],a[1],a[2],b[0],b[1],b[2]);
+    el.innerHTML = [
+      row("getSeconds()", "→ "+sec),
+      row("toMinutes()", "→ "+Math.trunc(sec/60)),
+      row("toHours()", "→ "+Math.trunc(sec/3600))].join("\n");
+  }
+  ['dulA','dulB'].forEach(id=> $(id).addEventListener('input', durLab)); durLab();
+
+  /* ---------- picker ---------- */
+  const goals = [
+    {g:"Store a birthday", c:"LocalDate", n:"A birthday has no time of day, so a date on its own is enough.", code:"LocalDate birthday = LocalDate.of(2009, 6, 15);"},
+    {g:"Store a bell time", c:"LocalTime", n:"A bell rings at the same time every school day, so there is no date to store.", code:"LocalTime bell = LocalTime.of(8, 45);"},
+    {g:"Store an exam start", c:"LocalDateTime", n:"The exam happens on one particular day at one particular time, so you need both.", code:"LocalDateTime exam = LocalDateTime.of(2025, 3, 14, 9, 30);"},
+    {g:"Show 13 Sep 2022", c:"DateTimeFormatter + format()", n:"Build a formatter with the style you want, then call format() on the date.", code:"DateTimeFormatter f = DateTimeFormatter.ofPattern(\"dd MMM yyyy\");\nString text = date.format(f);"},
+    {g:"Turn \"28/11/2018\" into a date", c:"DateTimeFormatter + parse()", n:"Describe how the text is written, then parse it. The pattern must match exactly.", code:"DateTimeFormatter f = DateTimeFormatter.ofPattern(\"dd/MM/yyyy\");\nLocalDate d = LocalDate.parse(\"28/11/2018\", f);"},
+    {g:"Age in years, months, days", c:"Period", n:"Period measures the gap between two dates in calendar units.", code:"Period age = Period.between(birthday, today);\nSystem.out.println(age.getYears());"},
+    {g:"Seconds between two times", c:"Duration", n:"Duration measures an exact length of time between two times.", code:"Duration d = Duration.between(start, end);\nSystem.out.println(d.getSeconds());"}
+  ];
+  const gEl = $('pickGoals'), rEl = $('pickResult');
+  goals.forEach((o,i)=>{
+    const b = document.createElement('button'); b.type='button'; b.textContent = o.g;
+    b.addEventListener('click', ()=>{
+      gEl.querySelectorAll('button').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+      rEl.innerHTML = `<p class="cls">${esc(o.c)}</p><p>${esc(o.n)}</p><div class="codeblock small"><pre><code>${highlight(o.code)}</code></pre></div>`;
+    });
+    gEl.appendChild(b);
+  });
+
+  /* ---------- challenges ---------- */
+  document.querySelectorAll('.challenge .reveal-btn').forEach(btn=>{
+    const panel = btn.nextElementSibling, label = btn.firstChild.textContent.trim();
+    btn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      btn.classList.toggle('open', open);
+      btn.firstChild.textContent = (open ? 'Hide answer' : label) + ' ';
+    });
+  });
+
+  /* ---------- self-test ---------- */
+  const selfTestData = [
+    {q:"Which package holds Java's modern date and time classes?", a:"<code class=\"inline\">java.time</code> (the formatter is in <code class=\"inline\">java.time.format</code>)."},
+    {q:"Which class would you use for a date only, a time only, and both together?", a:"<code class=\"inline\">LocalDate</code> for a date, <code class=\"inline\">LocalTime</code> for a time, and <code class=\"inline\">LocalDateTime</code> for both."},
+    {q:"What happens when you run LocalDate.of(2022, 2, 31)?", a:"It throws a <code class=\"inline\">DateTimeException</code> (Invalid date 'FEBRUARY 31'), because February doesn't have 31 days."},
+    {q:"Does dateObj.plusDays(5) change dateObj?", a:"No. It returns a <em>new</em> date and leaves <code class=\"inline\">dateObj</code> unchanged. Store it with <code class=\"inline\">dateObj = dateObj.plusDays(5);</code> if you want to keep it."},
+    {q:"What's the difference between MM and mm in a pattern?", a:"<code class=\"inline\">MM</code> is the month; <code class=\"inline\">mm</code> is the minute."},
+    {q:"Which class finds the gap between two dates, and which between two times?", a:"<code class=\"inline\">Period</code> for dates (years, months, days) and <code class=\"inline\">Duration</code> for times (e.g. seconds)."}
+  ];
+  const listEl = $('selftestList'), doneSet = new Set();
+  selfTestData.forEach((item, i)=>{
+    const card = document.createElement('div'); card.className = 'qcard';
+    card.innerHTML = `<div class="qcard-head"><span><span class="qn">Q${i+1}</span>${item.q}</span><span class="check">✓</span></div><div class="qcard-answer"><p>${item.a}</p></div>`;
+    const head = card.querySelector('.qcard-head'), ans = card.querySelector('.qcard-answer');
+    head.addEventListener('click', ()=>{
+      const open = ans.classList.toggle('open');
+      if(open && !doneSet.has(i)){ doneSet.add(i); card.classList.add('done'); upd(); }
+    });
+    listEl.appendChild(card);
+  });
+  function upd(){
+    $('selftestCount').textContent = `${doneSet.size} / ${selfTestData.length} answered`;
+    $('selftestFill').style.width = (doneSet.size/selfTestData.length*100) + '%';
+  }
+})();
+</script>
+</body>
+</html>
