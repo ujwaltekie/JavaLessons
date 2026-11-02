@@ -63,7 +63,7 @@
 
   .chapter-list{ list-style:none; margin:0; padding:0; }
   .chapter-card{
-    display:block; text-decoration:none; color:inherit;
+    display:block; color:inherit;
     border:1px solid var(--border); border-radius:var(--radius);
     background:var(--bg-raised); padding:20px 22px;
     margin-bottom:14px;
@@ -94,12 +94,20 @@
     background:#F5F1E9; border:1px solid var(--border); border-radius:4px;
     padding:2px 7px;
   }
+  .chapter-card h2 a{ color:inherit; text-decoration:none; }
+  .chapter-card h2 a::after{ content:""; position:absolute; inset:0; border-radius:var(--radius); }
+  .cc-assign{ position:relative; z-index:2; display:flex; align-items:center; flex-wrap:wrap; gap:7px; margin-top:14px; padding-top:13px; border-top:1px dashed var(--border); }
+  .cc-assign .lbl{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); margin-right:2px; }
+  .chip{ font-size:12.5px; font-weight:600; text-decoration:none; color:var(--accent); background:var(--accent-tint); border:1px solid #EBD3AE; border-radius:999px; padding:3px 11px; transition:background var(--dur), color var(--dur), border-color var(--dur); }
+  .chip:hover{ background:var(--accent); color:#fff; border-color:var(--accent); }
   .chapter-card .cc-arrow{
     font-size:13px; color:var(--faint); font-weight:600; white-space:nowrap;
     display:flex; align-items:center; gap:4px;
     transition:transform var(--dur), color var(--dur);
   }
 
+  .chapter-card.soon{ border-style:dashed; background:transparent; opacity:.75; }
+  .chapter-card.soon:hover{ transform:none; box-shadow:none; border-color:var(--border-strong); }
   .empty-note{
     border:1px dashed var(--border-strong); border-radius:var(--radius);
     padding:18px 20px; margin-top:6px; color:var(--faint); font-size:14px;
@@ -145,70 +153,48 @@
 
 </div>
 
+<script src="catalog.js"></script>
 <script>
 (function(){
   "use strict";
-
-  // Add a new entry here whenever a new chapter is published.
-  const chapters = [
-    {
-      title: "Java Methods",
-      description: "What a method is, how to define one, and how parameters let you feed information in.",
-      href: "java-methods-workspace.html",
-      tags: ["Methods", "Parameters"]
-    },
-    {
-      title: "Java Methods with Returns",
-      description: "Giving a method a return type, using the return keyword, and doing something useful with the value that comes back.",
-      href: "java-methods-with-returns.html",
-      tags: ["Methods", "return"]
-    },
-    {
-      title: "Java Instance Variables and Constructors",
-      description: "Storing an object's own data, and using a constructor to set it up the moment the object is created.",
-      href: "java-instance-variables-and-constructors.html",
-      tags: ["Objects", "Constructors"]
-    },
-    {
-      title: "Method Overloading & Constructor Overloading",
-      description: "Giving one name several forms — how Java tells overloaded methods and constructors apart by their parameters.",
-      href: "java-method-and-constructor-overloading.html",
-      tags: ["Methods", "Constructors", "Overloading"]
-    },
-    {
-      title: "Parameter Passing, Access Modifiers, static, and Variables",
-      description: "How data enters methods, who can access what, whether a member belongs to an object or the class, and where variables live.",
-      href: "java-parameter-passing-access-static-variables.html",
-      tags: ["Access modifiers", "static", "Variables"]
-    },
-    {
-      title: "Errors and Exceptions",
-      description: "HWhat goes wrong, when Java notices, and how to catch it before it crashes everything.",
-      href: "java-errors-and-exceptions.html",
-      tags: ["Errors", "exceptions", "throw"]
-    }
-  ];
+  // Everything here is driven by catalog.js (the only file you edit when adding chapters).
+  //   chapter      -> lectures/<id>.html
+  //   assignment N -> assignments/<id>/assignment-N.html
+  const L = CATALOG.lectures;
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const live = L.filter(l => !l.soon);
+  document.getElementById('chapterCount').textContent = live.length;
 
   const listEl = document.getElementById('chapterList');
-  document.getElementById('chapterCount').textContent = chapters.length;
-
-  chapters.forEach((ch, i) => {
+  L.forEach((ch, i) => {
     const li = document.createElement('li');
     const num = String(i + 1).padStart(2, '0');
-    const tags = ch.tags.map(t => `<span class="cc-tag">${t}</span>`).join('');
+    if (ch.soon) {
+      li.innerHTML = `
+        <div class="chapter-card soon">
+          <div class="cc-top"><span class="cc-num">${num}</span><h2>${esc(ch.title)}</h2></div>
+          <p>Coming soon.</p>
+        </div>`;
+      listEl.appendChild(li);
+      return;
+    }
+    const tags = (ch.tags || []).map(t => `<span class="cc-tag">${esc(t)}</span>`).join('');
+    const chips = (ch.assignments || []).map((t, j) =>
+      `<a class="chip" href="assignments/${ch.id}/assignment-${j + 1}.html" title="${esc(t)}">A${j + 1} · ${esc(t)}</a>`).join('');
+    const assign = chips ? `<div class="cc-assign"><span class="lbl">Assignments</span>${chips}</div>` : '';
     li.innerHTML = `
-      <a class="chapter-card" href="${ch.href}">
+      <div class="chapter-card">
         <div class="cc-top">
           <span class="cc-num">${num}</span>
-          <h2>${ch.title}</h2>
+          <h2><a href="lectures/${ch.id}.html">${esc(ch.title)}</a></h2>
         </div>
-        <p>${ch.description}</p>
+        <p>${esc(ch.blurb)}</p>
         <div class="cc-bottom">
           <div class="cc-tags">${tags}</div>
           <span class="cc-arrow">Read chapter →</span>
         </div>
-      </a>
-    `;
+        ${assign}
+      </div>`;
     listEl.appendChild(li);
   });
 })();
