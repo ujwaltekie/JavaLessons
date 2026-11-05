@@ -66,7 +66,17 @@ const CATALOG = {
       tags: ["LocalDate", "DateTimeFormatter", "Period / Duration"],
       title: "Working with Dates and Times",
       blurb: "Creating dates and times with java.time, writing them in any style, and measuring the gap between them.",
-      assignments: []
+      assignments: [
+        "Parsing Date",
+        "Formatting Datetime",
+        "Print Dates",
+        "Add Years",
+        "List of Dates",
+        "Name of the Weekday",
+        "Count of Mondays",
+        "UNIX Timestamp to DateTime",
+        "Exception"
+      ]
     }
     /* Next chapter: copy this block, remove the comment marks, rename.
     ,{
