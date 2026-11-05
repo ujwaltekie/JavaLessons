@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 6 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 6 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Name of the Weekday</h1>
-    <p class="sub">Write a program to print the name of the weekday of a given date.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 10 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>Write a program to print the <strong>name of the weekday</strong> of a given date.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code>.</p></div><div class="concepts"><code class="inline">getDayOfWeek()</code><code class="inline">LocalDate.parse()</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing the date in the string format.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>A single line containing the name of the weekday, in capital letters.</p><ul class="note-list"><li>The output uses the English weekday names in capitals: <code class="inline">MONDAY</code>, <code class="inline">TUESDAY</code>, &hellip; <code class="inline">SUNDAY</code>.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>Parse the text into a <code class="inline">LocalDate</code> and call <code class="inline">getDayOfWeek()</code>. It returns the weekday, and printing it shows the name in capitals, which is exactly the required output. (Use <code class="inline">getDayOfWeek().getValue()</code> only if you want the number 1 to 7.)</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2 Jul 2000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>SUNDAY</code></pre></div></div><p class="why"><strong>Explanation:</strong> 2 July 2000 fell on a Sunday, so the output is <code>SUNDAY</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>8 Feb 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>MONDAY</code></pre></div></div><p class="why"><strong>Explanation:</strong> 8 February 2021 was a Monday, so the output is <code>MONDAY</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Write a program to print the <strong>name of the weekday</strong> of a given date.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code>.</p></div><div class="concepts"><code class="inline">getDayOfWeek()</code><code class="inline">LocalDate.parse()</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing the date in the string format.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the name of the weekday, in capital letters.</p><ul class="note-list"><li>The output uses the English weekday names in capitals: <code class="inline">MONDAY</code>, <code class="inline">TUESDAY</code>, &hellip; <code class="inline">SUNDAY</code>.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Parse the text into a <code class="inline">LocalDate</code> and call <code class="inline">getDayOfWeek()</code>. It returns the weekday, and printing it shows the name in capitals, which is exactly the required output. (Use <code class="inline">getDayOfWeek().getValue()</code> only if you want the number 1 to 7.)</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2 Jul 2000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>SUNDAY</code></pre></div></div><p class="why"><strong>Explanation:</strong> 2 July 2000 fell on a Sunday, so the output is <code>SUNDAY</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>8 Feb 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>MONDAY</code></pre></div></div><p class="why"><strong>Explanation:</strong> 8 February 2021 was a Monday, so the output is <code>MONDAY</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -438,19 +463,7 @@ class Main {
         // TODO 1: parse the text into a LocalDate
         // TODO 2: print the name of its weekday
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>Parse with <code class="inline">"d MMM yyyy"</code> as in <em>Parsing Date</em>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p><code class="inline">date.getDayOfWeek()</code> returns the weekday. Print it directly.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy");
-        LocalDate date = LocalDate.parse(text, formatter);
-        System.out.println(date.getDayOfWeek());
-    }
-}</code></pre></div><p>Only two ideas: parse the text, then ask the date for its weekday. No <code class="inline">getValue()</code> or extra formatting needed.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>2 Jul 2000</code> prints <code>SUNDAY</code></span></li><li><span class="box">✓</span><span class="t"><code>8 Feb 2021</code> prints <code>MONDAY</code></span></li><li><span class="box">✓</span><span class="t">The output is in capital letters</span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-5.html"><span class="dir">← Previous</span><span class="nm">List of Dates</span></a><a class="next" href="assignment-7.html"><span class="dir">Next →</span><span class="nm">Count of Mondays</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

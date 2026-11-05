@@ -414,21 +414,46 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 4 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 4 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Add Years</h1>
-    <p class="sub">You are given a date D1 and an integer Y.</p>
     <div class="meta-row"><span class="meta-pill lvl">Medium</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>You are given a date <strong>D1</strong> and an integer <strong>Y</strong>.</p><p>Write a program to add the years <strong>Y</strong> to D1 and display the new date <strong>D2</strong>.</p></div><div class="concepts"><code class="inline">plusYears()</code><code class="inline">parsing + arithmetic</code><code class="inline">leap-day behaviour</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The first line is a string denoting D1 in a format similar to <code class="inline">Jul 11 2021</code>. The second line is an integer denoting the years Y to add.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>A single line containing the new date D2, printed as a date object (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>29 February plus a number of years that doesn&rsquo;t land on a leap year becomes 28 February. <code class="inline">plusYears()</code> handles this for you.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>Parse D1 into a <code class="inline">LocalDate</code> with the pattern <code class="inline">MMM dd yyyy</code>, then <code class="inline">plusYears(Y)</code> returns D2. Print D2.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given a date <strong>D1</strong> and an integer <strong>Y</strong>.</p><p>Write a program to add the years <strong>Y</strong> to D1 and display the new date <strong>D2</strong>.</p></div><div class="concepts"><code class="inline">plusYears()</code><code class="inline">parsing + arithmetic</code><code class="inline">leap-day behaviour</code></div></section><section class="sec"><h2>Input</h2><p>The first line is a string denoting D1 in a format similar to <code class="inline">Jul 11 2021</code>. The second line is an integer denoting the years Y to add.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the new date D2, printed as a date object (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>29 February plus a number of years that doesn&rsquo;t land on a leap year becomes 28 February. <code class="inline">plusYears()</code> handles this for you.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Parse D1 into a <code class="inline">LocalDate</code> with the pattern <code class="inline">MMM dd yyyy</code>, then <code class="inline">plusYears(Y)</code> returns D2. Print D2.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
 5</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2019-07-11</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>Jul 11 2014</code> plus 5 years is 11 July 2019, which prints as <code>2019-07-11</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Feb 29 2020
-1</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-02-28</code></pre></div></div><p class="why"><strong>Explanation:</strong> 29 February 2020 is a leap day. One year later, 2021 has no 29 February, so Java moves to the last day of that month: <code>2021-02-28</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+1</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-02-28</code></pre></div></div><p class="why"><strong>Explanation:</strong> 29 February 2020 is a leap day. One year later, 2021 has no 29 February, so Java moves to the last day of that month: <code>2021-02-28</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -442,21 +467,7 @@ class Main {
         // TODO 2: add the years to get D2
         // TODO 3: print D2
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>The input date looks like <code class="inline">Jul 11 2014</code>, so the pattern is month, day, year: <code class="inline">"MMM dd yyyy"</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p>Read the first line with <code class="inline">nextLine()</code> for the date, and read the second line as a number.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p><code class="inline">d1.plusYears(years)</code> returns the new date. Store it (for example in <code class="inline">d2</code>) or print it directly.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();
-        int years = Integer.parseInt(sc.nextLine().trim());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        LocalDate d1 = LocalDate.parse(text, formatter);
-        LocalDate d2 = d1.plusYears(years);
-        System.out.println(d2);
-    }
-}</code></pre></div><p>The 29 February behaviour needs no extra code: <code class="inline">plusYears</code> clamps to the last valid day of the month, just like <code class="inline">plusMonths</code> does.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>Jul 11 2014</code> + 5 prints <code>2019-07-11</code></span></li><li><span class="box">✓</span><span class="t"><code>Feb 29 2020</code> + 1 prints <code>2021-02-28</code></span></li><li><span class="box">✓</span><span class="t">I read the date and the number from two separate lines</span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-3.html"><span class="dir">← Previous</span><span class="nm">Print Dates</span></a><a class="next" href="assignment-5.html"><span class="dir">Next →</span><span class="nm">List of Dates</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

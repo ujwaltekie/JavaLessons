@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 9 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 9 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Exception</h1>
-    <p class="sub">Given two integers A and B, write a program to print the result of A divided by B.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>Given two integers <strong>A</strong> and <strong>B</strong>, write a program to print the result of A divided by B.</p></div><div class="concepts"><code class="inline">try / catch</code><code class="inline">ArithmeticException</code><code class="inline">NumberFormatException</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing two space-separated <strong>strings</strong>, denoting the values of A and B.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>A single line containing the result of A divided by B.<br>In the case of <code class="inline">ArithmeticException</code>, print the message <code class="inline">Denominator can't be 0</code>.<br>In the case of <code class="inline">NumberFormatException</code>, print the message <code class="inline">Input should be an integer</code>.</p><ul class="note-list"><li>A and B are integers, so the division is <strong>integer division</strong>: <code class="inline">7 / 2</code> gives <code class="inline">3</code>.</li><li>The inputs arrive as <em>strings</em>, so converting them can fail. That failure is the <code class="inline">NumberFormatException</code>.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>Read the two words, convert both with <code class="inline">Integer.parseInt</code>, and print <code class="inline">A / B</code>. Two things can go wrong, and each gets its own <code class="inline">catch</code> block: a word that isn&rsquo;t a whole number throws <code class="inline">NumberFormatException</code>, and dividing by zero throws <code class="inline">ArithmeticException</code>. Put all the risky lines inside one <code class="inline">try</code> block.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>5 0</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Denominator can't be 0</code></pre></div></div><p class="why"><strong>Explanation:</strong> Both are valid integers, but 5 divided by 0 throws <code>ArithmeticException</code>, so the program prints <code>Denominator can't be 0</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>12 a</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Input should be an integer</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>a</code> is not a whole number, so <code>Integer.parseInt("a")</code> throws <code>NumberFormatException</code> and the program prints <code>Input should be an integer</code>.</p></div><div class="sample"><h3>Sample 3</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>20 4</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>5</code></pre></div></div><p class="why"><strong>Explanation:</strong> Nothing goes wrong: 20 divided by 4 is <code>5</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.util.Scanner;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Given two integers <strong>A</strong> and <strong>B</strong>, write a program to print the result of A divided by B.</p></div><div class="concepts"><code class="inline">try / catch</code><code class="inline">ArithmeticException</code><code class="inline">NumberFormatException</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing two space-separated <strong>strings</strong>, denoting the values of A and B.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the result of A divided by B.<br>In the case of <code class="inline">ArithmeticException</code>, print the message <code class="inline">Denominator can't be 0</code>.<br>In the case of <code class="inline">NumberFormatException</code>, print the message <code class="inline">Input should be an integer</code>.</p><ul class="note-list"><li>A and B are integers, so the division is <strong>integer division</strong>: <code class="inline">7 / 2</code> gives <code class="inline">3</code>.</li><li>The inputs arrive as <em>strings</em>, so converting them can fail. That failure is the <code class="inline">NumberFormatException</code>.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Read the two words, convert both with <code class="inline">Integer.parseInt</code>, and print <code class="inline">A / B</code>. Two things can go wrong, and each gets its own <code class="inline">catch</code> block: a word that isn&rsquo;t a whole number throws <code class="inline">NumberFormatException</code>, and dividing by zero throws <code class="inline">ArithmeticException</code>. Put all the risky lines inside one <code class="inline">try</code> block.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>5 0</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Denominator can't be 0</code></pre></div></div><p class="why"><strong>Explanation:</strong> Both are valid integers, but 5 divided by 0 throws <code>ArithmeticException</code>, so the program prints <code>Denominator can't be 0</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>12 a</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Input should be an integer</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>a</code> is not a whole number, so <code>Integer.parseInt("a")</code> throws <code>NumberFormatException</code> and the program prints <code>Input should be an integer</code>.</p></div><div class="sample"><h3>Sample 3</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>20 4</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>5</code></pre></div></div><p class="why"><strong>Explanation:</strong> Nothing goes wrong: 20 divided by 4 is <code>5</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.util.Scanner;
 
 class Main {
     public static void main(String[] args) {
@@ -438,26 +463,9 @@ class Main {
         // TODO 2: catch ArithmeticException      -&gt; Denominator can't be 0
         // TODO 3: catch NumberFormatException    -&gt; Input should be an integer
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>Read both values with <code class="inline">sc.next()</code> as strings, then convert them <em>inside</em> the <code class="inline">try</code> block, because <code class="inline">Integer.parseInt</code> is what throws <code class="inline">NumberFormatException</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p><code class="inline">x / y</code> with <code class="inline">y</code> equal to 0 throws <code class="inline">ArithmeticException</code>.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p>Write one <code class="inline">catch</code> block per exception type, each printing its own message exactly as required (check the apostrophe in <code class="inline">can't</code>).</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String a = sc.next();
-        String b = sc.next();
-        try {
-            int x = Integer.parseInt(a);
-            int y = Integer.parseInt(b);
-            System.out.println(x / y);
-        } catch (ArithmeticException e) {
-            System.out.println("Denominator can't be 0");
-        } catch (NumberFormatException e) {
-            System.out.println("Input should be an integer");
-        }
-    }
-}</code></pre></div><p>Neither exception is checked, so the compiler doesn&rsquo;t force the <code class="inline">try/catch</code>, but without it the program would crash with a stack trace instead of the friendly message.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>5 0</code> prints <code>Denominator can't be 0</code></span></li><li><span class="box">✓</span><span class="t"><code>12 a</code> prints <code>Input should be an integer</code></span></li><li><span class="box">✓</span><span class="t"><code>20 4</code> prints <code>5</code></span></li><li><span class="box">✓</span><span class="t">Each exception has its own <code>catch</code> block</span></li></ul><div class="sc-progress" id="scProg">0 of 4 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
-    <div class="asg-nav"><a href="assignment-8.html"><span class="dir">← Previous</span><span class="nm">UNIX Timestamp to DateTime</span></a><a class="empty"></a></div>
+    <div class="asg-nav"><a href="assignment-8.html"><span class="dir">← Previous</span><span class="nm">UNIX Timestamp to DateTime</span></a><a class="next" href="assignment-10.html"><span class="dir">Next →</span><span class="nm">Age Calculator</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
   </section>
   <footer><span class="fn">Java Notes</span>Assignment 9 · Working with Dates and Times</footer>

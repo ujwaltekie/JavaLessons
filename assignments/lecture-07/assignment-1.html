@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 1 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 1 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Parsing Date</h1>
-    <p class="sub">Write a program to convert a date given in string format into a date object.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 15 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>Write a program to convert a date given in <strong>string format</strong> into a <strong>date object</strong>.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code> (day, abbreviated month name, year).</p></div><div class="concepts"><code class="inline">LocalDate.parse()</code><code class="inline">DateTimeFormatter.ofPattern()</code><code class="inline">text → date</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing the date in the string format.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>The output is a single line containing the matching date object. Printing a <code class="inline">LocalDate</code> gives it in Java&rsquo;s standard <code class="inline">yyyy-MM-dd</code> style.</p><ul class="note-list"><li>The day can have one or two digits (<code class="inline">8 Feb 2021</code> and <code class="inline">26 Jan 2021</code> are both valid).</li><li>The month is the three-letter abbreviation (<code class="inline">Jan</code>, <code class="inline">Feb</code>, <code class="inline">Jul</code>&hellip;).</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>You are turning <em>text</em> into a real <code class="inline">LocalDate</code>. That needs a <code class="inline">DateTimeFormatter</code> that describes how the text is written (day, short month, year), and <code class="inline">LocalDate.parse(text, formatter)</code> to do the conversion. Once you have the <code class="inline">LocalDate</code>, printing it shows the date as <code class="inline">yyyy-MM-dd</code>.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2 Jul 2000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2000-07-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The text <code>2 Jul 2000</code> is day 2, month July, year 2000. As a date object that prints as <code>2000-07-02</code> (year first, month and day padded to two digits).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>26 Jan 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-01-26</code></pre></div></div><p class="why"><strong>Explanation:</strong> A two-digit day works with the same pattern. <code>26 Jan 2021</code> becomes the date object <code>2021-01-26</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Write a program to convert a date given in <strong>string format</strong> into a <strong>date object</strong>.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code> (day, abbreviated month name, year).</p></div><div class="concepts"><code class="inline">LocalDate.parse()</code><code class="inline">DateTimeFormatter.ofPattern()</code><code class="inline">text → date</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing the date in the string format.</p></section><section class="sec"><h2>Output</h2><p>The output is a single line containing the matching date object. Printing a <code class="inline">LocalDate</code> gives it in Java&rsquo;s standard <code class="inline">yyyy-MM-dd</code> style.</p><ul class="note-list"><li>The day can have one or two digits (<code class="inline">8 Feb 2021</code> and <code class="inline">26 Jan 2021</code> are both valid).</li><li>The month is the three-letter abbreviation (<code class="inline">Jan</code>, <code class="inline">Feb</code>, <code class="inline">Jul</code>&hellip;).</li></ul></section><section class="sec"><h2>Explanation</h2><p>You are turning <em>text</em> into a real <code class="inline">LocalDate</code>. That needs a <code class="inline">DateTimeFormatter</code> that describes how the text is written (day, short month, year), and <code class="inline">LocalDate.parse(text, formatter)</code> to do the conversion. Once you have the <code class="inline">LocalDate</code>, printing it shows the date as <code class="inline">yyyy-MM-dd</code>.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2 Jul 2000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2000-07-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The text <code>2 Jul 2000</code> is day 2, month July, year 2000. As a date object that prints as <code>2000-07-02</code> (year first, month and day padded to two digits).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>26 Jan 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-01-26</code></pre></div></div><p class="why"><strong>Explanation:</strong> A two-digit day works with the same pattern. <code>26 Jan 2021</code> becomes the date object <code>2021-01-26</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -439,37 +464,7 @@ class Main {
         // TODO 2: parse the text into a LocalDate
         // TODO 3: print the date
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>Match the pattern to the text, piece by piece: day <code class="inline">d</code> (works for 8 and for 26), abbreviated month <code class="inline">MMM</code>, year <code class="inline">yyyy</code>. Put the spaces in the pattern too: <code class="inline">"d MMM yyyy"</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p>Use <code class="inline">LocalDate.parse(text, formatter)</code>. The text first, then the formatter.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p>You don&rsquo;t need to format the output. <code class="inline">System.out.println(date)</code> already prints <code class="inline">2000-07-02</code>.</p></div><button class="reveal-btn" data-label="Hint 4">Hint 4 <span class="chev">▾</span></button><div class="rv-panel"><p>If your computer is set to a language other than English, month names like <code class="inline">Jul</code> may not be recognised. Add <code class="inline">Locale.ENGLISH</code> as a second argument to <code class="inline">ofPattern</code> (and <code class="inline">import java.util.Locale;</code>).</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMM yyyy");
-        LocalDate date = LocalDate.parse(text, formatter);
-        System.out.println(date);
-    }
-}</code></pre></div><p><code class="inline">"d MMM yyyy"</code> describes the text exactly, and <code class="inline">LocalDate.parse</code> does the work. If the text didn&rsquo;t match the pattern, Java would throw a <code class="inline">DateTimeParseException</code>.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Stretch challenge</h2><p>Some people write the month in full (<code class="inline">2 July 2000</code>). With <code class="inline">MMM</code> that fails with a <code class="inline">DateTimeParseException</code>. Make your program accept <strong>both</strong> forms by trying one pattern and falling back to the other when it throws:</p><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Scanner;
-
-class Main {
-    static LocalDate parseDate(String text) {
-        try {
-            return LocalDate.parse(text, DateTimeFormatter.ofPattern("d MMM yyyy"));
-        } catch (DateTimeParseException e) {
-            return LocalDate.parse(text, DateTimeFormatter.ofPattern("d MMMM yyyy"));
-        }
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println(parseDate(sc.nextLine()));
-    }
-}</code></pre></div></div></section><section class="sec"><span class="sec-num">10</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t">My program prints <code>2000-07-02</code> for <code>2 Jul 2000</code></span></li><li><span class="box">✓</span><span class="t">It also works for a two-digit day such as <code>26 Jan 2021</code></span></li><li><span class="box">✓</span><span class="t">I can explain why the pattern is <code>d MMM yyyy</code> and not <code>dd/MM/yyyy</code></span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a class="empty"></a><a class="next" href="assignment-2.html"><span class="dir">Next →</span><span class="nm">Formatting Datetime</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

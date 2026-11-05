@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 8 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 8 of 13 · Working with Dates and Times</p>
     <h1>Assignment — UNIX Timestamp to DateTime</h1>
-    <p class="sub">The Unix timestamp is a way to track time as a running total of seconds. The count starts at the Unix Epoch, on January 1st, 1970, at UTC. So a Unix timestamp is simply the number of seconds between a particular moment and the Unix Epoch.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>The <strong>Unix timestamp</strong> is a way to track time as a running total of seconds. The count starts at the <strong>Unix Epoch</strong>, on January 1st, 1970, at UTC. So a Unix timestamp is simply the number of seconds between a particular moment and the Unix Epoch.</p><p>You are given a UNIX timestamp <strong>U</strong>. Write a program to convert U to a readable date-time (in UTC) and print it.</p></div><div class="concepts"><code class="inline">LocalDateTime.of()</code><code class="inline">plusSeconds()</code><code class="inline">format()</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing a UNIX timestamp U.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>A single line containing the moment in UTC in the format <code class="inline">yyyy-MM-dd HH:mm:ss</code>. The time is in the 24-hour format.</p><ul class="note-list"><li>Read U as a <code class="inline">long</code> (<code class="inline">sc.nextLong()</code>) so that large timestamps fit.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>The timestamp counts seconds from midnight on 1 January 1970 (UTC). So build that starting moment as a <code class="inline">LocalDateTime</code> (<code class="inline">1970-01-01 00:00:00</code>), add U seconds with <code class="inline">plusSeconds(U)</code>, and format the result with <code class="inline">yyyy-MM-dd HH:mm:ss</code>.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1284105682</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2010-09-10 08:01:22</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,284,105,682 seconds after the start of 1970 is <code>2010-09-10 08:01:22</code> (UTC).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>0</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>1970-01-01 00:00:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> Zero seconds have passed, so we are exactly at the Unix Epoch: <code>1970-01-01 00:00:00</code>.</p></div><div class="sample"><h3>Sample 3</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1700000000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2023-11-14 22:13:20</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,700,000,000 seconds after the epoch is <code>2023-11-14 22:13:20</code> (UTC).</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>The <strong>Unix timestamp</strong> is a way to track time as a running total of seconds. The count starts at the <strong>Unix Epoch</strong>, on January 1st, 1970, at UTC. So a Unix timestamp is simply the number of seconds between a particular moment and the Unix Epoch.</p><p>You are given a UNIX timestamp <strong>U</strong>. Write a program to convert U to a readable date-time (in UTC) and print it.</p></div><div class="concepts"><code class="inline">LocalDateTime.of()</code><code class="inline">plusSeconds()</code><code class="inline">format()</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing a UNIX timestamp U.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the moment in UTC in the format <code class="inline">yyyy-MM-dd HH:mm:ss</code>. The time is in the 24-hour format.</p><ul class="note-list"><li>Read U as a <code class="inline">long</code> (<code class="inline">sc.nextLong()</code>) so that large timestamps fit.</li></ul></section><section class="sec"><h2>Explanation</h2><p>The timestamp counts seconds from midnight on 1 January 1970 (UTC). So build that starting moment as a <code class="inline">LocalDateTime</code> (<code class="inline">1970-01-01 00:00:00</code>), add U seconds with <code class="inline">plusSeconds(U)</code>, and format the result with <code class="inline">yyyy-MM-dd HH:mm:ss</code>.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1284105682</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2010-09-10 08:01:22</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,284,105,682 seconds after the start of 1970 is <code>2010-09-10 08:01:22</code> (UTC).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>0</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>1970-01-01 00:00:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> Zero seconds have passed, so we are exactly at the Unix Epoch: <code>1970-01-01 00:00:00</code>.</p></div><div class="sample"><h3>Sample 3</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1700000000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2023-11-14 22:13:20</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,700,000,000 seconds after the epoch is <code>2023-11-14 22:13:20</code> (UTC).</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -439,20 +464,7 @@ class Main {
         // TODO 2: add the seconds to it
         // TODO 3: print it as "yyyy-MM-dd HH:mm:ss"
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>The starting point is <code class="inline">LocalDateTime.of(1970, 1, 1, 0, 0, 0)</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p><code class="inline">epoch.plusSeconds(seconds)</code> returns the new moment. It does not change <code class="inline">epoch</code>.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p>Format with <code class="inline">"yyyy-MM-dd HH:mm:ss"</code>. Capital <code class="inline">HH</code> gives the 24-hour clock; <code class="inline">mm</code> is minutes and <code class="inline">MM</code> is the month.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        long seconds = sc.nextLong();
-        LocalDateTime epoch = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
-        LocalDateTime result = epoch.plusSeconds(seconds);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        System.out.println(result.format(formatter));
-    }
-}</code></pre></div><p>A timestamp is just &ldquo;seconds since the epoch&rdquo;, so adding seconds to the epoch is the whole conversion. Java handles every month length and leap year in between.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>0</code> prints <code>1970-01-01 00:00:00</code></span></li><li><span class="box">✓</span><span class="t"><code>1284105682</code> prints <code>2010-09-10 08:01:22</code></span></li><li><span class="box">✓</span><span class="t">I used <code>HH</code> (24-hour) and <code>mm</code> (minutes) correctly</span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-7.html"><span class="dir">← Previous</span><span class="nm">Count of Mondays</span></a><a class="next" href="assignment-9.html"><span class="dir">Next →</span><span class="nm">Exception</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

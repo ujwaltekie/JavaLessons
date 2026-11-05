@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 7 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 7 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Count of Mondays</h1>
-    <p class="sub">You are given two years A and B.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 25 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>You are given two years <strong>A</strong> and <strong>B</strong>.</p><p>Write a program to count the number of months, from year A to year B (<strong>including B</strong>), whose <strong>1st day is a Monday</strong>. Call this number M.</p></div><div class="concepts"><code class="inline">LocalDate.of()</code><code class="inline">nested loops</code><code class="inline">getDayOfWeek().getValue()</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing two space-separated integers, the years A and B.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>A single integer: the count M.</p><ul class="note-list"><li>Assume A is not greater than B.</li><li>Both year A and year B are included.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>Check the 1st of every month, in every year from A to B. For each one, create <code class="inline">LocalDate.of(year, month, 1)</code> and test whether <code class="inline">getDayOfWeek().getValue()</code> equals <code class="inline">1</code> (Monday). Count the matches and print the count. An outer loop walks the years and an inner loop walks months 1 to 12.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2015 2017</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>4</code></pre></div></div><p class="why"><strong>Explanation:</strong> Between 2015 and 2017 the months that start on a Monday are 2015-06-01, 2016-02-01, 2016-08-01 and 2017-05-01. That is 4 months, so the output is <code>4</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2018 2018</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2</code></pre></div></div><p class="why"><strong>Explanation:</strong> Only one year. In 2018 the 1st of the month is a Monday for 2018-01-01 and 2018-10-01, so the output is <code>2</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given two years <strong>A</strong> and <strong>B</strong>.</p><p>Write a program to count the number of months, from year A to year B (<strong>including B</strong>), whose <strong>1st day is a Monday</strong>. Call this number M.</p></div><div class="concepts"><code class="inline">LocalDate.of()</code><code class="inline">nested loops</code><code class="inline">getDayOfWeek().getValue()</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing two space-separated integers, the years A and B.</p></section><section class="sec"><h2>Output</h2><p>A single integer: the count M.</p><ul class="note-list"><li>Assume A is not greater than B.</li><li>Both year A and year B are included.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Check the 1st of every month, in every year from A to B. For each one, create <code class="inline">LocalDate.of(year, month, 1)</code> and test whether <code class="inline">getDayOfWeek().getValue()</code> equals <code class="inline">1</code> (Monday). Count the matches and print the count. An outer loop walks the years and an inner loop walks months 1 to 12.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2015 2017</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>4</code></pre></div></div><p class="why"><strong>Explanation:</strong> Between 2015 and 2017 the months that start on a Monday are 2015-06-01, 2016-02-01, 2016-08-01 and 2017-05-01. That is 4 months, so the output is <code>4</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2018 2018</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2</code></pre></div></div><p class="why"><strong>Explanation:</strong> Only one year. In 2018 the 1st of the month is a Monday for 2018-01-01 and 2018-10-01, so the output is <code>2</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
 import java.util.Scanner;
 
 class Main {
@@ -441,26 +466,7 @@ class Main {
 
         System.out.println(count);
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>Two loops: <code class="inline">for (int year = a; year <= b; year++)</code> and inside it <code class="inline">for (int month = 1; month <= 12; month++)</code>. The <code class="inline"><=</code> on the year makes B included.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p>Create the first day of the month with <code class="inline">LocalDate.of(year, month, 1)</code>.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p><code class="inline">getDayOfWeek().getValue()</code> is 1 for Monday, 2 for Tuesday, &hellip; 7 for Sunday.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.util.Scanner;
-import java.time.LocalDate;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int a = sc.nextInt();
-        int b = sc.nextInt();
-        int count = 0;
-        for (int year = a; year &lt;= b; year++) {
-            for (int month = 1; month &lt;= 12; month++) {
-                LocalDate first = LocalDate.of(year, month, 1);
-                if (first.getDayOfWeek().getValue() == 1) {
-                    count++;
-                }
-            }
-        }
-        System.out.println(count);
-    }
-}</code></pre></div><p>That&rsquo;s at most 12 checks per year, so even a long range of years is instant.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>2015 2017</code> prints <code>4</code></span></li><li><span class="box">✓</span><span class="t"><code>2018 2018</code> prints <code>2</code> (A and B can be the same year)</span></li><li><span class="box">✓</span><span class="t">My year loop includes B</span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-6.html"><span class="dir">← Previous</span><span class="nm">Name of the Weekday</span></a><a class="next" href="assignment-8.html"><span class="dir">Next →</span><span class="nm">UNIX Timestamp to DateTime</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
