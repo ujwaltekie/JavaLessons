@@ -67,6 +67,9 @@ const CATALOG = {
       title: "Working with Dates and Times",
       blurb: "Creating dates and times with java.time, writing them in any style, and measuring the gap between them.",
       assignments: [
+        "Create a Date Object",
+        "Compare Two Times",
+        "Hours Later",
         "Parsing Date",
         "Formatting Datetime",
         "Print Dates",

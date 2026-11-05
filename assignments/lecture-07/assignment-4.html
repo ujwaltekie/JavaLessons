@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Java Notes · Assignment — Add Years</title>
+<title>Java Notes · Assignment — Parsing Date</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -444,33 +444,15 @@
 </head>
 <body>
 <div class="page">
-  <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
+  <nav class="topnav"><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 4 of 13 · Working with Dates and Times</p>
-    <h1>Assignment — Add Years</h1>
-    <div class="meta-row"><span class="meta-pill lvl">Medium</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
+    <p class="kicker">Assignment 4 of 16 · Working with Dates and Times</p>
+    <h1>Assignment — Parsing Date</h1>
+    <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 15 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given a date <strong>D1</strong> and an integer <strong>Y</strong>.</p><p>Write a program to add the years <strong>Y</strong> to D1 and display the new date <strong>D2</strong>.</p></div><div class="concepts"><code class="inline">plusYears()</code><code class="inline">parsing + arithmetic</code><code class="inline">leap-day behaviour</code></div></section><section class="sec"><h2>Input</h2><p>The first line is a string denoting D1 in a format similar to <code class="inline">Jul 11 2021</code>. The second line is an integer denoting the years Y to add.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the new date D2, printed as a date object (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>29 February plus a number of years that doesn&rsquo;t land on a leap year becomes 28 February. <code class="inline">plusYears()</code> handles this for you.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Parse D1 into a <code class="inline">LocalDate</code> with the pattern <code class="inline">MMM dd yyyy</code>, then <code class="inline">plusYears(Y)</code> returns D2. Print D2.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
-5</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2019-07-11</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>Jul 11 2014</code> plus 5 years is 11 July 2019, which prints as <code>2019-07-11</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Feb 29 2020
-1</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-02-28</code></pre></div></div><p class="why"><strong>Explanation:</strong> 29 February 2020 is a leap day. One year later, 2021 has no 29 February, so Java moves to the last day of that month: <code>2021-02-28</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();                     // D1
-        int years = Integer.parseInt(sc.nextLine().trim());   // Y
-
-        // TODO 1: parse D1 (pattern for "Jul 11 2021")
-        // TODO 2: add the years to get D2
-        // TODO 3: print D2
-    }
-}</code></pre></div></section>
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Write a program to convert a date given in <strong>string format</strong> into a <strong>date object</strong>.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code> (day, abbreviated month name, year).</p></div><div class="concepts"><code class="inline">LocalDate.parse()</code><code class="inline">DateTimeFormatter.ofPattern()</code><code class="inline">text → date</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing the date in the string format.</p></section><section class="sec"><h2>Output</h2><p>The output is a single line containing the matching date object. Printing a <code class="inline">LocalDate</code> gives it in Java&rsquo;s standard <code class="inline">yyyy-MM-dd</code> style.</p><ul class="note-list"><li>The day can have one or two digits (<code class="inline">8 Feb 2021</code> and <code class="inline">26 Jan 2021</code> are both valid).</li><li>The month is the three-letter abbreviation (<code class="inline">Jan</code>, <code class="inline">Feb</code>, <code class="inline">Jul</code>&hellip;).</li></ul></section><section class="sec"><h2>Explanation</h2><p>You are turning <em>text</em> into a real <code class="inline">LocalDate</code>. That needs a <code class="inline">DateTimeFormatter</code> that describes how the text is written (day, short month, year), and <code class="inline">LocalDate.parse(text, formatter)</code> to do the conversion. Once you have the <code class="inline">LocalDate</code>, printing it shows the date as <code class="inline">yyyy-MM-dd</code>.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2 Jul 2000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2000-07-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The text <code>2 Jul 2000</code> is day 2, month July, year 2000. As a date object that prints as <code>2000-07-02</code> (year first, month and day padded to two digits).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>26 Jan 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-01-26</code></pre></div></div><p class="why"><strong>Explanation:</strong> A two-digit day works with the same pattern. <code>26 Jan 2021</code> becomes the date object <code>2021-01-26</code>.</p></div></section>
   <section class="sec" style="margin-bottom:20px">
-    <div class="asg-nav"><a href="assignment-3.html"><span class="dir">← Previous</span><span class="nm">Print Dates</span></a><a class="next" href="assignment-5.html"><span class="dir">Next →</span><span class="nm">List of Dates</span></a></div>
-    <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
   </section>
   <footer><span class="fn">Java Notes</span>Assignment 4 · Working with Dates and Times</footer>
 </div>

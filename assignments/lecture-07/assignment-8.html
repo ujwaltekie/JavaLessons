@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Java Notes · Assignment — UNIX Timestamp to DateTime</title>
+<title>Java Notes · Assignment — List of Dates</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -444,30 +444,24 @@
 </head>
 <body>
 <div class="page">
-  <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
+  <nav class="topnav"><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 8 of 13 · Working with Dates and Times</p>
-    <h1>Assignment — UNIX Timestamp to DateTime</h1>
-    <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
+    <p class="kicker">Assignment 8 of 16 · Working with Dates and Times</p>
+    <h1>Assignment — List of Dates</h1>
+    <div class="meta-row"><span class="meta-pill lvl">Medium</span><span class="meta-pill">About 25 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>The <strong>Unix timestamp</strong> is a way to track time as a running total of seconds. The count starts at the <strong>Unix Epoch</strong>, on January 1st, 1970, at UTC. So a Unix timestamp is simply the number of seconds between a particular moment and the Unix Epoch.</p><p>You are given a UNIX timestamp <strong>U</strong>. Write a program to convert U to a readable date-time (in UTC) and print it.</p></div><div class="concepts"><code class="inline">LocalDateTime.of()</code><code class="inline">plusSeconds()</code><code class="inline">format()</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing a UNIX timestamp U.</p></section><section class="sec"><h2>Output</h2><p>A single line containing the moment in UTC in the format <code class="inline">yyyy-MM-dd HH:mm:ss</code>. The time is in the 24-hour format.</p><ul class="note-list"><li>Read U as a <code class="inline">long</code> (<code class="inline">sc.nextLong()</code>) so that large timestamps fit.</li></ul></section><section class="sec"><h2>Explanation</h2><p>The timestamp counts seconds from midnight on 1 January 1970 (UTC). So build that starting moment as a <code class="inline">LocalDateTime</code> (<code class="inline">1970-01-01 00:00:00</code>), add U seconds with <code class="inline">plusSeconds(U)</code>, and format the result with <code class="inline">yyyy-MM-dd HH:mm:ss</code>.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1284105682</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2010-09-10 08:01:22</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,284,105,682 seconds after the start of 1970 is <code>2010-09-10 08:01:22</code> (UTC).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>0</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>1970-01-01 00:00:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> Zero seconds have passed, so we are exactly at the Unix Epoch: <code>1970-01-01 00:00:00</code>.</p></div><div class="sample"><h3>Sample 3</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1700000000</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2023-11-14 22:13:20</code></pre></div></div><p class="why"><strong>Explanation:</strong> 1,700,000,000 seconds after the epoch is <code>2023-11-14 22:13:20</code> (UTC).</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        long seconds = sc.nextLong();
-
-        // TODO 1: create the epoch: 1970-01-01 00:00:00 as a LocalDateTime
-        // TODO 2: add the seconds to it
-        // TODO 3: print it as "yyyy-MM-dd HH:mm:ss"
-    }
-}</code></pre></div></section>
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given two dates <strong>D1</strong> and <strong>D2</strong>.</p><p>Write a program to print the list of dates between D1 and D2 (<strong>including</strong> both D1 and D2) in the <strong>increasing order</strong> of the dates.</p><p>The date in string format looks like <code class="inline">Feb 20 2021</code>.</p></div><div class="concepts"><code class="inline">looping over dates</code><code class="inline">plusDays()</code><code class="inline">compareTo()</code></div></section><section class="sec"><h2>Input</h2><p>The first line is a string denoting D1 in the string format. The second line is a string denoting D2 in the string format.</p></section><section class="sec"><h2>Output</h2><p>Multiple lines containing the dates from D1 to D2, each on a new line, printed as date objects (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>Assume D1 is not later than D2.</li><li>If D1 and D2 are the same day, print that one date.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Start with D1 and keep printing the current date while it is not after D2, moving forward one day each time with <code class="inline">plusDays(1)</code>. Because dates never change, you must store the result back (<code class="inline">current = current.plusDays(1);</code>), otherwise the loop never ends.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
+Jul 14 2014</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2014-07-11
+2014-07-12
+2014-07-13
+2014-07-14</code></pre></div></div><p class="why"><strong>Explanation:</strong> Starting at 11 July and stopping after 14 July (both included) gives four dates, one per line: <code>2014-07-11</code>, <code>2014-07-12</code>, <code>2014-07-13</code>, <code>2014-07-14</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Feb 27 2020
+Mar 02 2020</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2020-02-27
+2020-02-28
+2020-02-29
+2020-03-01
+2020-03-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The list crosses the end of February in a leap year, so 29 February appears: <code>2020-02-27</code>, <code>2020-02-28</code>, <code>2020-02-29</code>, <code>2020-03-01</code>, <code>2020-03-02</code>.</p></div></section>
   <section class="sec" style="margin-bottom:20px">
-    <div class="asg-nav"><a href="assignment-7.html"><span class="dir">← Previous</span><span class="nm">Count of Mondays</span></a><a class="next" href="assignment-9.html"><span class="dir">Next →</span><span class="nm">Exception</span></a></div>
-    <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
   </section>
   <footer><span class="fn">Java Notes</span>Assignment 8 · Working with Dates and Times</footer>
 </div>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Java Notes · Assignment — Print Dates</title>
+<title>Java Notes · Assignment — Hours Later</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -444,35 +444,17 @@
 </head>
 <body>
 <div class="page">
-  <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
+  <nav class="topnav"><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 3 of 13 · Working with Dates and Times</p>
-    <h1>Assignment — Print Dates</h1>
+    <p class="kicker">Assignment 3 of 16 · Working with Dates and Times</p>
+    <h1>Assignment — Hours Later</h1>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 15 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Write a program to print the <strong>previous day</strong> of D, the <strong>current day</strong> D, and the <strong>next day</strong> of D.</p><p>The date in string format looks like <code class="inline">8 Feb 2021</code>.</p></div><div class="concepts"><code class="inline">minusDays()</code><code class="inline">plusDays()</code><code class="inline">dates never change</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing the date D in the string format.</p></section><section class="sec"><h2>Output</h2><p>Three lines. The first line is the date of the previous day, the second line is the date of the current day, and the third line is the date of the next day. Each date is printed as a date object (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>Your program must cope with month ends, year ends and leap years. Let <code class="inline">LocalDate</code> do that work.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Parse the text into a <code class="inline">LocalDate</code> (as in <em>Parsing Date</em>). Then <code class="inline">minusDays(1)</code> gives the previous day and <code class="inline">plusDays(1)</code> gives the next day. Remember that these methods return <em>new</em> dates and never change the original, so you can use all three one after another.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>26 Jan 2021</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2021-01-25
-2021-01-26
-2021-01-27</code></pre></div></div><p class="why"><strong>Explanation:</strong> The day before <code>26 Jan 2021</code> is 25 January, and the day after is 27 January. So the three lines are <code>2021-01-25</code>, <code>2021-01-26</code> and <code>2021-01-27</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>1 Mar 2020</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2020-02-29
-2020-03-01
-2020-03-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> 2020 is a leap year, so the day before 1 March is <strong>29 February</strong>: <code>2020-02-29</code>, then <code>2020-03-01</code>, then <code>2020-03-02</code>. Java works out the month lengths for you.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();
-
-        // TODO 1: parse the text into a LocalDate
-        // TODO 2: print the previous day
-        // TODO 3: print the current day
-        // TODO 4: print the next day
-    }
-}</code></pre></div></section>
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given a time of the day (hour and minute) and a number of hours <strong>H</strong>.</p><p>Print the time that is H hours later, and then just the hour part of that new time.</p></div><div class="concepts"><code class="inline">LocalTime.of()</code><code class="inline">plusHours()</code><code class="inline">getHour()</code></div></section><section class="sec"><h2>Input</h2><p>One line with three space-separated integers: the hour, the minute, and H (the number of hours to add).</p></section><section class="sec"><h2>Output</h2><p>Two lines:<br>the new time (<code class="inline">HH:mm</code>)<br><code class="inline">Hour: N</code> where N is the hour of the new time</p><ul class="note-list"><li>If you go past midnight the clock wraps around to the next day&rsquo;s hours (for example 22:30 plus 5 hours is 03:30).</li></ul></section><section class="sec"><h2>Explanation</h2><p>Create the time with <code class="inline">LocalTime.of(hour, minute)</code> and call <code class="inline">plusHours(H)</code> on it. It returns a <em>new</em> time and leaves the original unchanged. <code class="inline">LocalTime</code> wraps around midnight by itself, so you do not need any extra check. Use <code class="inline">getHour()</code> on the new time to get its hour as a number.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>9 0 3</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>12:00
+Hour: 12</code></pre></div></div><p class="why"><strong>Explanation:</strong> 09:00 plus 3 hours is <code>12:00</code>, and its hour is <code>12</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>22 30 5</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>03:30
+Hour: 3</code></pre></div></div><p class="why"><strong>Explanation:</strong> 22:30 plus 5 hours passes midnight and wraps to <code>03:30</code>. The hour part is <code>3</code>.</p></div></section>
   <section class="sec" style="margin-bottom:20px">
-    <div class="asg-nav"><a href="assignment-2.html"><span class="dir">← Previous</span><span class="nm">Formatting Datetime</span></a><a class="next" href="assignment-4.html"><span class="dir">Next →</span><span class="nm">Add Years</span></a></div>
-    <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
   </section>
   <footer><span class="fn">Java Notes</span>Assignment 3 · Working with Dates and Times</footer>
 </div>

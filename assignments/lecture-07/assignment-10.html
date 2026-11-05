@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Java Notes · Assignment — Age Calculator</title>
+<title>Java Notes · Assignment — Count of Mondays</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -444,41 +444,15 @@
 </head>
 <body>
 <div class="page">
-  <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
+  <nav class="topnav"><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 10 of 13 · Working with Dates and Times</p>
-    <h1>Assignment — Age Calculator</h1>
-    <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 15 min</span><span class="meta-pill">Java</span></div>
+    <p class="kicker">Assignment 10 of 16 · Working with Dates and Times</p>
+    <h1>Assignment — Count of Mondays</h1>
+    <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 25 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given a person&rsquo;s <strong>date of birth</strong> and <strong>today&rsquo;s date</strong>, each as three integers (year, month, day).</p><p>Write a program to print the person&rsquo;s age in <strong>years, months and days</strong>.</p></div><div class="concepts"><code class="inline">LocalDate.of()</code><code class="inline">Period.between()</code><code class="inline">getYears() / getMonths() / getDays()</code></div></section><section class="sec"><h2>Input</h2><p>The first line has three space-separated integers: the year, month and day of birth. The second line has three space-separated integers: the year, month and day of today.</p></section><section class="sec"><h2>Output</h2><p>Three lines:<br><code class="inline">Years: Y</code><br><code class="inline">Months: M</code><br><code class="inline">Days: D</code></p><ul class="note-list"><li>Both dates are valid, and the date of birth is not later than today.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Turn each group of three integers into a <code class="inline">LocalDate</code> with <code class="inline">LocalDate.of(year, month, day)</code>. Then <code class="inline">Period.between(birth, today)</code> gives the gap in calendar units. Read it with <code class="inline">getYears()</code>, <code class="inline">getMonths()</code> and <code class="inline">getDays()</code>. Note that <code class="inline">getDays()</code> is only the leftover days after whole years and months, not the total number of days.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2008 6 15
-2024 10 27</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Years: 16
-Months: 4
-Days: 12</code></pre></div></div><p class="why"><strong>Explanation:</strong> From 15 June 2008 to 15 June 2024 is 16 whole years. From there to 15 October 2024 is 4 more months. From 15 October to 27 October is 12 more days. So the age is <code>16</code> years, <code>4</code> months, <code>12</code> days.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2010 12 31
-2011 1 1</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>Years: 0
-Months: 0
-Days: 1</code></pre></div></div><p class="why"><strong>Explanation:</strong> The two dates are one day apart, so there are no whole years or months: <code>0</code> years, <code>0</code> months, <code>1</code> day.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.Period;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int birthYear = sc.nextInt();
-        int birthMonth = sc.nextInt();
-        int birthDay = sc.nextInt();
-        int year = sc.nextInt();
-        int month = sc.nextInt();
-        int day = sc.nextInt();
-
-        // TODO 1: create the two LocalDate objects
-        // TODO 2: find the Period between them
-        // TODO 3: print Years, Months and Days (one per line)
-    }
-}</code></pre></div></section>
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given two years <strong>A</strong> and <strong>B</strong>.</p><p>Write a program to count the number of months, from year A to year B (<strong>including B</strong>), whose <strong>1st day is a Monday</strong>. Call this number M.</p></div><div class="concepts"><code class="inline">LocalDate.of()</code><code class="inline">nested loops</code><code class="inline">getDayOfWeek().getValue()</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing two space-separated integers, the years A and B.</p></section><section class="sec"><h2>Output</h2><p>A single integer: the count M.</p><ul class="note-list"><li>Assume A is not greater than B.</li><li>Both year A and year B are included.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Check the 1st of every month, in every year from A to B. For each one, create <code class="inline">LocalDate.of(year, month, 1)</code> and test whether <code class="inline">getDayOfWeek().getValue()</code> equals <code class="inline">1</code> (Monday). Count the matches and print the count. An outer loop walks the years and an inner loop walks months 1 to 12.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2015 2017</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>4</code></pre></div></div><p class="why"><strong>Explanation:</strong> Between 2015 and 2017 the months that start on a Monday are 2015-06-01, 2016-02-01, 2016-08-01 and 2017-05-01. That is 4 months, so the output is <code>4</code>.</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>2018 2018</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2</code></pre></div></div><p class="why"><strong>Explanation:</strong> Only one year. In 2018 the 1st of the month is a Monday for 2018-01-01 and 2018-10-01, so the output is <code>2</code>.</p></div></section>
   <section class="sec" style="margin-bottom:20px">
-    <div class="asg-nav"><a href="assignment-9.html"><span class="dir">← Previous</span><span class="nm">Exception</span></a><a class="next" href="assignment-11.html"><span class="dir">Next →</span><span class="nm">Valid Date Checker</span></a></div>
-    <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>
   </section>
   <footer><span class="fn">Java Notes</span>Assignment 10 · Working with Dates and Times</footer>
 </div>
