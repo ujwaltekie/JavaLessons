@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 2 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 2 of 13 · Working with Dates and Times</p>
     <h1>Assignment — Formatting Datetime</h1>
-    <p class="sub">Write a program to convert a datetime in one string format to another string format.</p>
     <div class="meta-row"><span class="meta-pill lvl">Easy</span><span class="meta-pill">About 20 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>Write a program to convert a datetime in <strong>one string format</strong> to <strong>another string format</strong>.</p><p>The input datetime string looks like <code class="inline">Jul 01 2014 02:43PM</code>.</p><p>The output string must be in the format <code class="inline">dd/MM/yyyy HH:mm:ss</code>.</p></div><div class="concepts"><code class="inline">LocalDateTime.parse()</code><code class="inline">format()</code><code class="inline">12-hour vs 24-hour</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The input is a single line containing the datetime in a format like <code class="inline">Jul 01 2014 02:43PM</code>.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>The output is a single line containing the same datetime written as <code class="inline">dd/MM/yyyy HH:mm:ss</code>.</p><ul class="note-list"><li>The input has no seconds, so the seconds part of the output is always <code class="inline">00</code>.</li><li>The output uses the 24-hour clock (<code class="inline">HH</code>), so <code class="inline">02:43PM</code> becomes <code class="inline">14:43</code>.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>First <strong>parse</strong> the text into a <code class="inline">LocalDateTime</code> using a formatter that describes the input (<code class="inline">MMM dd yyyy hh:mma</code>). Then <strong>format</strong> that object with a second formatter that describes the output (<code class="inline">dd/MM/yyyy HH:mm:ss</code>). The object in the middle holds the moment itself; the two formatters are just two ways of writing it.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 01 2014 02:43PM</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>01/07/2014 14:43:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>Jul 01 2014 02:43PM</code> is 1 July 2014, 2:43 PM. In day/month/year order that is <code>01/07/2014</code>. 2 PM on the 24-hour clock is 14, so the time is <code>14:43:00</code> (no seconds were given, so <code>00</code>).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Dec 31 2020 12:05AM</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>31/12/2020 00:05:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>12:05AM</code> is five past midnight. On the 24-hour clock midnight is <code>00</code>, so the output is <code>31/12/2020 00:05:00</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>Write a program to convert a datetime in <strong>one string format</strong> to <strong>another string format</strong>.</p><p>The input datetime string looks like <code class="inline">Jul 01 2014 02:43PM</code>.</p><p>The output string must be in the format <code class="inline">dd/MM/yyyy HH:mm:ss</code>.</p></div><div class="concepts"><code class="inline">LocalDateTime.parse()</code><code class="inline">format()</code><code class="inline">12-hour vs 24-hour</code></div></section><section class="sec"><h2>Input</h2><p>The input is a single line containing the datetime in a format like <code class="inline">Jul 01 2014 02:43PM</code>.</p></section><section class="sec"><h2>Output</h2><p>The output is a single line containing the same datetime written as <code class="inline">dd/MM/yyyy HH:mm:ss</code>.</p><ul class="note-list"><li>The input has no seconds, so the seconds part of the output is always <code class="inline">00</code>.</li><li>The output uses the 24-hour clock (<code class="inline">HH</code>), so <code class="inline">02:43PM</code> becomes <code class="inline">14:43</code>.</li></ul></section><section class="sec"><h2>Explanation</h2><p>First <strong>parse</strong> the text into a <code class="inline">LocalDateTime</code> using a formatter that describes the input (<code class="inline">MMM dd yyyy hh:mma</code>). Then <strong>format</strong> that object with a second formatter that describes the output (<code class="inline">dd/MM/yyyy HH:mm:ss</code>). The object in the middle holds the moment itself; the two formatters are just two ways of writing it.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 01 2014 02:43PM</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>01/07/2014 14:43:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>Jul 01 2014 02:43PM</code> is 1 July 2014, 2:43 PM. In day/month/year order that is <code>01/07/2014</code>. 2 PM on the 24-hour clock is 14, so the time is <code>14:43:00</code> (no seconds were given, so <code>00</code>).</p></div><div class="sample"><h3>Sample 2</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Dec 31 2020 12:05AM</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>31/12/2020 00:05:00</code></pre></div></div><p class="why"><strong>Explanation:</strong> <code>12:05AM</code> is five past midnight. On the 24-hour clock midnight is <code>00</code>, so the output is <code>31/12/2020 00:05:00</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -440,20 +465,7 @@ class Main {
         // TODO 3: formatter for "dd/MM/yyyy HH:mm:ss"
         // TODO 4: print the LocalDateTime using that formatter
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>It has a date <em>and</em> a time, so you need a <code class="inline">LocalDateTime</code>, not a <code class="inline">LocalDate</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p>Input pattern: <code class="inline">"MMM dd yyyy hh:mma"</code>. Here <code class="inline">hh</code> is the 12-hour clock and <code class="inline">a</code> reads the <code class="inline">AM/PM</code> at the end.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p>Output pattern: <code class="inline">"dd/MM/yyyy HH:mm:ss"</code>. Capital <code class="inline">MM</code> is the month, small <code class="inline">mm</code> is the minute. Capital <code class="inline">HH</code> is the 24-hour clock.</p></div><button class="reveal-btn" data-label="Hint 4">Hint 4 <span class="chev">▾</span></button><div class="rv-panel"><p>Parsing is <code class="inline">LocalDateTime.parse(text, inFormat)</code>; formatting is <code class="inline">dateTime.format(outFormat)</code>.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        String text = sc.nextLine();
-        DateTimeFormatter inFormat = DateTimeFormatter.ofPattern("MMM dd yyyy hh:mma");
-        LocalDateTime dateTime = LocalDateTime.parse(text, inFormat);
-        DateTimeFormatter outFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        System.out.println(dateTime.format(outFormat));
-    }
-}</code></pre></div><p>Two formatters, one object. Swapping <code class="inline">hh</code> for <code class="inline">HH</code> is what converts the 12-hour time to 24-hour, and the missing seconds simply print as <code class="inline">00</code>.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t"><code>Jul 01 2014 02:43PM</code> prints <code>01/07/2014 14:43:00</code></span></li><li><span class="box">✓</span><span class="t"><code>12:05AM</code> prints <code>00:05:00</code> (midnight)</span></li><li><span class="box">✓</span><span class="t">I used capital <code>MM</code> for the month and small <code>mm</code> for the minutes</span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-1.html"><span class="dir">← Previous</span><span class="nm">Parsing Date</span></a><a class="next" href="assignment-3.html"><span class="dir">Next →</span><span class="nm">Print Dates</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

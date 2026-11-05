@@ -414,19 +414,44 @@
   .spec-box p:last-child{ margin:0; }
   .note-list{ margin:10px 0 0; padding-left:20px; font-size:14.5px; color:var(--muted); }
   .note-list li{ margin-bottom:4px; }
+
+  /* ---- compact layout ---- */
+  body{ font-size:16px; line-height:1.6; }
+  .page{ padding-bottom:48px; }
+  .topnav{ padding-top:14px; }
+  .masthead{ padding:16px 0 10px; }
+  .masthead .kicker{ margin:0 0 6px; }
+  .masthead h1{ margin:0 0 2px; }
+  .meta-row{ margin:10px 0 0; }
+  hr.rule{ margin:0 0 18px; }
+  section.sec{ margin:0 0 20px; }
+  .sec h2{ font-size:18px; margin:0 0 8px; }
+  .sec > p{ margin:0 0 8px; }
+  .spec-box{ padding:11px 15px; margin:0 0 8px; font-size:15.5px; }
+  .spec-box p{ margin:0 0 6px; }
+  .concepts{ margin:0; gap:6px; }
+  .note-list{ margin:4px 0 0; }
+  .codeblock{ margin:8px 0 10px; }
+  .codeblock pre{ padding:11px 15px; }
+  .sample{ padding:12px 14px 3px; margin:0 0 10px; }
+  .sample h3{ margin:0 0 8px; }
+  .sample .why{ margin:0 0 8px; font-size:14.5px; }
+  .io{ margin:0 0 8px; gap:10px; }
+  .asg-nav{ margin:0; }
+  .back-row{ margin-top:12px; }
+  footer{ padding:20px 0 6px; margin-top:12px; }
 </style>
 </head>
 <body>
 <div class="page">
   <nav class="topnav"><a href="../../index.html">← Java Notes</a><a href="../../lectures/lecture-07.html">Read the lesson: Working with Dates and Times</a></nav>
   <header class="masthead">
-    <p class="kicker">Assignment 5 of 9 · Working with Dates and Times</p>
+    <p class="kicker">Assignment 5 of 13 · Working with Dates and Times</p>
     <h1>Assignment — List of Dates</h1>
-    <p class="sub">You are given two dates D1 and D2.</p>
     <div class="meta-row"><span class="meta-pill lvl">Medium</span><span class="meta-pill">About 25 min</span><span class="meta-pill">Java</span></div>
   </header>
   <hr class="rule" />
-  <section class="sec"><span class="sec-num">01</span><h2>The problem</h2><div class="spec-box"><p>You are given two dates <strong>D1</strong> and <strong>D2</strong>.</p><p>Write a program to print the list of dates between D1 and D2 (<strong>including</strong> both D1 and D2) in the <strong>increasing order</strong> of the dates.</p><p>The date in string format looks like <code class="inline">Feb 20 2021</code>.</p></div><div class="concepts"><code class="inline">looping over dates</code><code class="inline">plusDays()</code><code class="inline">compareTo()</code></div></section><section class="sec"><span class="sec-num">02</span><h2>Input</h2><p>The first line is a string denoting D1 in the string format. The second line is a string denoting D2 in the string format.</p></section><section class="sec"><span class="sec-num">03</span><h2>Output</h2><p>Multiple lines containing the dates from D1 to D2, each on a new line, printed as date objects (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>Assume D1 is not later than D2.</li><li>If D1 and D2 are the same day, print that one date.</li></ul></section><section class="sec"><span class="sec-num">04</span><h2>Explanation</h2><p>Start with D1 and keep printing the current date while it is not after D2, moving forward one day each time with <code class="inline">plusDays(1)</code>. Because dates never change, you must store the result back (<code class="inline">current = current.plusDays(1);</code>), otherwise the loop never ends.</p></section><section class="sec"><span class="sec-num">05</span><h2>Sample cases</h2><p>Each sample shows the input, the exact output your program should print, and why.</p><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
+  <section class="sec"><h2>The problem</h2><div class="spec-box"><p>You are given two dates <strong>D1</strong> and <strong>D2</strong>.</p><p>Write a program to print the list of dates between D1 and D2 (<strong>including</strong> both D1 and D2) in the <strong>increasing order</strong> of the dates.</p><p>The date in string format looks like <code class="inline">Feb 20 2021</code>.</p></div><div class="concepts"><code class="inline">looping over dates</code><code class="inline">plusDays()</code><code class="inline">compareTo()</code></div></section><section class="sec"><h2>Input</h2><p>The first line is a string denoting D1 in the string format. The second line is a string denoting D2 in the string format.</p></section><section class="sec"><h2>Output</h2><p>Multiple lines containing the dates from D1 to D2, each on a new line, printed as date objects (<code class="inline">yyyy-MM-dd</code>).</p><ul class="note-list"><li>Assume D1 is not later than D2.</li><li>If D1 and D2 are the same day, print that one date.</li></ul></section><section class="sec"><h2>Explanation</h2><p>Start with D1 and keep printing the current date while it is not after D2, moving forward one day each time with <code class="inline">plusDays(1)</code>. Because dates never change, you must store the result back (<code class="inline">current = current.plusDays(1);</code>), otherwise the loop never ends.</p></section><section class="sec"><h2>Sample cases</h2><div class="sample"><h3>Sample 1</h3><div class="io"><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Input</span><button class="copy-btn">Copy</button></div><pre><code>Jul 11 2014
 Jul 14 2014</code></pre></div><div class="codeblock plain small"><div class="cb-head"><span class="cb-lang">Sample Output</span><button class="copy-btn">Copy</button></div><pre><code>2014-07-11
 2014-07-12
 2014-07-13
@@ -435,7 +460,7 @@ Mar 02 2020</code></pre></div><div class="codeblock plain small"><div class="cb-
 2020-02-28
 2020-02-29
 2020-03-01
-2020-03-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The list crosses the end of February in a leap year, so 29 February appears: <code>2020-02-27</code>, <code>2020-02-28</code>, <code>2020-02-29</code>, <code>2020-03-01</code>, <code>2020-03-02</code>.</p></div></section><section class="sec"><span class="sec-num">06</span><h2>Your task</h2><p>Your program reads its input from the keyboard (<code class="inline">Scanner</code>) and prints the answer. Start from this skeleton:</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
+2020-03-02</code></pre></div></div><p class="why"><strong>Explanation:</strong> The list crosses the end of February in a leap year, so 29 February appears: <code>2020-02-27</code>, <code>2020-02-28</code>, <code>2020-02-29</code>, <code>2020-03-01</code>, <code>2020-03-02</code>.</p></div></section><section class="sec"><h2>Your task</h2><p>Read the input with <code class="inline">Scanner</code> and print the answer. Start from this skeleton and check your output against the samples.</p><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java (starter)</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
@@ -448,23 +473,7 @@ class Main {
 
         // TODO: print every date from d1 to d2 (both included), one per line
     }
-}</code></pre></div><p>Run it against each sample above and compare your output with the expected output, character for character.</p></section><section class="sec"><span class="sec-num">07</span><h2>Stuck? Hints</h2><button class="reveal-btn" data-label="Hint 1">Hint 1 <span class="chev">▾</span></button><div class="rv-panel"><p>Start a variable <code class="inline">current</code> at <code class="inline">d1</code>. Repeat while <code class="inline">current</code> is not after <code class="inline">d2</code>, that is while <code class="inline">current.compareTo(d2) <= 0</code>.</p></div><button class="reveal-btn" data-label="Hint 2">Hint 2 <span class="chev">▾</span></button><div class="rv-panel"><p>Inside the loop: print <code class="inline">current</code>, then move on with <code class="inline">current = current.plusDays(1);</code>.</p></div><button class="reveal-btn" data-label="Hint 3">Hint 3 <span class="chev">▾</span></button><div class="rv-panel"><p>Stuck in an endless loop? You probably wrote <code class="inline">current.plusDays(1);</code> without storing the result. Dates never change on their own.</p></div><button class="reveal-btn" data-label="Hint 4">Hint 4 <span class="chev">▾</span></button><div class="rv-panel"><p><strong>Stretch:</strong> what if D1 is later than D2? Swap them first (use <code class="inline">compareTo</code> to check), then run the same loop.</p></div></section><section class="sec"><span class="sec-num">08</span><h2>Solution</h2><button class="reveal-btn" data-label="Show solution">Show solution <span class="chev">▾</span></button><div class="rv-panel"><div class="codeblock"><div class="cb-head"><span class="cb-lang">Main.java</span><button class="copy-btn">Copy</button></div><pre><code>import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-
-class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        LocalDate d1 = LocalDate.parse(sc.nextLine(), formatter);
-        LocalDate d2 = LocalDate.parse(sc.nextLine(), formatter);
-        LocalDate current = d1;
-        while (current.compareTo(d2) &lt;= 0) {
-            System.out.println(current);
-            current = current.plusDays(1);
-        }
-    }
-}</code></pre></div><p>The condition <code class="inline">compareTo(d2) <= 0</code> is what makes D2 <em>included</em>. Using <code class="inline">< 0</code> instead would stop one day early.</p></div></section><section class="sec"><span class="sec-num">09</span><h2>Self-check</h2><ul class="self-check"><li><span class="box">✓</span><span class="t">Both D1 and D2 appear in my output</span></li><li><span class="box">✓</span><span class="t">The sample crossing 29 February prints 5 lines</span></li><li><span class="box">✓</span><span class="t">My loop ends: I store <code>current = current.plusDays(1)</code></span></li></ul><div class="sc-progress" id="scProg">0 of 3 done</div></section>
+}</code></pre></div></section>
   <section class="sec" style="margin-bottom:20px">
     <div class="asg-nav"><a href="assignment-4.html"><span class="dir">← Previous</span><span class="nm">Add Years</span></a><a class="next" href="assignment-6.html"><span class="dir">Next →</span><span class="nm">Name of the Weekday</span></a></div>
     <div class="back-row"><a href="../../index.html">Back to all chapters</a></div>

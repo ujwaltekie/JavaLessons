@@ -75,7 +75,11 @@ const CATALOG = {
         "Name of the Weekday",
         "Count of Mondays",
         "UNIX Timestamp to DateTime",
-        "Exception"
+        "Exception",
+        "Age Calculator",
+        "Valid Date Checker",
+        "Shift Length",
+        "Which Date Comes First"
       ]
     }
     /* Next chapter: copy this block, remove the comment marks, rename.
